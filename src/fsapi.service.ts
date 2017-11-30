@@ -1,5 +1,5 @@
 import { Injectable, Inject, Optional } from '@angular/core';
-import { FsUtil } from '@fs/util';
+import { FsUtil } from '@firestitch/common';
 import { Observable } from 'rxjs/Observable';
 import { HttpClient, HttpRequest, HttpEvent, HttpParams, HttpEventType, HttpHeaders } from '@angular/common/http';
 
