@@ -11,24 +11,21 @@ export * from './fsapi.service';
 @NgModule({
   imports: [
     CommonModule,
-    HttpClientModule,
-    FsUtil
+    HttpClientModule
 ],
 declarations: [    
 ],
 providers: [
-    FsApiConfig,
     FsUtil
 ],
 exports: [
-  FsApiConfig
 ]
 })
 export class FsApiModule {
   static forRoot(): ModuleWithProviders {
     return {
       ngModule: FsApiModule,
-      providers: [FsApiConfig, FsUtil]
+      providers: [FsApiConfig]
     };
   }
 }
