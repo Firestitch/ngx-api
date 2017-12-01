@@ -65,10 +65,10 @@
                                 id="xs-modules-links"
                             >
                                 <li class="link">
-                                    <a href="../modules/AppModule.html"  data-type="entity-link" class="active" >AppModule</a>
+                                    <a href="../modules/AppModule.html" >AppModule</a>
                                 </li>
                                 <li class="link">
-                                    <a href="../modules/FsApiModule.html" >FsApiModule</a>
+                                    <a href="../modules/FsApiModule.html"  data-type="entity-link" class="active" >FsApiModule</a>
                                 </li>
                         </ul>
                     </li>
@@ -193,10 +193,10 @@
                                        id="modules-links"
                    >
                                        <li class="link">
-                                           <a href="../modules/AppModule.html"  data-type="entity-link" class="active" >AppModule</a>
+                                           <a href="../modules/AppModule.html" >AppModule</a>
                                        </li>
                                        <li class="link">
-                                           <a href="../modules/FsApiModule.html" >FsApiModule</a>
+                                           <a href="../modules/FsApiModule.html"  data-type="entity-link" class="active" >FsApiModule</a>
                                        </li>
                                </ul>
                            </li>
@@ -277,7 +277,7 @@
 
 <ol class="breadcrumb">
   <li>Modules</li>
-  <li>AppModule</li>
+  <li>FsApiModule</li>
 </ol>
 
       <div class="text-center module-graph-container">
@@ -305,46 +305,62 @@
 <polygon fill="#fb8072" stroke="transparent" points="406,-10 406,-30 426,-30 426,-10 406,-10"/>
 <text text-anchor="start" x="429.7258" y="-15.4" font-family="sans-serif" font-size="14.00" fill="#000000"> &#160;Exports</text>
 <g id="clust1" class="cluster">
-<title>cluster_AppModule</title>
-<polygon fill="none" stroke="#000000" stroke-dasharray="1,5" points="178,-70 178,-268 318,-268 318,-70 178,-70"/>
+<title>cluster_FsApiModule</title>
+<polygon fill="none" stroke="#000000" stroke-dasharray="1,5" points="132,-70 132,-268 364,-268 364,-70 132,-70"/>
 </g>
-<g id="clust2" class="cluster">
-<title>cluster_AppModule_declarations</title>
-<polygon fill="none" stroke="#000000" points="187,-78 187,-130 309,-130 309,-78 187,-78"/>
+<g id="clust3" class="cluster">
+<title>cluster_FsApiModule_imports</title>
+<polygon fill="none" stroke="#000000" points="286,-78 286,-130 356,-130 356,-78 286,-78"/>
+</g>
+<g id="clust4" class="cluster">
+<title>cluster_FsApiModule_exports</title>
+<polygon fill="none" stroke="#000000" points="201,-208 201,-260 309,-260 309,-208 201,-208"/>
 </g>
 <g id="clust6" class="cluster">
-<title>cluster_AppModule_bootstrap</title>
-<polygon fill="none" stroke="#000000" points="186,-208 186,-260 310,-260 310,-208 186,-208"/>
+<title>cluster_FsApiModule_providers</title>
+<polygon fill="none" stroke="#000000" points="140,-78 140,-130 278,-130 278,-78 140,-78"/>
 </g>
-<!-- AppComponent -->
+<!-- FsUtil -->
 <g id="node1" class="node">
-<title>AppComponent</title>
-<polygon fill="#ffffb3" stroke="#000000" points="300.9399,-122 195.0601,-122 195.0601,-86 300.9399,-86 300.9399,-122"/>
-<text text-anchor="middle" x="248" y="-99.8" font-family="Times,serif" font-size="14.00" fill="#000000">AppComponent</text>
+<title>FsUtil</title>
+<polygon fill="#8dd3c7" stroke="#000000" points="348,-122 345,-126 324,-126 321,-122 294,-122 294,-86 348,-86 348,-122"/>
+<text text-anchor="middle" x="321" y="-99.8" font-family="Times,serif" font-size="14.00" fill="#000000">FsUtil</text>
 </g>
-<!-- AppModule -->
+<!-- FsApiModule -->
 <g id="node2" class="node">
-<title>AppModule</title>
-<polygon fill="#8dd3c7" stroke="#000000" points="289.6571,-187 286.6571,-191 265.6571,-191 262.6571,-187 206.3429,-187 206.3429,-151 289.6571,-151 289.6571,-187"/>
-<text text-anchor="middle" x="248" y="-164.8" font-family="Times,serif" font-size="14.00" fill="#000000">AppModule</text>
+<title>FsApiModule</title>
+<polygon fill="#8dd3c7" stroke="#000000" points="301.7745,-187 298.7745,-191 277.7745,-191 274.7745,-187 208.2255,-187 208.2255,-151 301.7745,-151 301.7745,-187"/>
+<text text-anchor="middle" x="255" y="-164.8" font-family="Times,serif" font-size="14.00" fill="#000000">FsApiModule</text>
 </g>
-<!-- AppComponent&#45;&gt;AppModule -->
+<!-- FsUtil&#45;&gt;FsApiModule -->
 <g id="edge1" class="edge">
-<title>AppComponent&#45;&gt;AppModule</title>
-<path fill="none" stroke="#000000" d="M248,-122.1061C248,-122.1061 248,-140.991 248,-140.991"/>
-<polygon fill="#000000" stroke="#000000" points="244.5001,-140.9909 248,-150.991 251.5001,-140.991 244.5001,-140.9909"/>
+<title>FsUtil&#45;&gt;FsApiModule</title>
+<path fill="none" stroke="#000000" d="M297.9436,-122.1061C297.9436,-122.1061 297.9436,-140.991 297.9436,-140.991"/>
+<polygon fill="#000000" stroke="#000000" points="294.4436,-140.9909 297.9436,-150.991 301.4436,-140.991 294.4436,-140.9909"/>
 </g>
-<!-- AppComponent  -->
+<!-- FsApiConfig  -->
 <g id="node3" class="node">
-<title>AppComponent </title>
-<polygon fill="#80b1d3" stroke="#000000" points="302.439,-252 193.561,-252 193.561,-216 302.439,-216 302.439,-252"/>
-<text text-anchor="middle" x="248" y="-229.8" font-family="Times,serif" font-size="14.00" fill="#000000">AppComponent </text>
+<title>FsApiConfig </title>
+<polygon fill="#fb8072" stroke="#000000" points="301.113,-252 208.887,-252 208.887,-216 301.113,-216 301.113,-252"/>
+<text text-anchor="middle" x="255" y="-229.8" font-family="Times,serif" font-size="14.00" fill="#000000">FsApiConfig </text>
 </g>
-<!-- AppModule&#45;&gt;AppComponent  -->
+<!-- FsApiModule&#45;&gt;FsApiConfig  -->
 <g id="edge2" class="edge">
-<title>AppModule&#45;&gt;AppComponent </title>
-<path fill="none" stroke="#000000" stroke-dasharray="1,5" d="M248,-187.1061C248,-187.1061 248,-205.991 248,-205.991"/>
-<polygon fill="#000000" stroke="#000000" points="244.5001,-205.9909 248,-215.991 251.5001,-205.991 244.5001,-205.9909"/>
+<title>FsApiModule&#45;&gt;FsApiConfig </title>
+<path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M255,-187.1061C255,-187.1061 255,-205.991 255,-205.991"/>
+<polygon fill="#000000" stroke="#000000" points="251.5001,-205.9909 255,-215.991 258.5001,-205.991 251.5001,-205.9909"/>
+</g>
+<!-- FsApiConfig -->
+<g id="node4" class="node">
+<title>FsApiConfig</title>
+<ellipse fill="#fdb462" stroke="#000000" cx="209" cy="-104" rx="61.436" ry="18"/>
+<text text-anchor="middle" x="209" y="-99.8" font-family="Times,serif" font-size="14.00" fill="#000000">FsApiConfig</text>
+</g>
+<!-- FsApiConfig&#45;&gt;FsApiModule -->
+<g id="edge3" class="edge">
+<title>FsApiConfig&#45;&gt;FsApiModule</title>
+<path fill="none" stroke="#000000" d="M239.2904,-119.7347C239.2904,-119.7347 239.2904,-140.6451 239.2904,-140.6451"/>
+<polygon fill="#000000" stroke="#000000" points="235.7905,-140.645 239.2904,-150.6451 242.7905,-140.6451 235.7905,-140.645"/>
 </g>
 </g>
 </svg>
@@ -378,25 +394,33 @@
             <h3>File</h3>
         </p>
         <p class="comment">
-            <code>playground/index.ts</code>
+            <code>src/index.ts</code>
         </p>
 
 
         <div class="container-fluid module">
             <div class="row">
                 <div class="col-sm-3">
-                    <h3>Declarations<a href="https://angular.io/api/core/NgModule#declarations" target="_blank" title="Official documentation about module declarations"><span class="fa fa-info-circle"></span></a></h3>
+                    <h3>Providers<a href="https://angular.io/api/core/NgModule#providers" target="_blank" title="Official documentation about module providers"><span class="fa fa-info-circle"></a></h3>
                     <ul class="list-group">
                             <li class="list-group-item">
-                                <a href="../components/AppComponent.html">AppComponent</a>
+                                     <a href="../injectables/FsApiConfig.html" >FsApiConfig</a>
                             </li>
                     </ul>
                 </div>
                 <div class="col-sm-3">
-                    <h3>Bootstrap<a href="https://angular.io/docs/ts/latest/api/core/index/NgModule-interface.html#!#bootstrap-anchor" target="_blank"><span class="fa fa-info-circle"></a></h3>
+                    <h3>Imports<a href="https://angular.io/api/core/NgModule#imports" target="_blank" title="Official documentation about module imports"><span class="fa fa-info-circle"></a></h3>
                     <ul class="list-group">
                             <li class="list-group-item">
-                                <a href="../components/AppComponent.html" >AppComponent</a>
+                                    <a href="../modules/FsUtil.html" >FsUtil</a>
+                            </li>
+                    </ul>
+                </div>
+                <div class="col-sm-3">
+                    <h3>Exports<a href="https://angular.io/api/core/NgModule#exports" target="_blank" title="Official documentation about module exports"><span class="fa fa-info-circle"></a></h3>
+                    <ul class="list-group">
+                            <li class="list-group-item">
+                                    <a href="../s/FsApiConfig.html" >FsApiConfig</a>
                             </li>
                     </ul>
                 </div>
@@ -406,27 +430,40 @@
 
 
     <div class="tab-pane fade tab-source-code" id="source">
-        <pre class="line-numbers"><code class="language-typescript">import { BrowserModule } from &#x27;@angular/platform-browser&#x27;;
-import { NgModule } from &#x27;@angular/core&#x27;;
-import { Component } from &#x27;@angular/core&#x27;;
-import { platformBrowserDynamic } from &#x27;@angular/platform-browser-dynamic&#x27;;
+        <pre class="line-numbers"><code class="language-typescript">import { FsUtil } from &#x27;@firestitch/common&#x27;;
+ 
+import { HttpClientModule } from &#x27;@angular/common/http&#x27;;
+import { FsApiConfig } from &#x27;./fsapi.service&#x27;;
 
-import { SampleModule }  from &#x27;fs-address&#x27;;
+import { JsonpModule } from &#x27;@angular/http&#x27;;
+import { NgModule, ModuleWithProviders } from &#x27;@angular/core&#x27;;
+import { CommonModule } from &#x27;@angular/common&#x27;;
 
-@Component({
-  selector: &#x27;app&#x27;,
-  template: &#x60;&lt;sample-component&gt;&lt;/sample-component&gt;&#x60;
-})
-class AppComponent {}
-
+export * from &#x27;./fsapi.service&#x27;;
 @NgModule({
-  bootstrap: [ AppComponent ],
-  declarations: [ AppComponent ],
-  imports: [ BrowserModule, SampleModule ]
+  imports: [
+    CommonModule,
+    HttpClientModule,
+    FsUtil
+],
+declarations: [    
+],
+providers: [
+    FsApiConfig,
+    FsUtil
+],
+exports: [
+  FsApiConfig
+]
 })
-class AppModule {}
-
-platformBrowserDynamic().bootstrapModule(AppModule);
+export class FsApiModule {
+  static forRoot(): ModuleWithProviders {
+    return {
+      ngModule: FsApiModule,
+      providers: [FsApiConfig, FsUtil]
+    };
+  }
+}
 </code></pre>
     </div>
 </div>
