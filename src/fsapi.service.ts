@@ -5,15 +5,17 @@ import { HttpClient, HttpRequest, HttpEvent, HttpParams, HttpEventType, HttpHead
 
 @Injectable()
 export class FsApiConfig {
+  /** A key value store for the request headers. */
   public headers?: object = {};
   public encoding?: string = null;
   public key?: string = null;
-  public search?: object = {};
+  public query?: object = {};
 
   constructor(@Optional() @Inject('FsApiConfig') private config?: any) {
     Object.assign(this, config || {});
   }
 
+  /** Adds or overrides a header value based on the name */
   public appendHeader(name: string, value: string) {
      this.headers[name] = value;
   }
@@ -23,8 +25,8 @@ export class FsApiConfig {
 export class FsApi {
   constructor(private FsApiConfig: FsApiConfig, private FsUtil: FsUtil, private http: HttpClient) {}
 
-  public get(url, config?: FsApiConfig) {
-    return this.request('GET', url, {}, config);
+  public get(url, query?, config?: FsApiConfig) {
+    return this.request('GET', url, query, config);
   }
 
   public post(url, data?: object, config?: FsApiConfig): Observable<any> {
@@ -42,7 +44,13 @@ export class FsApi {
   public request(method: string, url: string, data?: object, config?: FsApiConfig): Observable<any> {
 
     config = Object.assign({}, this.FsApiConfig, config);
-    //clearSlowAlert();
+    method = method.toUpperCase();
+
+    if (method === 'GET') {
+      config.query = data;
+      data = {};
+    }
+
     let headers = new HttpHeaders();
     this.FsUtil.each(config.headers, function(value, name) {
       headers = headers.set(name, value);
@@ -109,7 +117,7 @@ export class FsApi {
     const body = JSON.stringify(data);
 
     let params = new HttpParams();
-    this.FsUtil.each(config.search, function(value, name) {
+    this.FsUtil.each(config.query, function(value, name) {
       params = params.append(name, value);
     });
 
