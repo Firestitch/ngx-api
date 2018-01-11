@@ -30,6 +30,7 @@
     "angular-in-memory-web-api": "^0.3.2",
     "codelyzer": "~3.2.0",
     "concurrently": "^3.4.0",
+    "angular-file": "^0.4.1",
     "core-js": "^2.4.1",
     "del": "^2.2.2",
     "gulp": "^3.9.1",
@@ -55,7 +56,9 @@
     "ts-node": "~3.2.0",
     "tslint": "~5.7.0",
     "typescript": "~2.4.2",
-    "zone.js": "^0.8.14"
+    "zone.js": "^0.8.14",
+    "moment": "^2.19.3",
+    "moment-timezone": "^0.5.14"
   },
   "engines": {
     "node": ">=6.0.0"

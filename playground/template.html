@@ -1,5 +1,11 @@
 <p>
 {{data|fsUtilStringify}}
 </p>
-<button mat-raised-button color="primary" (click)="get()">Test</button>
+<button mat-raised-button color="primary" (click)="get()">GET</button>
+<button mat-raised-button color="primary" (click)="getException()">GET Exception</button>
+
+<button mat-raised-button color="primary" (click)="post()">POST</button>
      
+<input type="file" ngf [(file)]="file" />
+<button (click)="uploadFiles(file)">Upload</button>
+ 

@@ -2,12 +2,13 @@ import { Injectable, Inject, Optional } from '@angular/core';
 import { FsUtil } from '@firestitch/common';
 import { Observable } from 'rxjs/Observable';
 import { HttpClient, HttpRequest, HttpEvent, HttpParams, HttpEventType, HttpHeaders } from '@angular/common/http';
+import moment from 'moment-timezone';
 
 @Injectable()
 export class FsApiConfig {
   /** A key value store for the request headers. */
   public headers?: object = {};
-  public encoding?: string = null;
+  public encoding?: string = 'json';
   public key?: string = null;
   public query?: object = {};
 
@@ -23,6 +24,9 @@ export class FsApiConfig {
 
 @Injectable()
 export class FsApi {
+
+  events = [];
+
   constructor(private FsApiConfig: FsApiConfig, private FsUtil: FsUtil, private http: HttpClient) {}
 
   public get(url, query?, config?: FsApiConfig) {
@@ -45,6 +49,9 @@ export class FsApi {
 
     config = Object.assign({}, this.FsApiConfig, config);
     method = method.toUpperCase();
+    data = Object.assign({}, data);
+
+    this.sanitize(data);
 
     if (method === 'GET') {
       config.query = data;
@@ -56,11 +63,7 @@ export class FsApi {
       headers = headers.set(name, value);
     });
 
-    data = Object.assign({}, data);
-
     let hasFile = false;
-    //this.sanitize(request);
-
     this.FsUtil.each(data, function(item) {
        if (item instanceof File || item instanceof Blob) {
         hasFile = true;
@@ -68,23 +71,25 @@ export class FsApi {
       }
     });
 
+    let body = null;
     if (config.encoding === 'url') {
       headers = headers.set('Content-Type', 'application/x-www-form-urlencoded');
+      body = data;
 
     } else if (config.encoding === 'json') {
       headers = headers.set('Content-Type', 'text/json');
+      body = JSON.stringify(data);
 
     } else if (config.encoding === 'formdata') {
       headers = headers.delete('Content-Type');
-        //config.transformRequest = angular.identity;
-        // var request = new FormData();
-        // angular.forEach(body, function(item, key) {
-        //     if (item != null && item.name) {
-        //         request.append(key, item, item.name);
-        //     } else {
-        //         request.append(key, item);
-        //     }
-        // });
+      body = new FormData();
+      this.FsUtil.each(data, function(item, key) {
+        if (item != null && item.name) {
+          body.append(key, item, item.name);
+        } else {
+          body.append(key, item);
+        }
+      });
     }
 
     //begin(request, headers, config);
@@ -112,10 +117,6 @@ export class FsApi {
     //   }
     // }
 
-    //debugger;
-
-    const body = JSON.stringify(data);
-
     let params = new HttpParams();
     this.FsUtil.each(config.query, function(value, name) {
       params = params.append(name, value);
@@ -125,6 +126,8 @@ export class FsApi {
       headers: headers,
       params: params
     });
+
+    this.trigger('begin', request, config);
 
     return Observable.create(observer => {
 
@@ -144,66 +147,66 @@ export class FsApi {
           }
 
           if (event.type === HttpEventType.Response) {
+            this.trigger('success', event, config);
             observer.next(event.body);
           }
       },
       err => {
+        this.trigger('error', event, config);
         observer.error(err);
       },
-      () => observer.complete() );
+      () => {
+        this.trigger('complete', null, config);
+        observer.complete();
+      });
     });
+  }
+
+  public on(name, func) {
+    this.events.push({ name: name, func: func });
+    return this;
+  }
+
+  public trigger(name, data, FsApiConfig) {
+    this.FsUtil.each(this.events, function(event) {
+      if (name === event.name) {
+        event.func(data, FsApiConfig);
+      }
+    });
+    return this;
   }
 
   public intercept(config: FsApiConfig, request: HttpRequest<any>, next: FsApiHandler) {
     return next.handle(request);
   }
 
-  private iso8601(date) {
+  private sanitize(obj) {
+    const self = this;
+    this.FsUtil.each(obj, function(value, key) {
+      if (moment && moment.isMoment(value)) {
+          obj[key] = value.format();
 
-        const tzo = -date.getTimezoneOffset(),
-            dif = tzo >= 0 ? '+' : '-',
-            pad = function(num) {
-                const norm = Math.abs(Math.floor(num));
-                return (norm < 10 ? '0' : '') + norm;
-            };
+      } else if (value instanceof Date) {
+        obj[key] = moment(value).format();
 
-        return date.getFullYear()
-                + '-' + pad(date.getMonth() + 1)
-                + '-' + pad(date.getDate())
-                + 'T' + pad(date.getHours())
-                + ':' + pad(date.getMinutes())
-                + ':' + pad(date.getSeconds())
-                + dif + pad(tzo / 60)
-                + ':' + pad(tzo % 60);
-    }
+      } else if (value === undefined) {
+        delete obj[key];
 
-    private sanitize(obj) {
+      } else if (self.FsUtil.isObject(value)) {
+        self.sanitize(value);
+      }
+    });
 
-        // this.FsUtil.each(obj, function(value, key) {
-        //     if (moment && moment.isMoment(value)) {
-        //         obj[key] = value.format();
-
-        //     } else if (value instanceof Date) {
-        //         obj[key] = this.iso8601(value);
-
-        //     } else if (value === undefined) {
-        //         delete obj[key];
-
-        //     } else if (angular.isObject(value)) {
-        //         this.sanitize(value);
-        //     }
-        // });
-
-        return obj;
-    }
+    return obj;
+  }
 }
-
 
 export class FsApiHandler {
 
   constructor(private http: HttpClient) {}
 
   handle(request: HttpRequest<any>) {
+    console.log('FsApiHandler',request);
     return this.http.request(request);
   }
 }

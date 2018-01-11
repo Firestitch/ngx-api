@@ -41,13 +41,15 @@
       '@angular/cdk/table': 'npm:@angular/cdk/bundles/cdk-table.umd.js', 
       '@angular/cdk/stepper': 'npm:@angular/cdk/bundles/cdk-stepper.umd.js', 
       '@angular/cdk/coercion': 'npm:@angular/cdk/bundles/cdk-coercion.umd.js', 
-      'rxjs': 'npm:rxjs', 
+      'angular-file': 'npm:angular-file',
       'tslib': 'npm:tslib/tslib.js',
       'angular-in-memory-web-api': 'npm:angular-in-memory-web-api/bundles/in-memory-web-api.umd.js', 
       '@firestitch/common': 'npm:@firestitch/common/common.umd.js', 
       '@firestitch/api': '../dist/api.umd.js',
       'rxjs': 'npm:rxjs',
       'angular-in-memory-web-api': 'npm:angular-in-memory-web-api/bundles/in-memory-web-api.umd.js',
+      'moment-timezone': 'npm:moment-timezone/moment-timezone.js',
+      'moment': 'npm:moment/moment.js'
     },
     // packages tells the System loader how to load when no filename and/or no extension
     packages: {
@@ -61,6 +63,10 @@
       },
       rxjs: {
         defaultExtension: 'js'
+      },
+      'angular-file': {
+        defaultExtension: 'js',
+        main: 'index.js'
       }
     }
   });
