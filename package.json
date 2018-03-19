@@ -1,5 +1,5 @@
 {
-  "version": "0.1.8",
+  "version": "0.1.9",
   "name": "@firestitch/api",
   "main": "package/index.js",
   "typings": "package/index.d.ts",

@@ -16,7 +16,7 @@ var core_1 = require("@angular/core");
 var common_1 = require("@firestitch/common");
 var Observable_1 = require("rxjs/Observable");
 var http_1 = require("@angular/common/http");
-var moment_timezone_1 = require("moment-timezone");
+var moment = require("moment-timezone");
 var FsApiConfig = (function () {
     function FsApiConfig(config) {
         this.config = config;
@@ -172,11 +172,11 @@ var FsApi = (function () {
     FsApi.prototype.sanitize = function (obj) {
         var self = this;
         this.FsUtil.each(obj, function (value, key) {
-            if (moment_timezone_1.default && moment_timezone_1.default.isMoment(value)) {
+            if (moment && moment.isMoment(value)) {
                 obj[key] = value.format();
             }
             else if (value instanceof Date) {
-                obj[key] = moment_timezone_1.default(value).format();
+                obj[key] = moment(value).format();
             }
             else if (value === undefined) {
                 delete obj[key];

@@ -2,7 +2,7 @@ import { Injectable, Inject, Optional } from '@angular/core';
 import { FsUtil } from '@firestitch/common';
 import { Observable } from 'rxjs/Observable';
 import { HttpClient, HttpRequest, HttpEvent, HttpParams, HttpEventType, HttpHeaders } from '@angular/common/http';
-import moment from 'moment-timezone';
+import * as moment from 'moment-timezone';
 
 @Injectable()
 export class FsApiConfig {

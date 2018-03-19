@@ -2,11 +2,11 @@
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
 	else if(typeof define === 'function' && define.amd)
-		define([], factory);
-	else {
-		var a = factory();
-		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
-	}
+		define("@firestitch/api", [], factory);
+	else if(typeof exports === 'object')
+		exports["@firestitch/api"] = factory();
+	else
+		root["@firestitch/api"] = factory();
 })(typeof self !== 'undefined' ? self : this, function() {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -151,7 +151,7 @@ var core_1 = __webpack_require__("@angular/core");
 var common_1 = __webpack_require__("@firestitch/common");
 var Observable_1 = __webpack_require__("rxjs/Observable");
 var http_1 = __webpack_require__("@angular/common/http");
-var moment_timezone_1 = __webpack_require__("moment-timezone");
+var moment = __webpack_require__("moment-timezone");
 var FsApiConfig = (function () {
     function FsApiConfig(config) {
         this.config = config;
@@ -307,11 +307,11 @@ var FsApi = (function () {
     FsApi.prototype.sanitize = function (obj) {
         var self = this;
         this.FsUtil.each(obj, function (value, key) {
-            if (moment_timezone_1.default && moment_timezone_1.default.isMoment(value)) {
+            if (moment && moment.isMoment(value)) {
                 obj[key] = value.format();
             }
             else if (value instanceof Date) {
-                obj[key] = moment_timezone_1.default(value).format();
+                obj[key] = moment(value).format();
             }
             else if (value === undefined) {
                 delete obj[key];
