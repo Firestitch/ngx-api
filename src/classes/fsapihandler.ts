@@ -1,4 +1,6 @@
-import { HttpClient, HttpRequest } from '@angular/common/http';
+import {  HttpClient, HttpRequest, HttpHeaderResponse, HttpProgressEvent,
+          HttpResponse, HttpSentEvent, HttpUserEvent } from '@angular/common/http';
+import { Observable } from 'rxjs/Observable';
 
 export class FsApiHandler {
 
