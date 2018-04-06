@@ -3,51 +3,35 @@ import { FsUtil } from '@firestitch/common';
 import { Observable } from 'rxjs/Observable';
 import { HttpClient, HttpRequest, HttpEvent, HttpParams, HttpEventType, HttpHeaders } from '@angular/common/http';
 import * as moment from 'moment-timezone';
-
-@Injectable()
-export class FsApiConfig {
-  /** A key value store for the request headers. */
-  public headers?: object = {};
-  public encoding?: string = 'json';
-  public key?: string = null;
-  public query?: object = {};
-
-  constructor(@Optional() @Inject('FsApiConfig') private config?: any) {
-    Object.assign(this, config || {});
-  }
-
-  /** Adds or overrides a header value based on the name */
-  public appendHeader(name: string, value: string) {
-     this.headers[name] = value;
-  }
-}
+import { FsApiConfig, FsApiHandler, ResponseType } from '../classes';
+import { forEach, isObject } from 'lodash';
 
 @Injectable()
 export class FsApi {
 
   events = [];
 
-  constructor(private FsApiConfig: FsApiConfig, private FsUtil: FsUtil, private http: HttpClient) {}
+  constructor(private FsApiConfig: FsApiConfig, private http: HttpClient) {}
 
-  public get(url, query?, config?: FsApiConfig) {
+  public get(url, query?, config?) {
     return this.request('GET', url, query, config);
   }
 
-  public post(url, data?: object, config?: FsApiConfig): Observable<any> {
+  public post(url, data?: object, config?): Observable<any> {
     return this.request('POST', url, data, config);
   }
 
-  public put(url, data?: object, config?: FsApiConfig): Observable<any> {
+  public put(url, data?: object, config?): Observable<any> {
     return this.request('PUT', url, data, config);
   }
 
-  public delete(url, data?: object, config?: FsApiConfig): Observable<any> {
+  public delete(url, data?: object, config?): Observable<any> {
       return this.request('DELETE', url, data, config);
   }
 
-  public request(method: string, url: string, data?: object, config?: FsApiConfig): Observable<any> {
+  public request(method: string, url: string, data?: object, config?): Observable<any> {
 
-    config = Object.assign({}, this.FsApiConfig, config);
+    config = <FsApiConfig>Object.assign({}, this.FsApiConfig, config);
     method = method.toUpperCase();
     data = Object.assign({}, data);
 
@@ -59,12 +43,12 @@ export class FsApi {
     }
 
     let headers = new HttpHeaders();
-    this.FsUtil.each(config.headers, function(value, name) {
+    forEach(config.headers, function(value, name) {
       headers = headers.set(name, value);
     });
 
     let hasFile = false;
-    this.FsUtil.each(data, function(item) {
+    forEach(data, function(item) {
        if (item instanceof File || item instanceof Blob) {
         hasFile = true;
         config.encoding = 'formdata';
@@ -83,7 +67,7 @@ export class FsApi {
     } else if (config.encoding === 'formdata') {
       headers = headers.delete('Content-Type');
       body = new FormData();
-      this.FsUtil.each(data, function(item, key) {
+      forEach(data, function(item, key) {
         if (item != null && item.name) {
           body.append(key, item, item.name);
         } else {
@@ -118,14 +102,19 @@ export class FsApi {
     // }
 
     let params = new HttpParams();
-    this.FsUtil.each(config.query, function(value, name) {
+    forEach(config.query, function(value, name) {
       params = params.append(name, value);
     });
 
     const request = new HttpRequest(method, url, body, {
       headers: headers,
-      params: params
+      params: params,
+      reportProgress: config.reportProgress
     });
+
+    if (config.reportProgress) {
+      config.responseType = ResponseType.httpEvent;
+    }
 
     this.trigger('begin', request, config);
 
@@ -133,30 +122,21 @@ export class FsApi {
 
         this.intercept(config, request, new FsApiHandler(this.http))
         .subscribe((event: HttpEvent<any>) => {
-          if (event.type === HttpEventType.Sent) {
-            return;
-          }
 
-          if (event.type === HttpEventType.ResponseHeader) {
-            return;
-          }
+          if (config.responseType == ResponseType.httpEvent) {
+            observer.next(event);
 
-          if (event.type === HttpEventType.DownloadProgress) {
-            const kbLoaded = Math.round(event.loaded / 1024);
-            return;
-          }
-
-          if (event.type === HttpEventType.Response) {
+          } else if (event.type === HttpEventType.Response) {
             this.trigger('success', event, config);
             observer.next(event.body);
           }
       },
       err => {
-        this.trigger('error', event, config);
+        this.trigger('error', err, config);
         observer.error(err);
       },
       () => {
-        this.trigger('complete', null, config);
+        this.trigger('complete', {}, config);
         observer.complete();
       });
     });
@@ -167,10 +147,10 @@ export class FsApi {
     return this;
   }
 
-  public trigger(name, data, FsApiConfig) {
-    this.FsUtil.each(this.events, function(event) {
+  public trigger(name, data, config) {
+    forEach(this.events, function(event) {
       if (name === event.name) {
-        event.func(data, FsApiConfig);
+        event.func(data, config);
       }
     });
     return this;
@@ -182,7 +162,7 @@ export class FsApi {
 
   private sanitize(obj) {
     const self = this;
-    this.FsUtil.each(obj, function(value, key) {
+    forEach(obj, function(value, key) {
       if (moment && moment.isMoment(value)) {
           obj[key] = value.format();
 
@@ -192,21 +172,11 @@ export class FsApi {
       } else if (value === undefined) {
         delete obj[key];
 
-      } else if (self.FsUtil.isObject(value)) {
+      } else if (isObject(value)) {
         self.sanitize(value);
       }
     });
 
     return obj;
-  }
-}
-
-export class FsApiHandler {
-
-  constructor(private http: HttpClient) {}
-
-  handle(request: HttpRequest<any>) {
-    console.log('FsApiHandler',request);
-    return this.http.request(request);
   }
 }

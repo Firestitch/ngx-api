@@ -1,13 +1,7 @@
-import { FsUtil } from '@firestitch/common';
-
 import { HttpClientModule } from '@angular/common/http';
-import { FsApiConfig, FsApi } from './fsapi.service';
-
-import { JsonpModule } from '@angular/http';
+import { FsApiConfig, FsApi } from './';
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-export * from './fsapi.service';
 
 @NgModule({
   imports: [
@@ -16,7 +10,6 @@ export * from './fsapi.service';
 ],
 declarations: [],
 providers: [
-    FsUtil,
     FsApi,
     FsApiConfig
 ],

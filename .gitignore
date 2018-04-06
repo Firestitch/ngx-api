@@ -39,3 +39,4 @@ dist/*
 /.tmp
 /docs
 /dll
+/*.code-workspace
