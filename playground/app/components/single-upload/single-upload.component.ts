@@ -3,12 +3,14 @@ import { FsApi, ResponseType } from '../../../../src';
 import { HttpEventType } from '@angular/common/http';
 
 @Component({
-  selector: 'upload-example',
-  templateUrl: 'upload-example.component.html'
+  selector: 'single-upload',
+  templateUrl: 'single-upload.component.html'
 })
-export class UploadExampleComponent {
+export class SingleUploadComponent {
 
   files = [];
+  percent = 0;
+  kbLoaded = 0;
   url = 'https://boilerplate.firestitch.com/api/dummy';
   constructor(private FsApi: FsApi) {}
 
@@ -17,6 +19,8 @@ export class UploadExampleComponent {
     const data = { moment: null, object: { date: new Date() }, file: null };
     this.files.forEach((fsFile, index) => {
       data.file = fsFile.file;
+      this.kbLoaded = 0;
+      this.percent = 0;
 
       fsFile.obserable = this.FsApi.post(this.url, data, { reportProgress: true })
       .subscribe(event => {
@@ -26,7 +30,8 @@ export class UploadExampleComponent {
         }
 
         if (event.type === HttpEventType.UploadProgress) {
-
+          this.kbLoaded = Math.round(event.loaded / 1024);
+          this.percent = Math.round((event.loaded / event.total) * 100);
         }
 
         if (event.type === HttpEventType.ResponseHeader) {
@@ -50,7 +55,7 @@ export class UploadExampleComponent {
     }
   }
 
-  public select(files) {
-    this.files = this.files.concat(files);
+  public select(file) {
+    this.files = [file];
   }
 }

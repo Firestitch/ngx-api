@@ -1,8 +1,10 @@
 
-<fs-file (select)="select($event)" multiple="true">
+<fs-file (select)="select($event)">
   <button mat-raised-button color="primary">Select File</button>
 </fs-file>
 <button mat-raised-button color="primary" (click)="upload()">Upload</button>
+
+<span *ngIf="percent">{{percent}}%</span> <span *ngIf="kbLoaded">{{kbLoaded}}KB</span>
 
 <br><br>
 

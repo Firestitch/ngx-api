@@ -117,10 +117,9 @@ export class FsApi {
     }
 
     this.trigger('begin', request, config);
-
-    return Observable.create(observer => {
-
-        this.intercept(config, request, new FsApiHandler(this.http))
+    let httpObservable = null;
+    return new Observable(observer => {
+        httpObservable = this.intercept(config, request, new FsApiHandler(this.http))
         .subscribe((event: HttpEvent<any>) => {
 
           if (config.responseType == ResponseType.httpEvent) {
@@ -130,15 +129,21 @@ export class FsApi {
             this.trigger('success', event, config);
             observer.next(event.body);
           }
-      },
-      err => {
-        this.trigger('error', err, config);
-        observer.error(err);
-      },
-      () => {
-        this.trigger('complete', {}, config);
-        observer.complete();
-      });
+        },
+        err => {
+          this.trigger('error', err, config);
+          observer.error(err);
+        },
+        () => {
+          this.trigger('complete', {}, config);
+          observer.complete();
+        });
+
+        return {
+          unsubscribe() {
+            httpObservable.unsubscribe();
+          }
+        };
     });
   }
 

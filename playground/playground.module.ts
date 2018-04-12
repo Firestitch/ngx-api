@@ -12,6 +12,7 @@ import { FsFileModule } from '@firestitch/file';
 import { FsExamplesComponent } from '../tools/components/examples/examples.component';
 import { FirstExampleComponent } from './app/components/first-example/first-example.component';
 import { UploadExampleComponent } from './app/components/upload-example/upload-example.component';
+import { SingleUploadComponent } from './app/components/single-upload/single-upload.component';
 
 // export class FsApiApp extends FsApi {
 
@@ -54,7 +55,8 @@ import { UploadExampleComponent } from './app/components/upload-example/upload-e
     AppComponent,
     FirstExampleComponent,
     FsExamplesComponent,
-    UploadExampleComponent
+    UploadExampleComponent,
+    SingleUploadComponent
   ],
   providers: [
   ],

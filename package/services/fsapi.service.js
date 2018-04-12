@@ -107,8 +107,9 @@ var FsApi = (function () {
             config.responseType = classes_1.ResponseType.httpEvent;
         }
         this.trigger('begin', request, config);
-        return Observable_1.Observable.create(function (observer) {
-            _this.intercept(config, request, new classes_1.FsApiHandler(_this.http))
+        var httpObservable = null;
+        return new Observable_1.Observable(function (observer) {
+            httpObservable = _this.intercept(config, request, new classes_1.FsApiHandler(_this.http))
                 .subscribe(function (event) {
                 if (config.responseType == classes_1.ResponseType.httpEvent) {
                     observer.next(event);
@@ -124,6 +125,11 @@ var FsApi = (function () {
                 _this.trigger('complete', {}, config);
                 observer.complete();
             });
+            return {
+                unsubscribe: function () {
+                    httpObservable.unsubscribe();
+                }
+            };
         });
     };
     FsApi.prototype.on = function (name, func) {
