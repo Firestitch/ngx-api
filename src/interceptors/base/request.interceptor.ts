@@ -9,7 +9,7 @@ import { forEach } from 'lodash';
 import { Observable } from 'rxjs/Observable';
 
 
-export class BaseInterceptor implements HttpInterceptor {
+export class RequestInterceptor implements HttpInterceptor {
   constructor(protected _config: any, protected _data: any) {
   }
 

@@ -7,10 +7,10 @@ import {
 
 import { forEach } from 'lodash';
 import { Observable } from 'rxjs/Observable';
-import { BaseInterceptor } from './base.interceptor';
+import { RequestInterceptor } from './base/request.interceptor';
 
 
-export class ParamsHandlerInterceptor extends BaseInterceptor {
+export class ParamsHandlerInterceptor extends RequestInterceptor {
   constructor(protected _config: any, protected _data: any) {
     super(_config, _data);
   }

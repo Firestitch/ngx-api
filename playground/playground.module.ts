@@ -2,31 +2,29 @@ import './../tools/assets/playground.scss';
 
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { AppComponent } from './app/app.component';
 import { BrowserModule } from '@angular/platform-browser';
-import { FsApiModule } from '../src';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { AppMaterialModule } from './app/material.module';
 import { FsExampleModule } from '@firestitch/example';
 import { FsFileModule } from '@firestitch/file';
+import { FsApiModule } from '../src';
+
+import { AppComponent } from './app/app.component';
+import { AppMaterialModule } from './app/material.module';
 import { FsExamplesComponent } from '../tools/components/examples/examples.component';
 import { FirstExampleComponent } from './app/components/first-example/first-example.component';
 import { UploadExampleComponent } from './app/components/upload-example/upload-example.component';
 import { SingleUploadComponent } from './app/components/single-upload/single-upload.component';
-import {
-  API_COMPLETE_HANDLER,
-  API_CUSTOM_INTERCTEPTORS,
-  API_ERROR_HANDLER,
-  API_SUCCESS_HANDLER,
-} from '../src/fsapi-providers';
-import { TestService } from './app/services/test.service';
 
 import {
-  ApiSuccessHandler,
-  ApiErrorHandler,
-  ApiCompleteHandler
-} from './api-handlers';
+  FS_API_REQUEST_INTERCEPTORS,
+  FS_API_RESPONSE_HANDLER,
+} from '../src/fsapi-providers';
+
+import { TestService } from './app/services/test.service';
+
+
 import { AlertInterceptor, TokenInterceptor } from './app/interceptors';
+import { ResponseHandler } from './app/interceptors/response.handler';
 
 
 // export class FsApiApp extends FsApi {
@@ -76,12 +74,10 @@ import { AlertInterceptor, TokenInterceptor } from './app/interceptors';
   providers: [
     TestService,
 
-    { provide: API_CUSTOM_INTERCTEPTORS, useValue: AlertInterceptor, multi: true },
-    { provide: API_CUSTOM_INTERCTEPTORS, useValue: TokenInterceptor, multi: true },
+    { provide: FS_API_REQUEST_INTERCEPTORS, useValue: AlertInterceptor, multi: true },
+    { provide: FS_API_REQUEST_INTERCEPTORS, useValue: TokenInterceptor, multi: true },
 
-    { provide: API_SUCCESS_HANDLER, useFactory: ApiSuccessHandler, deps: [ TestService ] },
-    { provide: API_ERROR_HANDLER, useValue: ApiErrorHandler },
-    { provide: API_COMPLETE_HANDLER, useValue: ApiCompleteHandler }
+    { provide: FS_API_RESPONSE_HANDLER, useClass: ResponseHandler, deps: [ TestService ] }, // example with fsStor like
   ],
 })
 export class PlaygroundModule {

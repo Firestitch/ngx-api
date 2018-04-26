@@ -1,9 +1,10 @@
-import { BaseInterceptor } from '../../../src/interceptors/base.interceptor';
 import { HttpEvent, HttpHandler, HttpRequest } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 
+import { RequestInterceptor } from '../../../src';
 
-export class TokenInterceptor extends BaseInterceptor {
+
+export class TokenInterceptor extends RequestInterceptor {
   constructor(protected _config, protected _data) {
     super(_config, _data);
   }

@@ -15,16 +15,16 @@ import {
 } from '../interceptors';
 
 import {
-  API_COMPLETE_HANDLER,
-  API_CUSTOM_INTERCTEPTORS,
-  API_ERROR_HANDLER,
-  API_SUCCESS_HANDLER,
+  FS_API_REQUEST_INTERCEPTORS,
+  FS_API_RESPONSE_HANDLER,
 } from '../fsapi-providers';
 
 import { Observable } from 'rxjs/Observable';
 import { map, tap } from 'rxjs/operators';
 import * as moment from 'moment-timezone';
 import { forEach, isObject } from 'lodash';
+import { RequestInterceptor } from '../interceptors/base/request.interceptor';
+import { FsApiResponseHandler } from '../interceptors/base/response.handler';
 
 
 @Injectable()
@@ -34,12 +34,10 @@ export class FsApi {
 
   constructor(private apiConfig: FsApiConfig, private http: HttpXhrBackend,
               // Custom interceptors
-              @Optional() @Inject(API_CUSTOM_INTERCTEPTORS) private customInterceptors,
+              @Optional() @Inject(FS_API_REQUEST_INTERCEPTORS) private requestInterceptors,
 
               // Other callbacks
-              @Optional() @Inject(API_SUCCESS_HANDLER) private successHandler,
-              @Optional() @Inject(API_ERROR_HANDLER) private errorHandler,
-              @Optional() @Inject(API_COMPLETE_HANDLER) private completeHandler) {
+              @Optional() @Inject(FS_API_RESPONSE_HANDLER) private responseHandler: FsApiResponseHandler) {
   }
 
   public get(url, query?, config?) {
@@ -81,13 +79,13 @@ export class FsApi {
     ];
 
     // Add custom interceptors into chain
-    if (Array.isArray(this.customInterceptors)) {
-      const interceptors = this.customInterceptors
+    if (Array.isArray(this.requestInterceptors)) {
+      const interceptors = this.requestInterceptors
         .map((interceptor) => new interceptor(config, data));
 
       INTERCEPTORS.push(...interceptors);
-    } else if (this.customInterceptors) {
-      const interceptor = new this.customInterceptors(config, data);
+    } else if (this.requestInterceptors) {
+      const interceptor = new this.requestInterceptors(config, data);
 
       INTERCEPTORS.push(interceptor);
     }
@@ -101,15 +99,15 @@ export class FsApi {
       .pipe(
         tap((event: HttpEvent<any>) => {
           if (event.type === HttpEventType.Response) {
-            (this.successHandler || noop)(event, config);
+            this.responseHandler.success(event, config);
           }
         }),
         map((event: HttpEvent<any>) => {
           return (event.type === HttpEventType.Response) ? event.body : event;
         }),
         tap({
-          error: (err) => (this.errorHandler || noop)(err, config),
-          complete: () => (this.completeHandler || noop)(config)
+          error: (err) => this.responseHandler.error(err, config),
+          complete: () => this.responseHandler.complete(config)
         })
       );
   }
@@ -139,8 +137,4 @@ export class FsApi {
 
     return obj;
   }
-}
-
-
-export function noop(...args: any[]) {
 }
