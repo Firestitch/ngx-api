@@ -14,10 +14,11 @@ import { FirstExampleComponent } from './app/components/first-example/first-exam
 import { UploadExampleComponent } from './app/components/upload-example/upload-example.component';
 import { SingleUploadComponent } from './app/components/single-upload/single-upload.component';
 import {
-  API_COMPLETE_HANDLER, API_CUSTOM_INTERCTEPTORS,
+  API_COMPLETE_HANDLER,
+  API_CUSTOM_INTERCTEPTORS,
   API_ERROR_HANDLER,
   API_SUCCESS_HANDLER,
-} from '../src';
+} from '../src/fsapi-providers';
 import { TestService } from './app/services/test.service';
 
 import {

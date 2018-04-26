@@ -19,7 +19,7 @@ import {
   API_CUSTOM_INTERCTEPTORS,
   API_ERROR_HANDLER,
   API_SUCCESS_HANDLER,
-} from '../';
+} from '../fsapi-providers';
 
 import { Observable } from 'rxjs/Observable';
 import { map, tap } from 'rxjs/operators';
