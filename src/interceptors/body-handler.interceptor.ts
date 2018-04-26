@@ -1,21 +1,20 @@
 import {
   HttpEvent,
   HttpHandler,
-  HttpHeaders,
-  HttpInterceptor,
   HttpRequest
 } from '@angular/common/http';
 
 import { forEach } from 'lodash';
-
 import { Observable } from 'rxjs/Observable';
+import { BaseInterceptor } from './base.interceptor';
 
-export class BodyHandlerInterceptor implements HttpInterceptor {
-  constructor(private _config: any, private _data: any) {
+
+export class BodyHandlerInterceptor extends BaseInterceptor {
+  constructor(protected _config: any, protected _data: any) {
+    super(_config, _data);
   }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    debugger;
     let hasFile = false;
 
     forEach(this._data, (item) => {

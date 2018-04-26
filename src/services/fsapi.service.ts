@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable, Optional } from '@angular/core';
 import {
   HttpRequest,
   HttpEventType,
@@ -6,19 +6,25 @@ import {
   HttpEvent,
 } from '@angular/common/http';
 
-import { Observable } from 'rxjs/Observable';
-import { map, tap } from 'rxjs/operators';
-import * as moment from 'moment-timezone';
-import { forEach, isObject } from 'lodash';
-
 import { FsApiConfig, RequestHandler } from '../classes';
 
 import {
   HeadersHandlerInterceptor,
   BodyHandlerInterceptor,
   ParamsHandlerInterceptor,
-  RequestReadyInterceptor
 } from '../interceptors';
+
+import {
+  API_COMPLETE_HANDLER,
+  API_CUSTOM_INTERCTEPTORS,
+  API_ERROR_HANDLER,
+  API_SUCCESS_HANDLER,
+} from '../';
+
+import { Observable } from 'rxjs/Observable';
+import { map, tap } from 'rxjs/operators';
+import * as moment from 'moment-timezone';
+import { forEach, isObject } from 'lodash';
 
 
 @Injectable()
@@ -26,7 +32,14 @@ export class FsApi {
 
   events = [];
 
-  constructor(private apiConfig: FsApiConfig, private http: HttpXhrBackend) {
+  constructor(private apiConfig: FsApiConfig, private http: HttpXhrBackend,
+              // Custom interceptors
+              @Optional() @Inject(API_CUSTOM_INTERCTEPTORS) private customInterceptors,
+
+              // Other callbacks
+              @Optional() @Inject(API_SUCCESS_HANDLER) private successHandler,
+              @Optional() @Inject(API_ERROR_HANDLER) private errorHandler,
+              @Optional() @Inject(API_COMPLETE_HANDLER) private completeHandler) {
   }
 
   public get(url, query?, config?) {
@@ -61,16 +74,23 @@ export class FsApi {
     // Create clear request
     const request = new HttpRequest((method as any), url);
 
-    // Describe involved intorcepters
-    // Can be extended in feature for using custom interceptors from user
-    const INTERCEPTORS = [
-      new HeadersHandlerInterceptor(config),
+    const INTERCEPTORS: any = [
+      new HeadersHandlerInterceptor(config, data),
       new BodyHandlerInterceptor(config, data),
-      new ParamsHandlerInterceptor(config),
-      new RequestReadyInterceptor(() => {
-        this.trigger('begin', request, config)
-      })
+      new ParamsHandlerInterceptor(config, data),
     ];
+
+    // Add custom interceptors into chain
+    if (Array.isArray(this.customInterceptors)) {
+      const interceptors = this.customInterceptors
+        .map((interceptor) => new interceptor(config, data));
+
+      INTERCEPTORS.push(...interceptors);
+    } else if (this.customInterceptors) {
+      const interceptor = new this.customInterceptors(config, data);
+
+      INTERCEPTORS.push(interceptor);
+    }
 
     // Executing of interceptors
     const handlersChain = INTERCEPTORS.reduceRight(
@@ -81,46 +101,17 @@ export class FsApi {
       .pipe(
         tap((event: HttpEvent<any>) => {
           if (event.type === HttpEventType.Response) {
-            this.trigger('success', event, config);
+            (this.successHandler || noop)(event, config);
           }
         }),
         map((event: HttpEvent<any>) => {
           return (event.type === HttpEventType.Response) ? event.body : event;
         }),
         tap({
-          error: (err) => this.trigger('error', err, config),
-          complete: () => this.trigger('complete', {}, config)
+          error: (err) => (this.errorHandler || noop)(err, config),
+          complete: () => (this.completeHandler || noop)(config)
         })
       );
-  }
-
-  /**
-   * Add listener for events
-   * @param name
-   * @param func
-   *
-   * @returns {this}
-   */
-  public on(name, func) {
-    this.events.push({ name: name, func: func });
-    return this;
-  }
-
-  /**
-   * Fire event
-   * @param name
-   * @param data
-   * @param config
-   *
-   * @returns {this}
-   */
-  public trigger(name, data, config) {
-    forEach(this.events, function (event) {
-      if (name === event.name) {
-        event.func(data, config);
-      }
-    });
-    return this;
   }
 
   /**
@@ -148,4 +139,8 @@ export class FsApi {
 
     return obj;
   }
+}
+
+
+export function noop(...args: any[]) {
 }

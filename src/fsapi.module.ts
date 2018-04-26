@@ -15,7 +15,7 @@ import { FsApiConfig, FsApi } from './';
     FsApi,
     FsApiConfig,
     HttpXhrBackend,
-    { provide: HttpBackend, useExisting: HttpXhrBackend }
+    { provide: HttpBackend, useExisting: HttpXhrBackend },
   ],
   exports: []
 })

@@ -1,21 +1,21 @@
 import {
   HttpEvent,
   HttpHandler,
-  HttpHeaders,
-  HttpInterceptor, HttpParams,
+  HttpParams,
   HttpRequest
 } from '@angular/common/http';
 
 import { forEach } from 'lodash';
-
 import { Observable } from 'rxjs/Observable';
+import { BaseInterceptor } from './base.interceptor';
 
-export class ParamsHandlerInterceptor implements HttpInterceptor {
-  constructor(private _config: any) {
+
+export class ParamsHandlerInterceptor extends BaseInterceptor {
+  constructor(protected _config: any, protected _data: any) {
+    super(_config, _data);
   }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    debugger;
     let params = new HttpParams();
 
     forEach(this._config.query, function(value, name) {
