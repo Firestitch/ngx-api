@@ -9,7 +9,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppMaterialModule } from './app/material.module';
 import { FsExampleModule } from '@firestitch/example';
 import { FsFileModule } from '@firestitch/file';
-import { FsExamplesComponent } from '../tools/components/examples/examples.component';
 import { FirstExampleComponent } from './app/components/first-example/first-example.component';
 import { UploadExampleComponent } from './app/components/upload-example/upload-example.component';
 import { SingleUploadComponent } from './app/components/single-upload/single-upload.component';
@@ -54,7 +53,6 @@ import { SingleUploadComponent } from './app/components/single-upload/single-upl
   declarations: [
     AppComponent,
     FirstExampleComponent,
-    FsExamplesComponent,
     UploadExampleComponent,
     SingleUploadComponent
   ],
