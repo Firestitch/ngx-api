@@ -7,11 +7,8 @@ export class ResponseHandler extends FsApiResponseHandler {
   }
 
   public success(event, config) {
-    event.body = event.body.data;
-    if (config.key) {
-      event.body = event.body[config.key];
-    }
-
+    super.success(event, config);
+    
     console.log('Success', event, this._test);
   }
 
