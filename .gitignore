@@ -40,3 +40,4 @@ dist/*
 /docs
 /dll
 /*.code-workspace
+/package
