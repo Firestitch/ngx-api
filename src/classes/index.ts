@@ -1,2 +1,2 @@
 export * from './fsapiconfig';
-export * from './fsapihandler';
+export * from './request-handler';

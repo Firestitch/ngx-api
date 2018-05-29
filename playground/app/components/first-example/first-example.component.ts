@@ -38,6 +38,8 @@ export class FirstExampleComponent {
     this.FsApi.get(this.url, query, { key: 'objects' })
     .subscribe(resp => {
       this.data = resp;
+    },(event) => {
+      this.data = event.error;
     });
   }
 
