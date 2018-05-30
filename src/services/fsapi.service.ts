@@ -1,10 +1,15 @@
-import { Inject, Injectable, Optional } from '@angular/core';
+import { Inject, Injectable, Injector, Optional } from '@angular/core';
 import {
   HttpRequest,
   HttpEventType,
   HttpXhrBackend,
   HttpEvent,
 } from '@angular/common/http';
+
+import { Observable } from 'rxjs/Observable';
+import { map, tap } from 'rxjs/operators';
+import * as moment from 'moment-timezone';
+import { forEach, isObject } from 'lodash';
 
 import { FsApiConfig, RequestHandler } from '../classes';
 
@@ -19,12 +24,7 @@ import {
   FS_API_RESPONSE_HANDLER,
 } from '../fsapi-providers';
 
-import { Observable } from 'rxjs/Observable';
-import { map, tap } from 'rxjs/operators';
-import * as moment from 'moment-timezone';
-import { forEach, isObject } from 'lodash';
-import { RequestInterceptor } from '../interceptors/base/request.interceptor';
-import { FsApiResponseHandler } from '../interceptors/base/response.handler';
+import { FsApiResponseHandler } from '../interceptors/base';
 
 
 @Injectable()
@@ -32,7 +32,9 @@ export class FsApi {
 
   events = [];
 
-  constructor(private apiConfig: FsApiConfig, private http: HttpXhrBackend,
+  constructor(private apiConfig: FsApiConfig,
+              private http: HttpXhrBackend,
+              private injector: Injector,
               // Custom interceptors
               @Optional() @Inject(FS_API_REQUEST_INTERCEPTOR) private requestInterceptors,
 
@@ -81,11 +83,11 @@ export class FsApi {
     // Add custom interceptors into chain
     if (Array.isArray(this.requestInterceptors)) {
       const interceptors = this.requestInterceptors
-        .map((interceptor) => new interceptor(config, data));
+        .map((interceptor) => new interceptor(config, data, this.injector));
 
       INTERCEPTORS.push(...interceptors);
     } else if (this.requestInterceptors) {
-      const interceptor = new this.requestInterceptors(config, data);
+      const interceptor = new this.requestInterceptors(config, data, this.injector);
 
       INTERCEPTORS.push(interceptor);
     }

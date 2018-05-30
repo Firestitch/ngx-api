@@ -1,20 +1,23 @@
 import { HttpEvent, HttpHandler, HttpRequest } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 import { RequestInterceptor } from '../../../src';
-import { Optional, Inject } from '@angular/core';
 
-import { FsMessageModule, FsMessage } from '@firestitch/message';
+import { FsMessage } from '@firestitch/message';
+import { Injector } from '@angular/core';
 
 
 export class AlertInterceptor extends RequestInterceptor {
-  constructor(public config, public data, @Optional() @Inject(FsMessage) private fsMessage) {
+  private _message: FsMessage;
+
+  constructor(public config, public data, private _injector: Injector) {
     super(config, data);
-    debugger;
-    console.log(config,data);
+
+    this._message = _injector.get(FsMessage);
   }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     alert('Has been intercepted');
+    this._message.info('Has been intercepted');
     return next.handle(req);
   }
 }
