@@ -46,8 +46,7 @@ import { ResponseHandler } from './app/interceptors/response.handler';
     TestService,
     { provide: FS_API_REQUEST_INTERCEPTOR, useValue: AlertInterceptor, multi: true },
     { provide: FS_API_REQUEST_INTERCEPTOR, useValue: TokenInterceptor, multi: true },
-    { provide: FS_API_RESPONSE_HANDLER, useClass: ResponseHandler, deps: [ TestService ] },
-    // { provide: 'test_message_inject', useValue: FsMessage }
+    { provide: FS_API_RESPONSE_HANDLER, useClass: ResponseHandler, deps: [ FsMessage ] }
   ],
 })
 export class PlaygroundModule {
