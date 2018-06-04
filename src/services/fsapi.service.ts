@@ -3,11 +3,11 @@ import {
   HttpRequest,
   HttpEventType,
   HttpXhrBackend,
-  HttpEvent,
+  HttpEvent, HttpResponse,
 } from '@angular/common/http';
 
 import { Observable } from 'rxjs/Observable';
-import { map, tap } from 'rxjs/operators';
+import { map, tap, filter } from 'rxjs/operators';
 import * as moment from 'moment-timezone';
 import { forEach, isObject } from 'lodash';
 
@@ -99,6 +99,9 @@ export class FsApi {
     // Do request and process the answer
     return handlersChain.handle(request)
       .pipe(
+        filter((event) => {
+          return config.reportProgress || event instanceof HttpResponse;
+        }),
         tap((event: HttpEvent<any>) => {
           if (event.type === HttpEventType.Response) {
             this.responseHandler.success(event, config);

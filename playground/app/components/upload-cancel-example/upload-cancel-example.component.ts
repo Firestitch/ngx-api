@@ -1,16 +1,17 @@
 import { Component } from '@angular/core';
+import { HttpEventType } from '@angular/common/http';
 import { FsMessage } from '@firestitch/message';
 import { FsApi } from '../../../../src';
-import { HttpEventType, HttpResponse } from '@angular/common/http';
+
 
 @Component({
-  selector: 'upload-example',
-  templateUrl: 'upload-example.component.html'
+  selector: 'upload-cancel-example',
+  templateUrl: 'upload-cancel-example.component.html'
 })
-export class UploadExampleComponent {
+export class UploadCancelExampleComponent {
 
   files = [];
-  url = 'https://boilerplate.firestitch.com/api/dummy';
+  url = 'api/dummy';
   constructor(private _api: FsApi, private _message: FsMessage) {}
 
   public upload() {
@@ -39,7 +40,20 @@ export class UploadExampleComponent {
             fsFile.progress = false;
           }
         }
+      }, () => {
+        this._message.error('Uploading error');
+        fsFile.obserable = null;
+      }, () => {
+        fsFile.obserable = null;
       });
+
+      setTimeout(() => {
+        if (fsFile.obserable) {
+          fsFile.obserable.unsubscribe();
+          this._message.warning('Uploading has been canceled');
+          fsFile.progress = false;
+        }
+      }, 1000)
     });
   }
 

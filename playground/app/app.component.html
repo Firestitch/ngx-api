@@ -9,24 +9,28 @@
   <fs-example title="Multiple File Upload" componentName="upload-example">
     <upload-example></upload-example>
   </fs-example>
-  <fs-example title="Single File Upload with Progress &amp; Cancel" componentName="single-upload">
+  <fs-example title="Single File Upload with Progress" componentName="single-upload">
     <single-upload></single-upload>
   </fs-example>
-  
+
+  <fs-example title="Single File Upload with Cancel after 1 second" componentName="single-upload">
+    <upload-cancel-example></upload-cancel-example>
+  </fs-example>
+
   <div fs-examples-install>
-    <div class="examples-h2">Main Module</div>  
+    <div class="examples-h2">Main Module</div>
     <fs-example-highlight [source]="mainModule" language="ts"></fs-example-highlight>
 
-    <div class="examples-h2">alert.interceptor.ts</div>  
+    <div class="examples-h2">alert.interceptor.ts</div>
     <fs-example-highlight [source]="alertInterceptor" language="ts"></fs-example-highlight>
 
-    <div class="examples-h2">token.interceptor.ts</div>  
+    <div class="examples-h2">token.interceptor.ts</div>
     <fs-example-highlight [source]="tokenInterceptor" language="ts"></fs-example-highlight>
 
-    <div class="examples-h2">response.handler.ts</div>  
+    <div class="examples-h2">response.handler.ts</div>
     <fs-example-highlight [source]="responseHandler" language="ts"></fs-example-highlight>
 
   </div>
 
 </fs-examples>
-  
+

@@ -12,6 +12,7 @@ import { AppMaterialModule } from './app/material.module';
 import { FirstExampleComponent } from './app/components/first-example/first-example.component';
 import { UploadExampleComponent } from './app/components/upload-example/upload-example.component';
 import { SingleUploadComponent } from './app/components/single-upload/single-upload.component';
+import { UploadCancelExampleComponent } from './app/components/upload-cancel-example/upload-cancel-example.component';
 
 import {
   FsApiModule,
@@ -40,7 +41,8 @@ import { ResponseHandler } from './app/interceptors/response.handler';
     AppComponent,
     FirstExampleComponent,
     UploadExampleComponent,
-    SingleUploadComponent
+    SingleUploadComponent,
+    UploadCancelExampleComponent
   ],
   providers: [
     TestService,
