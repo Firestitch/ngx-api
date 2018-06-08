@@ -1,7 +1,7 @@
 {
   "name": "@firestitch/api",
   "description": "@firestitch/api",
-  "version": "0.1.13",
+  "version": "0.1.14",
   "repository": {
     "type": "git",
     "url": "https://github.com/Firestitch/fs-api"
@@ -125,5 +125,7 @@
     "moment-timezone": ">=0.5.0",
     "lodash": ">=4.0.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "replace-in-file": "^3.4.0"
+  }
 }
