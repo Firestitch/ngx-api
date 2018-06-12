@@ -126,26 +126,6 @@ exports.FsApiConfig = FsApiConfig;
 
 /***/ }),
 
-/***/ "./classes/fsapihandler.ts":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var FsApiHandler = (function () {
-    function FsApiHandler(http) {
-        this.http = http;
-    }
-    FsApiHandler.prototype.handle = function (request) {
-        return this.http.request(request);
-    };
-    return FsApiHandler;
-}());
-exports.FsApiHandler = FsApiHandler;
-
-
-/***/ }),
-
 /***/ "./classes/index.ts":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -156,7 +136,41 @@ function __export(m) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 __export(__webpack_require__("./classes/fsapiconfig.ts"));
-__export(__webpack_require__("./classes/fsapihandler.ts"));
+__export(__webpack_require__("./classes/request-handler.ts"));
+
+
+/***/ }),
+
+/***/ "./classes/request-handler.ts":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var RequestHandler = (function () {
+    function RequestHandler(next, interceptor) {
+        this.next = next;
+        this.interceptor = interceptor;
+    }
+    RequestHandler.prototype.handle = function (req) {
+        return this.interceptor.intercept(req, this.next);
+    };
+    return RequestHandler;
+}());
+exports.RequestHandler = RequestHandler;
+
+
+/***/ }),
+
+/***/ "./fsapi-providers.ts":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__("@angular/core");
+exports.FS_API_REQUEST_INTERCEPTOR = new core_1.InjectionToken('fs-app.request_interceptor');
+exports.FS_API_RESPONSE_HANDLER = new core_1.InjectionToken('fs-app.response_handler');
 
 
 /***/ }),
@@ -174,9 +188,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var http_1 = __webpack_require__("@angular/common/http");
-var _1 = __webpack_require__("./index.ts");
 var core_1 = __webpack_require__("@angular/core");
 var common_1 = __webpack_require__("@angular/common");
+var _1 = __webpack_require__("./index.ts");
 var FsApiModule = (function () {
     function FsApiModule() {
     }
@@ -196,7 +210,9 @@ var FsApiModule = (function () {
             declarations: [],
             providers: [
                 _1.FsApi,
-                _1.FsApiConfig
+                _1.FsApiConfig,
+                http_1.HttpXhrBackend,
+                { provide: http_1.HttpBackend, useExisting: http_1.HttpXhrBackend },
             ],
             exports: []
         })
@@ -205,6 +221,42 @@ var FsApiModule = (function () {
     var FsApiModule_1;
 }());
 exports.FsApiModule = FsApiModule;
+
+
+/***/ }),
+
+/***/ "./helpers/index.ts":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
+Object.defineProperty(exports, "__esModule", { value: true });
+__export(__webpack_require__("./helpers/interceptor.factory.ts"));
+
+
+/***/ }),
+
+/***/ "./helpers/interceptor.factory.ts":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+function makeInterceptorFactory(klass) {
+    return function () {
+        var args = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            args[_i] = arguments[_i];
+        }
+        return function (config, data) {
+            return new (klass.bind.apply(klass, [void 0, config, data].concat(args)))();
+        };
+    };
+}
+exports.makeInterceptorFactory = makeInterceptorFactory;
 
 
 /***/ }),
@@ -220,7 +272,270 @@ function __export(m) {
 Object.defineProperty(exports, "__esModule", { value: true });
 __export(__webpack_require__("./services/index.ts"));
 __export(__webpack_require__("./classes/index.ts"));
+__export(__webpack_require__("./helpers/index.ts"));
+__export(__webpack_require__("./interceptors/index.ts"));
 __export(__webpack_require__("./fsapi.module.ts"));
+__export(__webpack_require__("./fsapi-providers.ts"));
+
+
+/***/ }),
+
+/***/ "./interceptors/base/index.ts":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
+Object.defineProperty(exports, "__esModule", { value: true });
+__export(__webpack_require__("./interceptors/base/request.interceptor.ts"));
+__export(__webpack_require__("./interceptors/base/response.handler.ts"));
+
+
+/***/ }),
+
+/***/ "./interceptors/base/request.interceptor.ts":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var RequestInterceptor = (function () {
+    function RequestInterceptor(_config, _data) {
+        this._config = _config;
+        this._data = _data;
+    }
+    RequestInterceptor.prototype.intercept = function (req, next) {
+        return next.handle(req);
+    };
+    return RequestInterceptor;
+}());
+exports.RequestInterceptor = RequestInterceptor;
+
+
+/***/ }),
+
+/***/ "./interceptors/base/response.handler.ts":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var FsApiResponseHandler = (function () {
+    function FsApiResponseHandler() {
+    }
+    FsApiResponseHandler.prototype.success = function (event, config) {
+        event.body = event.body.data;
+        if (config.key) {
+            event.body = event.body[config.key];
+        }
+    };
+    FsApiResponseHandler.prototype.error = function (error, config) { };
+    FsApiResponseHandler.prototype.complete = function (config) { };
+    return FsApiResponseHandler;
+}());
+exports.FsApiResponseHandler = FsApiResponseHandler;
+
+
+/***/ }),
+
+/***/ "./interceptors/body-handler.interceptor.ts":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var lodash_1 = __webpack_require__("lodash");
+var request_interceptor_1 = __webpack_require__("./interceptors/base/request.interceptor.ts");
+var BodyHandlerInterceptor = (function (_super) {
+    __extends(BodyHandlerInterceptor, _super);
+    function BodyHandlerInterceptor(_config, _data) {
+        var _this = _super.call(this, _config, _data) || this;
+        _this._config = _config;
+        _this._data = _data;
+        return _this;
+    }
+    BodyHandlerInterceptor.prototype.intercept = function (req, next) {
+        var _this = this;
+        var hasFile = false;
+        lodash_1.forEach(this._data, function (item) {
+            if (item instanceof Blob) {
+                hasFile = true;
+                _this._config.encoding = 'formdata';
+            }
+        });
+        var body = null;
+        switch (this._config.encoding) {
+            case 'url':
+                {
+                    body = this._data;
+                }
+                break;
+            case 'json':
+                {
+                    body = JSON.stringify(this._data);
+                }
+                break;
+            case 'formdata':
+                {
+                    body = new FormData();
+                    lodash_1.forEach(this._data, function (item, key) {
+                        if (item != null && item.name) {
+                            body.append(key, item, item.name);
+                        }
+                        else {
+                            body.append(key, item);
+                        }
+                    });
+                }
+                break;
+        }
+        var modified = req.clone({
+            body: body
+        });
+        return next.handle(modified);
+    };
+    return BodyHandlerInterceptor;
+}(request_interceptor_1.RequestInterceptor));
+exports.BodyHandlerInterceptor = BodyHandlerInterceptor;
+
+
+/***/ }),
+
+/***/ "./interceptors/headers-handler.interceptor.ts":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var http_1 = __webpack_require__("@angular/common/http");
+var lodash_1 = __webpack_require__("lodash");
+var base_1 = __webpack_require__("./interceptors/base/index.ts");
+var HeadersHandlerInterceptor = (function (_super) {
+    __extends(HeadersHandlerInterceptor, _super);
+    function HeadersHandlerInterceptor(_config, _data) {
+        var _this = _super.call(this, _config, _data) || this;
+        _this._config = _config;
+        _this._data = _data;
+        return _this;
+    }
+    HeadersHandlerInterceptor.prototype.intercept = function (req, next) {
+        var _this = this;
+        var headers = new http_1.HttpHeaders();
+        lodash_1.forEach(this._config.headers, function (value, name) {
+            headers = headers.set(name, value);
+        });
+        lodash_1.forEach(this._data, function (item) {
+            if (item instanceof File || item instanceof Blob) {
+                _this._config.encoding = 'formdata';
+            }
+        });
+        switch (this._config.encoding) {
+            case 'url':
+                {
+                    headers = headers.set('Content-Type', 'application/x-www-form-urlencoded');
+                }
+                break;
+            case 'json':
+                {
+                    headers = headers.set('Content-Type', 'text/json');
+                }
+                break;
+            case 'formdata':
+                {
+                    headers = headers.delete('Content-Type');
+                }
+                break;
+        }
+        var modified = req.clone({ headers: headers });
+        return next.handle(modified);
+    };
+    return HeadersHandlerInterceptor;
+}(base_1.RequestInterceptor));
+exports.HeadersHandlerInterceptor = HeadersHandlerInterceptor;
+
+
+/***/ }),
+
+/***/ "./interceptors/index.ts":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
+Object.defineProperty(exports, "__esModule", { value: true });
+__export(__webpack_require__("./interceptors/headers-handler.interceptor.ts"));
+__export(__webpack_require__("./interceptors/body-handler.interceptor.ts"));
+__export(__webpack_require__("./interceptors/params-handler.interceptor.ts"));
+__export(__webpack_require__("./interceptors/base/index.ts"));
+
+
+/***/ }),
+
+/***/ "./interceptors/params-handler.interceptor.ts":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var http_1 = __webpack_require__("@angular/common/http");
+var lodash_1 = __webpack_require__("lodash");
+var request_interceptor_1 = __webpack_require__("./interceptors/base/request.interceptor.ts");
+var ParamsHandlerInterceptor = (function (_super) {
+    __extends(ParamsHandlerInterceptor, _super);
+    function ParamsHandlerInterceptor(_config, _data) {
+        var _this = _super.call(this, _config, _data) || this;
+        _this._config = _config;
+        _this._data = _data;
+        return _this;
+    }
+    ParamsHandlerInterceptor.prototype.intercept = function (req, next) {
+        var params = new http_1.HttpParams();
+        lodash_1.forEach(this._config.query, function (value, name) {
+            params = params.append(name, value);
+        });
+        var modified = req.clone({
+            params: params,
+            reportProgress: this._config.reportProgress
+        });
+        return next.handle(modified);
+    };
+    return ParamsHandlerInterceptor;
+}(request_interceptor_1.RequestInterceptor));
+exports.ParamsHandlerInterceptor = ParamsHandlerInterceptor;
 
 
 /***/ }),
@@ -239,17 +554,30 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = __webpack_require__("@angular/core");
-var Observable_1 = __webpack_require__("rxjs/Observable");
 var http_1 = __webpack_require__("@angular/common/http");
+var operators_1 = __webpack_require__("rxjs/operators");
 var moment = __webpack_require__("moment-timezone");
-var classes_1 = __webpack_require__("./classes/index.ts");
 var lodash_1 = __webpack_require__("lodash");
+var classes_1 = __webpack_require__("./classes/index.ts");
+var interceptors_1 = __webpack_require__("./interceptors/index.ts");
+var fsapi_providers_1 = __webpack_require__("./fsapi-providers.ts");
+var base_1 = __webpack_require__("./interceptors/base/index.ts");
 var FsApi = (function () {
-    function FsApi(FsApiConfig, http) {
-        this.FsApiConfig = FsApiConfig;
+    function FsApi(apiConfig, http, injector, 
+        // Custom interceptors
+        requestInterceptors, 
+        // Other callbacks
+        responseHandler) {
+        this.apiConfig = apiConfig;
         this.http = http;
+        this.injector = injector;
+        this.requestInterceptors = requestInterceptors;
+        this.responseHandler = responseHandler;
         this.events = [];
     }
     FsApi.prototype.get = function (url, query, config) {
@@ -266,7 +594,7 @@ var FsApi = (function () {
     };
     FsApi.prototype.request = function (method, url, data, config) {
         var _this = this;
-        config = Object.assign({}, this.FsApiConfig, config);
+        config = Object.assign({}, this.apiConfig, config);
         method = method.toUpperCase();
         data = Object.assign({}, data);
         this.sanitize(data);
@@ -274,110 +602,46 @@ var FsApi = (function () {
             config.query = data;
             data = {};
         }
-        var headers = new http_1.HttpHeaders();
-        lodash_1.forEach(config.headers, function (value, name) {
-            headers = headers.set(name, value);
-        });
-        var hasFile = false;
-        lodash_1.forEach(data, function (item) {
-            if (item instanceof File || item instanceof Blob) {
-                hasFile = true;
-                config.encoding = 'formdata';
+        // Create clear request
+        var request = new http_1.HttpRequest(method, url);
+        var INTERCEPTORS = [
+            new interceptors_1.HeadersHandlerInterceptor(config, data),
+            new interceptors_1.BodyHandlerInterceptor(config, data),
+            new interceptors_1.ParamsHandlerInterceptor(config, data),
+        ];
+        // Add custom interceptors into chain
+        if (Array.isArray(this.requestInterceptors)) {
+            var interceptors = this.requestInterceptors
+                .map(function (interceptor) { return interceptor(config, data); });
+            INTERCEPTORS.push.apply(INTERCEPTORS, interceptors);
+        }
+        else if (this.requestInterceptors) {
+            var interceptor = this.requestInterceptors(config, data);
+            INTERCEPTORS.push(interceptor);
+        }
+        // Executing of interceptors
+        var handlersChain = INTERCEPTORS.reduceRight(function (next, interceptor) { return new classes_1.RequestHandler(next, interceptor); }, this.http);
+        // Do request and process the answer
+        return handlersChain.handle(request)
+            .pipe(operators_1.filter(function (event) {
+            return config.reportProgress || event instanceof http_1.HttpResponse;
+        }), operators_1.tap(function (event) {
+            if (event.type === http_1.HttpEventType.Response) {
+                _this.responseHandler.success(event, config);
             }
-        });
-        var body = null;
-        if (config.encoding === 'url') {
-            headers = headers.set('Content-Type', 'application/x-www-form-urlencoded');
-            body = data;
-        }
-        else if (config.encoding === 'json') {
-            headers = headers.set('Content-Type', 'text/json');
-            body = JSON.stringify(data);
-        }
-        else if (config.encoding === 'formdata') {
-            headers = headers.delete('Content-Type');
-            body = new FormData();
-            lodash_1.forEach(data, function (item, key) {
-                if (item != null && item.name) {
-                    body.append(key, item, item.name);
-                }
-                else {
-                    body.append(key, item);
-                }
-            });
-        }
-        //begin(request, headers, config);
-        // var timeout = config.uploadTimeout;
-        //   var slowTimeout = null;
-        //     if(!hasFile) {
-        //       timeout = config.timeout;
-        //       if(config.slowTimeout) {
-        //         slowTimeout = setTimeout(function() {
-        //           fsAlert.info('Your request is still processing, please wait...',{ hideDelay: 0, toastClass: 'fs-api-slow-timeout' });
-        //         },config.slowTimeout * 1000);
-        //     }
-        //if(url.match(/^http/)) {
-        // let url = config.url + url;
-        // if(config.forceHttps && !url.match(/^https/)) {
-        //   if(url.match(/^http/)) {
-        //     url = url.replace(/^https/,'https');
-        //   } else {
-        //     url = 'https://' + $location.$$host + ($location.$$port==80 ? '' : ':' + $location.$$port) + url;
-        //   }
-        // }
-        var params = new http_1.HttpParams();
-        lodash_1.forEach(config.query, function (value, name) {
-            params = params.append(name, value);
-        });
-        var request = new http_1.HttpRequest(method, url, body, {
-            headers: headers,
-            params: params,
-            reportProgress: config.reportProgress
-        });
-        if (config.reportProgress) {
-            config.responseType = classes_1.ResponseType.httpEvent;
-        }
-        this.trigger('begin', request, config);
-        var httpObservable = null;
-        return new Observable_1.Observable(function (observer) {
-            httpObservable = _this.intercept(config, request, new classes_1.FsApiHandler(_this.http))
-                .subscribe(function (event) {
-                if (config.responseType == classes_1.ResponseType.httpEvent) {
-                    observer.next(event);
-                }
-                else if (event.type === http_1.HttpEventType.Response) {
-                    _this.trigger('success', event, config);
-                    observer.next(event.body);
-                }
-            }, function (err) {
-                _this.trigger('error', err, config);
-                observer.error(err);
-            }, function () {
-                _this.trigger('complete', {}, config);
-                observer.complete();
-            });
-            return {
-                unsubscribe: function () {
-                    httpObservable.unsubscribe();
-                }
-            };
-        });
+        }), operators_1.map(function (event) {
+            return (event.type === http_1.HttpEventType.Response) ? event.body : event;
+        }), operators_1.tap({
+            error: function (err) { return _this.responseHandler.error(err, config); },
+            complete: function () { return _this.responseHandler.complete(config); }
+        }));
     };
-    FsApi.prototype.on = function (name, func) {
-        this.events.push({ name: name, func: func });
-        return this;
-    };
-    FsApi.prototype.trigger = function (name, data, config) {
-        lodash_1.forEach(this.events, function (event) {
-            if (name === event.name) {
-                event.func(data, config);
-            }
-        });
-        return this;
-    };
-    FsApi.prototype.intercept = function (config, request, next) {
-        return next.handle(request);
-    };
+    /**
+     * Sanitize the passed object
+     *
+     * @param obj
+     * @returns {any}
+     */
     FsApi.prototype.sanitize = function (obj) {
         var self = this;
         lodash_1.forEach(obj, function (value, key) {
@@ -398,7 +662,11 @@ var FsApi = (function () {
     };
     FsApi = __decorate([
         core_1.Injectable(),
-        __metadata("design:paramtypes", [classes_1.FsApiConfig, http_1.HttpClient])
+        __param(3, core_1.Optional()), __param(3, core_1.Inject(fsapi_providers_1.FS_API_REQUEST_INTERCEPTOR)),
+        __param(4, core_1.Optional()), __param(4, core_1.Inject(fsapi_providers_1.FS_API_RESPONSE_HANDLER)),
+        __metadata("design:paramtypes", [classes_1.FsApiConfig,
+            http_1.HttpXhrBackend,
+            core_1.Injector, Object, base_1.FsApiResponseHandler])
     ], FsApi);
     return FsApi;
 }());
@@ -456,10 +724,10 @@ module.exports = require("moment-timezone");
 
 /***/ }),
 
-/***/ "rxjs/Observable":
+/***/ "rxjs/operators":
 /***/ (function(module, exports) {
 
-module.exports = require("rxjs/Observable");
+module.exports = require("rxjs/operators");
 
 /***/ })
 

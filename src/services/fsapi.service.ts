@@ -83,11 +83,11 @@ export class FsApi {
     // Add custom interceptors into chain
     if (Array.isArray(this.requestInterceptors)) {
       const interceptors = this.requestInterceptors
-        .map((interceptor) => new interceptor(config, data, this.injector));
+        .map((interceptor) => interceptor(config, data));
 
       INTERCEPTORS.push(...interceptors);
     } else if (this.requestInterceptors) {
-      const interceptor = new this.requestInterceptors(config, data, this.injector);
+      const interceptor = this.requestInterceptors(config, data);
 
       INTERCEPTORS.push(interceptor);
     }

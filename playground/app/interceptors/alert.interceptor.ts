@@ -2,15 +2,12 @@ import { HttpEvent, HttpHandler, HttpRequest } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 import { RequestInterceptor } from '../../../src';
 import { FsMessage } from '@firestitch/message';
-import { Injector } from '@angular/core';
+import { makeInterceptorFactory } from '../../../src/helpers';
 
 
-export class AlertInterceptor extends RequestInterceptor {
-  private fsMessage: FsMessage;
-
-  constructor(public config, public data, private injector: Injector) {
+class AlertInterceptor extends RequestInterceptor {
+  constructor(public config, public data, public fsMessage: FsMessage) {
     super(config, data);
-    this.fsMessage = injector.get(FsMessage);
   }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -18,3 +15,6 @@ export class AlertInterceptor extends RequestInterceptor {
     return next.handle(req);
   }
 }
+
+
+export const AlertInterceptorFactory = makeInterceptorFactory(AlertInterceptor);

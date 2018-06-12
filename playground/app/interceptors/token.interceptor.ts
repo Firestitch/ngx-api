@@ -2,9 +2,10 @@ import { HttpEvent, HttpHandler, HttpRequest } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 
 import { RequestInterceptor } from '../../../src';
+import { makeInterceptorFactory } from '../../../src/helpers';
 
 
-export class TokenInterceptor extends RequestInterceptor {
+class TokenInterceptor extends RequestInterceptor {
   constructor(protected _config, protected _data) {
     super(_config, _data);
   }
@@ -18,3 +19,5 @@ export class TokenInterceptor extends RequestInterceptor {
     return next.handle(modified);
   }
 }
+
+export const TokenInterceptorFactory = makeInterceptorFactory(TokenInterceptor);

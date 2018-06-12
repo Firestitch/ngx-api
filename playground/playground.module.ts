@@ -20,7 +20,10 @@ import {
   FS_API_RESPONSE_HANDLER,
 } from '../src';
 import { TestService } from './app/services/test.service';
-import { AlertInterceptor, TokenInterceptor } from './app/interceptors';
+import {
+  AlertInterceptorFactory,
+  TokenInterceptorFactory
+} from './app/interceptors';
 import { ResponseHandler } from './app/interceptors/response.handler';
 
 @NgModule({
@@ -46,8 +49,8 @@ import { ResponseHandler } from './app/interceptors/response.handler';
   ],
   providers: [
     TestService,
-    { provide: FS_API_REQUEST_INTERCEPTOR, useValue: AlertInterceptor, multi: true },
-    { provide: FS_API_REQUEST_INTERCEPTOR, useValue: TokenInterceptor, multi: true },
+    { provide: FS_API_REQUEST_INTERCEPTOR, useFactory: AlertInterceptorFactory, deps: [ FsMessage ], multi: true },
+    { provide: FS_API_REQUEST_INTERCEPTOR, useFactory: TokenInterceptorFactory, multi: true },
     { provide: FS_API_RESPONSE_HANDLER, useClass: ResponseHandler, deps: [ FsMessage ] }
   ],
 })
