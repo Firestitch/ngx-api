@@ -43,9 +43,12 @@ export class SingleUploadComponent {
         }
 
         if (event.type === HttpEventType.Response) {
-          this.percent = 0;
-          fsFile.progress = false;
+
         }
+      }, (err) => {
+      }, () => {
+        this.percent = 0;
+        fsFile.progress = false;
       });
     });
   }

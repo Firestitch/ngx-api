@@ -35,9 +35,13 @@ export class UploadExampleComponent {
           } break;
           default: {
             this._message.success('Uploading completed');
-            fsFile.progress = false;
           }
         }
+
+      }, (err) => {
+
+      }, () => {
+        fsFile.progress = false;
       });
     });
   }
