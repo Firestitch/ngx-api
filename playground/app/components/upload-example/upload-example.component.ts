@@ -28,8 +28,7 @@ export class UploadExampleComponent {
             this._message.info('Uploading started');
           } break;
           case HttpEventType.UploadProgress: {
-            const uploaded = (event.loaded / event.total) * 100;
-            this._message.info(`Uploading ${uploaded.toFixed(1)}%`);
+            // const uploaded = (event.loaded / event.total) * 100;
           } break;
           case HttpEventType.ResponseHeader: {
             this._message.info('Response Header Received');
