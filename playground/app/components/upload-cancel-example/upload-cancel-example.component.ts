@@ -53,7 +53,7 @@ export class UploadCancelExampleComponent {
           this._message.warning('Uploading has been canceled');
           fsFile.progress = false;
         }
-      }, 1000)
+      }, 500)
     });
   }
 

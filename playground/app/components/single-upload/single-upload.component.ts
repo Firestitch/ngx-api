@@ -12,7 +12,7 @@ export class SingleUploadComponent {
   percent = 0;
   kbLoaded = 0;
   url = 'https://boilerplate.firestitch.com/api/dummy';
-  constructor(private FsApi: FsApi) {}
+  constructor(private fsApi: FsApi) {}
 
   public upload() {
 
@@ -22,7 +22,7 @@ export class SingleUploadComponent {
       this.kbLoaded = 0;
       this.percent = 0;
 
-      fsFile.obserable = this.FsApi.post(this.url, data, { reportProgress: true })
+      fsFile.obserable = this.fsApi.post(this.url, data, { reportProgress: true })
       .subscribe(event => {
 
         if (event.type === HttpEventType.Sent) {
