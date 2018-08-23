@@ -3,7 +3,9 @@ import {
   HttpRequest,
   HttpEventType,
   HttpXhrBackend,
-  HttpEvent, HttpResponse,
+  HttpEvent,
+  HttpResponse,
+  HTTP_INTERCEPTORS,
 } from '@angular/common/http';
 
 import { Observable } from 'rxjs/Observable';
@@ -30,11 +32,14 @@ import { FsApiResponseHandler } from '../interceptors/base';
 @Injectable()
 export class FsApi {
 
-  events = [];
+  public events = [];
 
   constructor(private apiConfig: FsApiConfig,
               private http: HttpXhrBackend,
               private injector: Injector,
+              // Custom interceptors
+              @Optional() @Inject(HTTP_INTERCEPTORS) private httpInterceptors,
+
               // Custom interceptors
               @Optional() @Inject(FS_API_REQUEST_INTERCEPTOR) private requestInterceptors,
 
@@ -59,7 +64,6 @@ export class FsApi {
   }
 
   public request(method: string, url: string, data?: object, config?): Observable<any> {
-
     config = <FsApiConfig>Object.assign({}, this.apiConfig, config);
     method = method.toUpperCase();
     data = Object.assign({}, data);
@@ -91,6 +95,8 @@ export class FsApi {
 
       INTERCEPTORS.push(interceptor);
     }
+
+    INTERCEPTORS.push(...this.httpInterceptors);
 
     // Executing of interceptors
     const handlersChain = INTERCEPTORS.reduceRight(
