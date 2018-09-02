@@ -9,7 +9,7 @@ export class FirstExampleComponent {
 
   data: Array<any> = null;
   file: null;
-  url = '/api/dummy';
+  url = 'https://components.firestitch.com/api/dummy';
   constructor(private FsApi: FsApi) {}
 
   uploadFiles(file: File) {

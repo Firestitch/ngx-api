@@ -13,6 +13,7 @@ import { FirstExampleComponent } from './app/components/first-example/first-exam
 import { UploadExampleComponent } from './app/components/upload-example/upload-example.component';
 import { SingleUploadComponent } from './app/components/single-upload/single-upload.component';
 import { UploadCancelExampleComponent } from './app/components/upload-cancel-example/upload-cancel-example.component';
+import { ToastrModule } from 'ngx-toastr';
 
 import {
   FsApiModule,
@@ -36,7 +37,8 @@ import { ResponseHandler } from './app/interceptors/response.handler';
     FormsModule,
     FsExampleModule,
     FsFileModule,
-    FsMessageModule
+    FsMessageModule.forRoot(),
+    ToastrModule.forRoot({ preventDuplicates: true }),
   ],
   entryComponents: [
   ],

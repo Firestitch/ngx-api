@@ -110,15 +110,25 @@ export class FsApi {
         }),
         tap((event: HttpEvent<any>) => {
           if (event.type === HttpEventType.Response) {
-            this.responseHandler.success(event, config);
+            if (this.responseHandler) {
+              this.responseHandler.success(event, config);
+            }
           }
         }),
         map((event: HttpEvent<any>) => {
           return (event.type === HttpEventType.Response) ? event.body : event;
         }),
         tap({
-          error: (err) => this.responseHandler.error(err, config),
-          complete: () => this.responseHandler.complete(config)
+          error: (err) => {
+            if (this.responseHandler) {
+              this.responseHandler.error(err, config);
+            }
+          },
+          complete: () => {
+            if (this.responseHandler) {
+              this.responseHandler.complete(config);
+            }
+          }
         })
       );
   }

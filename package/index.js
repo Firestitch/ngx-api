@@ -570,12 +570,15 @@ var base_1 = __webpack_require__("./interceptors/base/index.ts");
 var FsApi = (function () {
     function FsApi(apiConfig, http, injector, 
         // Custom interceptors
+        httpInterceptors, 
+        // Custom interceptors
         requestInterceptors, 
         // Other callbacks
         responseHandler) {
         this.apiConfig = apiConfig;
         this.http = http;
         this.injector = injector;
+        this.httpInterceptors = httpInterceptors;
         this.requestInterceptors = requestInterceptors;
         this.responseHandler = responseHandler;
         this.events = [];
@@ -619,6 +622,7 @@ var FsApi = (function () {
             var interceptor = this.requestInterceptors(config, data);
             INTERCEPTORS.push(interceptor);
         }
+        INTERCEPTORS.push.apply(INTERCEPTORS, this.httpInterceptors);
         // Executing of interceptors
         var handlersChain = INTERCEPTORS.reduceRight(function (next, interceptor) { return new classes_1.RequestHandler(next, interceptor); }, this.http);
         // Do request and process the answer
@@ -627,13 +631,23 @@ var FsApi = (function () {
             return config.reportProgress || event instanceof http_1.HttpResponse;
         }), operators_1.tap(function (event) {
             if (event.type === http_1.HttpEventType.Response) {
-                _this.responseHandler.success(event, config);
+                if (_this.responseHandler) {
+                    _this.responseHandler.success(event, config);
+                }
             }
         }), operators_1.map(function (event) {
             return (event.type === http_1.HttpEventType.Response) ? event.body : event;
         }), operators_1.tap({
-            error: function (err) { return _this.responseHandler.error(err, config); },
-            complete: function () { return _this.responseHandler.complete(config); }
+            error: function (err) {
+                if (_this.responseHandler) {
+                    _this.responseHandler.error(err, config);
+                }
+            },
+            complete: function () {
+                if (_this.responseHandler) {
+                    _this.responseHandler.complete(config);
+                }
+            }
         }));
     };
     /**
@@ -662,11 +676,12 @@ var FsApi = (function () {
     };
     FsApi = __decorate([
         core_1.Injectable(),
-        __param(3, core_1.Optional()), __param(3, core_1.Inject(fsapi_providers_1.FS_API_REQUEST_INTERCEPTOR)),
-        __param(4, core_1.Optional()), __param(4, core_1.Inject(fsapi_providers_1.FS_API_RESPONSE_HANDLER)),
+        __param(3, core_1.Optional()), __param(3, core_1.Inject(http_1.HTTP_INTERCEPTORS)),
+        __param(4, core_1.Optional()), __param(4, core_1.Inject(fsapi_providers_1.FS_API_REQUEST_INTERCEPTOR)),
+        __param(5, core_1.Optional()), __param(5, core_1.Inject(fsapi_providers_1.FS_API_RESPONSE_HANDLER)),
         __metadata("design:paramtypes", [classes_1.FsApiConfig,
             http_1.HttpXhrBackend,
-            core_1.Injector, Object, base_1.FsApiResponseHandler])
+            core_1.Injector, Object, Object, base_1.FsApiResponseHandler])
     ], FsApi);
     return FsApi;
 }());

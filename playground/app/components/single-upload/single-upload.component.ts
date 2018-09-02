@@ -11,7 +11,7 @@ export class SingleUploadComponent {
   files = [];
   percent = 0;
   kbLoaded = 0;
-  url = 'https://boilerplate.firestitch.com/api/dummy';
+  url = 'https://components.firestitch.com/api/dummy';
   constructor(private fsApi: FsApi) {}
 
   public upload() {

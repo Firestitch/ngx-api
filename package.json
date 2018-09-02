@@ -1,7 +1,7 @@
 {
   "name": "@firestitch/api",
   "description": "@firestitch/api",
-  "version": "0.1.16",
+  "version": "0.1.17",
   "repository": {
     "type": "git",
     "url": "https://github.com/Firestitch/fs-api"
