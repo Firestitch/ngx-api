@@ -4,9 +4,10 @@ import {
   HttpRequest
 } from '@angular/common/http';
 
-import { forEach } from 'lodash';
-import { Observable } from 'rxjs/Observable';
-import { RequestInterceptor } from './base/request.interceptor';
+import { Observable } from 'rxjs';
+import * as forEach from 'lodash/forEach';
+
+import { RequestInterceptor } from './base';
 
 
 export class BodyHandlerInterceptor extends RequestInterceptor {
@@ -15,14 +16,10 @@ export class BodyHandlerInterceptor extends RequestInterceptor {
   }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    let hasFile = false;
 
-    forEach(this._data, (item) => {
-      if (item instanceof Blob) {
-        hasFile = true;
-        this._config.encoding = 'formdata';
-      }
-    });
+    if (lookupBlob(this._data)) {
+      this._config.encoding = 'formdata';
+    }
 
     let body = null;
 
@@ -53,4 +50,23 @@ export class BodyHandlerInterceptor extends RequestInterceptor {
 
     return next.handle(modified);
   }
+}
+
+export function lookupBlob(data: {}, level = 0) {
+  level++;
+
+  // Depth limit
+  if (level >= 4 || !data) {
+    return false;
+  }
+
+  return Object.keys(data).some((key) => {
+    const item = data[key];
+
+    if (item instanceof Blob) {
+      return true;
+    } else if (item instanceof Object || Array.isArray(item)) {
+      return lookupBlob(item, level);
+    }
+  });
 }
