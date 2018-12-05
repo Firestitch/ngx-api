@@ -8,6 +8,7 @@ import {
 import { forEach } from 'lodash';
 import { Observable } from 'rxjs/Observable';
 import { RequestInterceptor } from './base';
+import { lookupBlob } from '../helpers';
 
 
 export class HeadersHandlerInterceptor extends RequestInterceptor {
@@ -22,11 +23,9 @@ export class HeadersHandlerInterceptor extends RequestInterceptor {
       headers = headers.set(name, value);
     });
 
-    forEach(this._data, (item) => {
-      if (item instanceof File || item instanceof Blob) {
-        this._config.encoding = 'formdata';
-      }
-    });
+    if (lookupBlob(this._data)) {
+      this._config.encoding = 'formdata';
+    }
 
     switch (this._config.encoding) {
       case 'url': {

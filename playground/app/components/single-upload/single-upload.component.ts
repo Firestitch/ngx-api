@@ -1,6 +1,9 @@
 import { Component } from '@angular/core';
-import { FsApi, ResponseType } from '../../../../src';
 import { HttpEventType } from '@angular/common/http';
+
+import * as moment from 'moment';
+
+import { FsApi } from '../../../../src';
 
 @Component({
   selector: 'single-upload',
@@ -11,14 +14,15 @@ export class SingleUploadComponent {
   files = [];
   percent = 0;
   kbLoaded = 0;
-  url = 'https://components.firestitch.com/api/dummy';
+  url = '/api';
   constructor(private fsApi: FsApi) {}
 
   public upload() {
 
-    const data = { moment: null, object: { date: new Date() }, file: null };
+    const data = { moment: moment(), object: { date: new Date(), file: null }, file: null };
     this.files.forEach((fsFile, index) => {
       data.file = fsFile.file;
+      data.object.file = fsFile.file;
       this.kbLoaded = 0;
       this.percent = 0;
 
