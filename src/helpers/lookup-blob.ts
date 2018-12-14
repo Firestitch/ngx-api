@@ -2,7 +2,7 @@ export function lookupBlob(data: {}, level = 0) {
   level++;
 
   // Depth limit
-  if (level > 4) {
+  if (level > 10) {
     throw Error('Maximum call stack size exceeded');
   }
 
