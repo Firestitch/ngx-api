@@ -39,7 +39,7 @@
     "@angular/platform-browser": "^5.2.4",
     "@angular/platform-browser-dynamic": "^5.2.4",
     "@compodoc/compodoc": "^1.0.5",
-    "@firestitch/common": "^0.1.22",
+    "@firestitch/common": "^0.3.1",
     "@firestitch/example": "^0.2.21",
     "@firestitch/file": "^0.2.5",
     "@firestitch/iframe": "^0.1.5",
@@ -87,6 +87,7 @@
     "lodash": "^4.17.5",
     "moment": ">=2.0.0",
     "moment-timezone": ">=0.5.0",
+    "ngx-toastr": "^8.0.0",
     "node-sass": "^4.5.2",
     "node-sass-tilde-importer": "^1.0.0",
     "node-watch": "^0.5.7",
@@ -114,8 +115,7 @@
     "webpack-dll-bundles-plugin": "^1.0.0-beta.5",
     "webpack-merge": "^4.1.1",
     "webpack-node-externals": "^1.6.0",
-    "zone.js": "^0.8.14",
-    "ngx-toastr": "^8.0.0"
+    "zone.js": "^0.8.14"
   },
   "engines": {
     "node": ">=6.0.0"
