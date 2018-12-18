@@ -3,6 +3,7 @@ import { FsMessage } from '@firestitch/message';
 import { FsApi } from '../../../../src';
 import { HttpEventType, HttpResponse } from '@angular/common/http';
 
+
 @Component({
   selector: 'upload-example',
   templateUrl: 'upload-example.component.html'
@@ -10,7 +11,7 @@ import { HttpEventType, HttpResponse } from '@angular/common/http';
 export class UploadExampleComponent {
 
   files = [];
-  url = 'https://components.firestitch.com/api/dummy';
+  url = 'https://boilerplate.firestitch.com/api/dummy';
   constructor(private _api: FsApi, private _message: FsMessage) {}
 
   public upload() {

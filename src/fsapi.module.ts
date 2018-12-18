@@ -2,7 +2,8 @@ import { HttpBackend, HttpClientModule, HttpXhrBackend } from '@angular/common/h
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { FsApiConfig, FsApi } from './';
+import { FsApiConfig, FsApi, FS_API_CONFIG } from './';
+import { IModuleConfig } from './interfaces';
 
 
 @NgModule({
@@ -20,10 +21,14 @@ import { FsApiConfig, FsApi } from './';
   exports: []
 })
 export class FsApiModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(config: IModuleConfig = {}): ModuleWithProviders {
     return {
       ngModule: FsApiModule,
-      providers: [FsApiConfig, FsApi]
+      providers: [
+        { provide: FS_API_CONFIG, useValue: config },
+        FsApiConfig,
+        FsApi,
+      ]
     };
   }
 }

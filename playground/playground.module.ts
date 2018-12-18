@@ -34,7 +34,9 @@ import { ResponseHandler } from './app/interceptors/response.handler';
   bootstrap: [ AppComponent ],
   imports: [
     BrowserModule,
-    FsApiModule,
+    FsApiModule.forRoot({
+      queueSize: 3,
+    }),
     BrowserAnimationsModule,
     AppMaterialModule,
     FormsModule,

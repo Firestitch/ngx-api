@@ -22,29 +22,45 @@ import {
 } from '../interceptors';
 
 import {
+  FS_API_CONFIG,
   FS_API_REQUEST_INTERCEPTOR,
   FS_API_RESPONSE_HANDLER,
 } from '../fsapi-providers';
 
 import { FsApiResponseHandler } from '../interceptors/base';
+import { Queue } from '@firestitch/common/util';
+import { IModuleConfig } from '../interfaces';
 
 
 @Injectable()
 export class FsApi {
 
   public events = [];
+  private readonly _queue = new Queue(Infinity);
 
-  constructor(private apiConfig: FsApiConfig,
-              private http: HttpXhrBackend,
-              private injector: Injector,
-              // Custom interceptors
-              @Optional() @Inject(HTTP_INTERCEPTORS) private httpInterceptors,
+  constructor(
+    private apiConfig: FsApiConfig,
+    private http: HttpXhrBackend,
+    private injector: Injector,
+    // Custom interceptors
+    @Optional() @Inject(FS_API_CONFIG)
+    private config: IModuleConfig,
 
-              // Custom interceptors
-              @Optional() @Inject(FS_API_REQUEST_INTERCEPTOR) private requestInterceptors,
+    // Custom interceptors
+    @Optional() @Inject(HTTP_INTERCEPTORS)
+    private httpInterceptors,
 
-              // Other callbacks
-              @Optional() @Inject(FS_API_RESPONSE_HANDLER) private responseHandler: FsApiResponseHandler) {
+    // Custom interceptors
+    @Optional() @Inject(FS_API_REQUEST_INTERCEPTOR)
+    private requestInterceptors,
+
+    // Other callbacks
+    @Optional() @Inject(FS_API_RESPONSE_HANDLER)
+    private responseHandler: FsApiResponseHandler
+  ) {
+
+    // Queue Limit
+    this._queue.setLimit(this.config.queueSize || Infinity);
   }
 
   public get(url, query?, config?) {
@@ -103,7 +119,7 @@ export class FsApi {
       (next: any, interceptor: any) => new RequestHandler(next, interceptor), this.http);
 
     // Do request and process the answer
-    return handlersChain.handle(request)
+    const chainedRequest = handlersChain.handle(request)
       .pipe(
         filter((event) => {
           return config.reportProgress || event instanceof HttpResponse;
@@ -111,8 +127,7 @@ export class FsApi {
         tap((event: HttpEvent<any>) => {
           if (event.type === HttpEventType.Response) {
             if (this.responseHandler) {
-              this.responseHandler.success(event, config);
-            }
+             }
           }
         }),
         map((event: HttpEvent<any>) => {
@@ -131,6 +146,11 @@ export class FsApi {
           }
         })
       );
+
+    // Depends on encoding will send in queue or raw
+    return (config.encoding === 'formdata')
+      ? this._queue.push(chainedRequest)
+      : chainedRequest;
   }
 
   /**
