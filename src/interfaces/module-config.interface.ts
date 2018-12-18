@@ -1,3 +1,3 @@
 export interface IModuleConfig {
-  queueSize?: number;
+  maxFileConnections?: number;
 }

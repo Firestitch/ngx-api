@@ -35,7 +35,7 @@ import { ResponseHandler } from './app/interceptors/response.handler';
   imports: [
     BrowserModule,
     FsApiModule.forRoot({
-      queueSize: 3,
+      maxFileConnections: 5,
     }),
     BrowserAnimationsModule,
     AppMaterialModule,

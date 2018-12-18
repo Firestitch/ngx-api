@@ -36,7 +36,7 @@ import { IModuleConfig } from '../interfaces';
 export class FsApi {
 
   public events = [];
-  private readonly _queue = new Queue(Infinity);
+  private readonly _queue = new Queue(5);
 
   constructor(
     private apiConfig: FsApiConfig,
@@ -60,7 +60,11 @@ export class FsApi {
   ) {
 
     // Queue Limit
-    this._queue.setLimit(this.config.queueSize || Infinity);
+    this._queue.setLimit(this.config.maxFileConnections || 5);
+  }
+
+  get queue() {
+    return this._queue;
   }
 
   public get(url, query?, config?) {
