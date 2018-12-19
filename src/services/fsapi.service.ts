@@ -60,7 +60,7 @@ export class FsApi {
   ) {
 
     // Queue Limit
-    this._queue.setLimit(this.config.maxFileConnections || 5);
+    this._queue.setLimit((this.config && this.config.maxFileConnections) || 5);
   }
 
   get queue() {
@@ -131,7 +131,8 @@ export class FsApi {
         tap((event: HttpEvent<any>) => {
           if (event.type === HttpEventType.Response) {
             if (this.responseHandler) {
-             }
+              this.responseHandler.success(event, config);
+            }
           }
         }),
         map((event: HttpEvent<any>) => {
