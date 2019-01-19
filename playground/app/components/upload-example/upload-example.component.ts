@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FsMessage } from '@firestitch/message';
-import { FsApi } from '../../../../src';
+import { FsApi } from '@firestitch/api';
 import { HttpEventType, HttpResponse } from '@angular/common/http';
 
 

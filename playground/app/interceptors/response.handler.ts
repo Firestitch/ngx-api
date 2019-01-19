@@ -1,5 +1,5 @@
-import { FsApiResponseHandler } from '../../../src';
 import { FsMessage } from '@firestitch/message';
+import { FsApiResponseHandler } from '@firestitch/api';
 
 export class ResponseHandler extends FsApiResponseHandler {
 

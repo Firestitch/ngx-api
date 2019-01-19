@@ -1,5 +1,3 @@
-import './styles.scss';
-
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
@@ -8,27 +6,28 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FsExampleModule } from '@firestitch/example';
 import { FsFileModule } from '@firestitch/file';
 import { FsMessageModule, FsMessage } from '@firestitch/message';
-
-import { ToastrModule } from 'ngx-toastr';
-
-import { AppComponent } from './app/app.component';
-import { AppMaterialModule } from './app/material.module';
-import { FirstExampleComponent } from './app/components/first-example/first-example.component';
-import { UploadExampleComponent } from './app/components/upload-example/upload-example.component';
-import { SingleUploadComponent } from './app/components/single-upload/single-upload.component';
-import { UploadCancelExampleComponent } from './app/components/upload-cancel-example/upload-cancel-example.component';
-
+import { FsCommonModule } from '@firestitch/common';
 import {
   FsApiModule,
   FS_API_REQUEST_INTERCEPTOR,
   FS_API_RESPONSE_HANDLER,
-} from '../src';
-import { TestService } from './app/services/test.service';
+} from '@firestitch/api';
+
+import { ToastrModule } from 'ngx-toastr';
+
+import { AppComponent } from './app.component';
+import { AppMaterialModule } from './material.module';
+import { FirstExampleComponent } from './components/first-example/first-example.component';
+import { UploadExampleComponent } from './components/upload-example/upload-example.component';
+import { SingleUploadComponent } from './components/single-upload/single-upload.component';
+import { UploadCancelExampleComponent } from './components/upload-cancel-example/upload-cancel-example.component';
+
+import { TestService } from './services/test.service';
 import {
   AlertInterceptorFactory,
   TokenInterceptorFactory
-} from './app/interceptors';
-import { ResponseHandler } from './app/interceptors/response.handler';
+} from './interceptors';
+import { ResponseHandler } from './interceptors/response.handler';
 
 @NgModule({
   bootstrap: [ AppComponent ],
@@ -41,7 +40,8 @@ import { ResponseHandler } from './app/interceptors/response.handler';
     AppMaterialModule,
     FormsModule,
     FsExampleModule.forRoot({ iframeObserveBody: true }),
-    FsFileModule,
+    FsFileModule.forRoot(),
+    FsCommonModule,
     FsMessageModule.forRoot(),
     ToastrModule.forRoot({ preventDuplicates: true }),
   ],

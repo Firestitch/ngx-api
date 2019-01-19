@@ -3,7 +3,7 @@ import { HttpEventType } from '@angular/common/http';
 
 import * as moment from 'moment';
 
-import { FsApi } from '../../../../src';
+import { FsApi } from '@firestitch/api';
 
 @Component({
   selector: 'single-upload',

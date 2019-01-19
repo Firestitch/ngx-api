@@ -5,10 +5,10 @@ import {
   HttpRequest
 } from '@angular/common/http';
 
-import { forEach } from 'lodash';
-import { Observable } from 'rxjs/Observable';
-import { RequestInterceptor } from './base';
-import { lookupBlob } from '../helpers';
+import { forEach } from 'lodash-es';
+import { Observable } from 'rxjs';
+import { RequestInterceptor } from './base/request.interceptor';
+import { lookupBlob } from '../helpers/lookup-blob';
 
 
 export class HeadersHandlerInterceptor extends RequestInterceptor {

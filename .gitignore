@@ -41,3 +41,4 @@ dist/*
 /dll
 /*.code-workspace
 /package
+/src/package.json

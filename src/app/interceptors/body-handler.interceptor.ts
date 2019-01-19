@@ -6,8 +6,8 @@ import {
 
 import { Observable } from 'rxjs';
 
-import { RequestInterceptor } from './base';
-import { objectToFormData } from '../helpers';
+import { RequestInterceptor } from './base/request.interceptor';
+import { objectToFormData } from '../helpers/object-to-form-data';
 
 
 export class BodyHandlerInterceptor extends RequestInterceptor {

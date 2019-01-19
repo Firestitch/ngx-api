@@ -5,8 +5,8 @@ import {
   HttpRequest
 } from '@angular/common/http';
 
-import { forEach } from 'lodash';
-import { Observable } from 'rxjs/Observable';
+import { forEach } from 'lodash-es';
+import { Observable } from 'rxjs';
 import { RequestInterceptor } from './base/request.interceptor';
 
 

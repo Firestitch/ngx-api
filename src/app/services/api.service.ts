@@ -8,28 +8,31 @@ import {
   HTTP_INTERCEPTORS,
 } from '@angular/common/http';
 
-import { Observable } from 'rxjs/Observable';
+import { Queue } from '@firestitch/common';
+
+import { Observable } from 'rxjs';
 import { map, tap, filter } from 'rxjs/operators';
-import * as moment from 'moment-timezone';
-import { forEach, isObject } from 'lodash';
 
-import { FsApiConfig, RequestHandler } from '../classes';
+import * as _moment from 'moment-timezone';
+const moment = _moment;
 
-import {
-  HeadersHandlerInterceptor,
-  BodyHandlerInterceptor,
-  ParamsHandlerInterceptor,
-} from '../interceptors';
+import { forEach, isObject } from 'lodash-es';
+
+import { FsApiConfig } from '../classes/api-config';
+import { RequestHandler } from '../classes/request-handler';
+
+import { HeadersHandlerInterceptor } from '../interceptors/headers-handler.interceptor';
+import { BodyHandlerInterceptor } from '../interceptors/body-handler.interceptor';
+import { ParamsHandlerInterceptor} from '../interceptors/params-handler.interceptor';
 
 import {
   FS_API_CONFIG,
   FS_API_REQUEST_INTERCEPTOR,
   FS_API_RESPONSE_HANDLER,
-} from '../fsapi-providers';
+} from '../fs-api-providers';
 
-import { FsApiResponseHandler } from '../interceptors/base';
-import { Queue } from '@firestitch/common/util';
-import { IModuleConfig } from '../interfaces';
+import { FsApiResponseHandler } from '../interceptors/base/response.handler';
+import { IModuleConfig } from '../interfaces/module-config.interface';
 
 
 @Injectable()

@@ -2,8 +2,10 @@ import { HttpBackend, HttpClientModule, HttpXhrBackend } from '@angular/common/h
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { FsApiConfig, FsApi, FS_API_CONFIG } from './';
-import { IModuleConfig } from './interfaces';
+import { FS_API_CONFIG } from './fs-api-providers';
+import { FsApi } from './services/api.service';
+import { FsApiConfig } from './classes/api-config';
+import { IModuleConfig } from './interfaces/module-config.interface';
 
 
 @NgModule({

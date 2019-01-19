@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FsApi } from '../../../../src';
+import { FsApi } from '@firestitch/api';
 
 @Component({
   selector: 'first-example',

@@ -1,8 +1,7 @@
 import { HttpEvent, HttpHandler, HttpRequest } from '@angular/common/http';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 
-import { RequestInterceptor } from '../../../src';
-import { makeInterceptorFactory } from '../../../src/helpers';
+import { RequestInterceptor, makeInterceptorFactory } from '@firestitch/api';
 
 
 class TokenInterceptor extends RequestInterceptor {

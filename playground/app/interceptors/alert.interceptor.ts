@@ -1,8 +1,7 @@
 import { HttpEvent, HttpHandler, HttpRequest } from '@angular/common/http';
-import { Observable } from 'rxjs/Observable';
-import { RequestInterceptor } from '../../../src';
+import { RequestInterceptor, makeInterceptorFactory } from '@firestitch/api';
 import { FsMessage } from '@firestitch/message';
-import { makeInterceptorFactory } from '../../../src/helpers';
+import { Observable } from 'rxjs';
 
 
 class AlertInterceptor extends RequestInterceptor {
