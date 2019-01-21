@@ -38,6 +38,7 @@ dist/*
 /docs
 /.tmp
 /docs
+/demo
 /dll
 /*.code-workspace
 /package
