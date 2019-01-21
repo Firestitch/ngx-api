@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { environment } from '../environments/environment';
 
 @Component({
   selector: 'app-root',
@@ -6,14 +7,16 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
 
-  public mainModule = 
+  public environment = environment;
+
+  public mainModule =
 `import {
   FsApiModule,
   FS_API_REQUEST_INTERCEPTOR,
   FS_API_RESPONSE_HANDLER,
 } from '@firestitch/api';
 import { AlertInterceptor, TokenInterceptor } from './app/interceptors';
-import { ResponseHandler } from './app/interceptors/response.handler';  
+import { ResponseHandler } from './app/interceptors/response.handler';
 
 
 @NgModule({
@@ -44,7 +47,7 @@ export class AlertInterceptor extends RequestInterceptor {
   }
 }`;
 
-  public tokenInterceptor = 
+  public tokenInterceptor =
 `import { HttpEvent, HttpHandler, HttpRequest } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 import { RequestInterceptor } from '@firestitch/api';
@@ -65,7 +68,7 @@ export class TokenInterceptor extends RequestInterceptor {
   }
 }`;
 
-  public responseHandler = 
+  public responseHandler =
 `import { FsApiResponseHandler } from '@firestitch/api';
 
 export class ResponseHandler extends FsApiResponseHandler {
@@ -75,7 +78,7 @@ export class ResponseHandler extends FsApiResponseHandler {
 
   public success(event, config) {
     super.success(event, config);
-    
+
     console.log('Success', event);
   }
 
