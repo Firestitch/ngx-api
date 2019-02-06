@@ -10,7 +10,7 @@ import {
 
 import { Observable } from 'rxjs/Observable';
 import { map, tap, filter } from 'rxjs/operators';
-import * as moment from 'moment-timezone';
+import * as moment from 'moment';
 import { forEach, isObject } from 'lodash';
 
 import { FsApiConfig, RequestHandler } from '../classes';
