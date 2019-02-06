@@ -8,6 +8,7 @@ import {
 import { forEach } from 'lodash-es';
 import { Observable } from 'rxjs';
 import { RequestInterceptor } from './base/request.interceptor';
+import { CustomParamsEncoder } from '../classes/params-encoder';
 
 
 export class ParamsHandlerInterceptor extends RequestInterceptor {
@@ -16,13 +17,11 @@ export class ParamsHandlerInterceptor extends RequestInterceptor {
   }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    let params = new HttpParams();
+    let params = new HttpParams({
+      encoder: new CustomParamsEncoder()
+    });
 
     forEach(this._config.query, function(value, name) {
-      // Escape special chars
-      if (req.method === 'GET') {
-        value = encodeURIComponent(value);
-      }
       params = params.append(name, value);
     });
 
