@@ -2,7 +2,7 @@
   "name": "@firestitch/api",
   "title": "API",
   "description": "@firestitch/api",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "repository": {
     "type": "git",
     "url": "https://github.com/Firestitch/ngx-api"
@@ -58,6 +58,7 @@
     "ng-packagr": "^4.7.0",
     "npm-run-all": "^4.1.5",
     "rxjs": "^6.4.0",
+    "rxjs-compat": "^6.4.0",
     "tsickle": "^0.34.3",
     "tslint": "^5.12.1",
     "typescript": "^3.1.6",
