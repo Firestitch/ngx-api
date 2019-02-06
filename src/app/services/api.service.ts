@@ -13,7 +13,7 @@ import { Queue } from '@firestitch/common';
 import { Observable } from 'rxjs';
 import { map, tap, filter } from 'rxjs/operators';
 
-import * as _moment from 'moment-timezone';
+import * as _moment from 'moment';
 const moment = _moment;
 
 import { forEach, isObject } from 'lodash-es';
