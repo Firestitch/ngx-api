@@ -16,7 +16,7 @@ export class UploadCancelExampleComponent {
 
   public upload() {
 
-    const data = { moment: null, object: { date: new Date() }, file: null };
+    const data = { object: { date: new Date() }, file: null };
     this.files.forEach((fsFile, index) => {
       data.file = fsFile.file;
 

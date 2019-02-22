@@ -1,8 +1,6 @@
 import { Component } from '@angular/core';
 import { HttpEventType } from '@angular/common/http';
 
-import * as moment from 'moment';
-
 import { FsApi } from '@firestitch/api';
 
 @Component({
@@ -19,7 +17,7 @@ export class SingleUploadComponent {
 
   public upload() {
 
-    const data = { moment: moment(), object: { date: new Date(), file: null }, file: null };
+    const data = { object: { date: new Date(), file: null }, file: null };
     this.files.forEach((fsFile, index) => {
       data.file = fsFile.file;
       data.object.file = fsFile.file;

@@ -13,9 +13,7 @@ import { Queue } from '@firestitch/common';
 import { Observable } from 'rxjs';
 import { map, tap, filter } from 'rxjs/operators';
 
-import * as _moment from 'moment';
-const moment = _moment;
-
+import { isDate, isValid } from 'date-fns';
 import { forEach, isObject } from 'lodash-es';
 
 import { FsApiConfig } from '../classes/api-config';
@@ -170,12 +168,12 @@ export class FsApi {
   private sanitize(obj) {
     const self = this;
     forEach(obj, function (value, key) {
-      if (moment && moment.isMoment(value)) {
-        obj[key] = value.format();
-
-      } else if (value instanceof Date) {
-        obj[key] = moment(value).format();
-
+      if (isDate(value)) {
+        if (isValid(value)) {
+          obj[key] = value.toISOString();
+        } else {
+          delete obj[key];
+        }
       } else if (value === undefined) {
         delete obj[key];
 

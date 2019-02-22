@@ -22,7 +22,7 @@ export class FirstExampleComponent {
 
   public post() {
 
-    const data = { moment: null, object: { date: new Date() } };
+    const data = { object: { date: new Date() } };
 
     this.FsApi.post(this.url, data)
     .subscribe(resp => {
