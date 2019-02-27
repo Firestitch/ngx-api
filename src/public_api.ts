@@ -7,6 +7,9 @@ export { FsApiModule } from './app/fs-api.module';
 
 // Services
 export { FsApi } from './app/services/api.service';
+export { FsApiConfig } from './app/classes/api-config';
+export { CustomParamsEncoder } from './app/classes/params-encoder';
+export { RequestHandler } from './app/classes/request-handler';
 
 // Providers
 export { FS_API_REQUEST_INTERCEPTOR, FS_API_RESPONSE_HANDLER } from './app/fs-api-providers';
