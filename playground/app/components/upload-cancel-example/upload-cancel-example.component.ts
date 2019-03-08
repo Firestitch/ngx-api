@@ -11,7 +11,7 @@ import { FsApi } from '@firestitch/api';
 export class UploadCancelExampleComponent {
 
   files = [];
-  url = 'https://components.firestitch.com/api/dummy';
+  url = 'https://boilerplate.firestitch.com/api/dummy';
   constructor(private _api: FsApi, private _message: FsMessage) {}
 
   public upload() {
