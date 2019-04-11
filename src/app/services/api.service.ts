@@ -13,7 +13,7 @@ import { Queue } from '@firestitch/common';
 import { Observable } from 'rxjs';
 import { map, tap, filter } from 'rxjs/operators';
 
-import { isDate, isValid } from 'date-fns';
+import { isDate, isValid, format } from 'date-fns';
 import { forEach, isObject } from 'lodash-es';
 
 import { FsApiConfig } from '../classes/api-config';
@@ -170,7 +170,7 @@ export class FsApi {
     forEach(obj, function (value, key) {
       if (isDate(value)) {
         if (isValid(value)) {
-          obj[key] = value.toISOString();
+          obj[key] = format(value, 'yyyy-MM-dd\'T\'HH:mm:ssxxx');
         } else {
           delete obj[key];
         }

@@ -1,12 +1,12 @@
 
-<fs-file (select)="select($event)" multiple="false">
-  <button mat-raised-button color="primary">Select File</button>
-</fs-file>
-<button mat-raised-button color="primary" (click)="upload()">Upload</button>
+<div class="buttons">
+  <fs-file (select)="select($event)" multiple="false">
+    <button mat-raised-button color="primary">Select File</button>
+  </fs-file>
+  <button mat-raised-button color="primary" (click)="upload()">Upload</button>
+</div>
 
-<br><br>
-
-<fs-file-previews [files]="files">
+<fs-file-previews [files]="files" *ngIf="files.length">
   <ng-template fs-file-preview-action placement="top-right" action="remove" tooltip="Remove" (click)="remove($event)">
     <mat-icon>close</mat-icon>
   </ng-template>

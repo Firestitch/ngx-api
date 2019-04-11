@@ -3,3 +3,15 @@
 @import '~@firestitch/file/styles.scss';
 
 @include fs-file($mat-blue);
+
+.buttons {
+  display: flex;
+  > * {
+    margin-right: 5px !important;
+  }
+}
+
+fs-file-previews {
+  margin-top: 20px;
+  display: block;
+}
