@@ -31,6 +31,7 @@ import {
 
 import { FsApiResponseHandler } from '../interceptors/base/response.handler';
 import { IModuleConfig } from '../interfaces/module-config.interface';
+import { RequestConfig } from '../interfaces';
 
 
 @Injectable()
@@ -68,24 +69,24 @@ export class FsApi {
     return this._queue;
   }
 
-  public get(url, query?, config?) {
+  public get(url, query?, config?: RequestConfig) {
     return this.request('GET', url, query, config);
   }
 
-  public post(url, data?: object, config?): Observable<any> {
+  public post(url, data?: object, config?: RequestConfig): Observable<any> {
     return this.request('POST', url, data, config);
   }
 
-  public put(url, data?: object, config?): Observable<any> {
+  public put(url, data?: object, config?: RequestConfig): Observable<any> {
     return this.request('PUT', url, data, config);
   }
 
-  public delete(url, data?: object, config?): Observable<any> {
+  public delete(url, data?: object, config?: RequestConfig): Observable<any> {
     return this.request('DELETE', url, data, config);
   }
 
-  public request(method: string, url: string, data?: object, config?): Observable<any> {
-    config = <FsApiConfig>Object.assign({}, this.apiConfig, config);
+  public request(method: string, url: string, data?: object, config?: RequestConfig): Observable<any> {
+    config = Object.assign(new FsApiConfig(), this.apiConfig, config);
     method = method.toUpperCase();
     data = Object.assign({}, data);
 
@@ -97,7 +98,7 @@ export class FsApi {
     }
 
     // Create clear request
-    const request = new HttpRequest((method as any), url);
+    const request = new HttpRequest((method as any), url, { responseType: config.responseType });
 
     const INTERCEPTORS: any = [
       new HeadersHandlerInterceptor(config, data),
@@ -105,19 +106,22 @@ export class FsApi {
       new ParamsHandlerInterceptor(config, data),
     ];
 
-    // Add custom interceptors into chain
-    if (Array.isArray(this.requestInterceptors)) {
-      const interceptors = this.requestInterceptors
-        .map((interceptor) => interceptor(config, data));
+    if (config.interceptors) {
 
-      INTERCEPTORS.push(...interceptors);
-    } else if (this.requestInterceptors) {
-      const interceptor = this.requestInterceptors(config, data);
+      // Add custom interceptors into chain
+      if (Array.isArray(this.requestInterceptors)) {
+        const interceptors = this.requestInterceptors
+          .map((interceptor) => interceptor(config, data));
 
-      INTERCEPTORS.push(interceptor);
+        INTERCEPTORS.push(...interceptors);
+      } else if (this.requestInterceptors) {
+        const interceptor = this.requestInterceptors(config, data);
+
+        INTERCEPTORS.push(interceptor);
+      }
+
+      INTERCEPTORS.push(...this.httpInterceptors);
     }
-
-    INTERCEPTORS.push(...this.httpInterceptors);
 
     // Executing of interceptors
     const handlersChain = INTERCEPTORS.reduceRight(
@@ -130,7 +134,7 @@ export class FsApi {
           return config.reportProgress || event instanceof HttpResponse;
         }),
         tap((event: HttpEvent<any>) => {
-          if (event.type === HttpEventType.Response) {
+          if (event.type === HttpEventType.Response && config.handlers) {
             if (this.responseHandler) {
               this.responseHandler.success(event, config);
             }
@@ -141,12 +145,12 @@ export class FsApi {
         }),
         tap({
           error: (err) => {
-            if (this.responseHandler) {
+            if (this.responseHandler && config.handlers) {
               this.responseHandler.error(err, config);
             }
           },
           complete: () => {
-            if (this.responseHandler) {
+            if (this.responseHandler && config.handlers) {
               this.responseHandler.complete(config);
             }
           }

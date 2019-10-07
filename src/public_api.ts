@@ -26,3 +26,5 @@ export { RequestInterceptor } from './app/interceptors/base/request.interceptor'
 
 // Interfaces
 export { IModuleConfig } from './app/interfaces/module-config.interface';
+export { RequestConfig } from './app/interfaces/request-config.interface';
+export { ResponseType } from './app/enums/response-type.enum';

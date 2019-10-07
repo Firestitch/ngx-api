@@ -1,18 +1,18 @@
 import { Injectable, Optional, Inject } from '@angular/core';
+import { ResponseType } from '../enums/response-type.enum';
 
-export enum ResponseType {
-  body = 'body',
-  httpEvent = 'httpEvent'
-}
 
 @Injectable()
 export class FsApiConfig {
   /** A key value store for the request headers. */
   public headers?: object = {};
-  public encoding? = 'json';
+  public encoding = 'json';
+  public interceptors = true;
+  public handlers = true;
   public key?: string = null;
   public query?: object = {};
-  public responseType: ResponseType = ResponseType.body;
+  public reportProgress = false;
+  public responseType: ResponseType = ResponseType.Json;
 
   constructor(@Optional() @Inject('FsApiConfig') private config?: any) {
     Object.assign(this, config || {});

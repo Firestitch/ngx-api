@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FsApi } from '@firestitch/api';
+import { FsApi, ResponseType } from '@firestitch/api';
 
 @Component({
   selector: 'first-example',
@@ -9,7 +9,7 @@ export class FirstExampleComponent {
 
   data: Array<any> = null;
   file: null;
-  url = 'https://boilerplate.firestitch.com/api/dummy';
+  url = 'https://boilerplate.local.firestitch.com/api/dummy';
   constructor(private FsApi: FsApi) {}
 
   uploadFiles(file: File) {
@@ -44,6 +44,22 @@ export class FirstExampleComponent {
       //this.data = event.error;
     });
   }
+
+  public blob() {
+    const url = this.url + '/download';
+    this.FsApi.get(url, {}, {
+      interceptors: false,
+      handlers: false,
+      responseType: ResponseType.Blob
+    })
+    .subscribe(resp => {
+      console.log(resp);
+      this.data = resp;
+    }, (event) => {
+      alert(event)
+    });
+  }
+
 
   public mapp(resp) {
     return { data: resp.data.objects };
