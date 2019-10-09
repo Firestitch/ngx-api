@@ -167,7 +167,6 @@ export class FsApi {
    * Sanitize the passed object
    *
    * @param obj
-   * @returns {any}
    */
   private sanitize(obj) {
     const self = this;
