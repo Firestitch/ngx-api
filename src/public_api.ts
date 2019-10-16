@@ -21,10 +21,11 @@ export { makeInterceptorFactory } from './app/helpers/interceptor.factory';
 export { BodyHandlerInterceptor } from './app/interceptors/body-handler.interceptor';
 export { ParamsHandlerInterceptor } from './app/interceptors/params-handler.interceptor';
 export { HeadersHandlerInterceptor } from './app/interceptors/headers-handler.interceptor';
-export { FsApiResponseHandler, FsApiBaseHander } from './app/interceptors/base/response.handler';
+export { FsApiResponseHandler } from './app/handlers/response.handler';
 export { RequestInterceptor } from './app/interceptors/base/request.interceptor';
 
 // Interfaces
 export { IModuleConfig } from './app/interfaces/module-config.interface';
 export { RequestConfig } from './app/interfaces/request-config.interface';
+export { FsApiBaseHander } from './app/interfaces/handler.interface';
 export { ResponseType } from './app/enums/response-type.enum';

@@ -1,11 +1,7 @@
-export interface FsApiBaseHander {
-  success(event, config);
-  error(error, config);
-  complete(config);
-}
+import { FsApiBaseHander } from '../interfaces/handler.interface';
+
 
 export class FsApiResponseHandler implements FsApiBaseHander {
-  constructor() {}
 
   success(event, config) {
     event.body = event.body.data;
@@ -13,6 +9,8 @@ export class FsApiResponseHandler implements FsApiBaseHander {
       event.body = event.body[config.key];
     }
   }
-  error(error, config) {}
+  error(error, config) {
+    debugger;
+  }
   complete(config) {}
 }

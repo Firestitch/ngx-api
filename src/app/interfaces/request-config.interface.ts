@@ -9,4 +9,5 @@ export interface RequestConfig {
   query?: any;
   reportProgress?: boolean;
   responseType?:  ResponseType;
+  cache?: boolean;
 }

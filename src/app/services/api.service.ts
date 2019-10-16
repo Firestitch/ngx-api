@@ -10,7 +10,7 @@ import {
 
 import { Queue } from '@firestitch/common';
 
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { map, tap, filter } from 'rxjs/operators';
 
 import { isDate, isValid, format } from 'date-fns';
@@ -29,9 +29,12 @@ import {
   FS_API_RESPONSE_HANDLER,
 } from '../fs-api-providers';
 
-import { FsApiResponseHandler } from '../interceptors/base/response.handler';
+import { FsApiResponseHandler } from '../handlers/response.handler';
+import { FsApiCacheHandler } from '../handlers/cache.handler';
 import { IModuleConfig } from '../interfaces/module-config.interface';
 import { RequestConfig } from '../interfaces';
+import { FsApiBaseHander } from '../interfaces/handler.interface';
+import { ApiCache } from '../classes/api-cache';
 
 
 @Injectable()
@@ -39,6 +42,7 @@ export class FsApi {
 
   public events = [];
   private readonly _queue = new Queue(5);
+  private _cache = new ApiCache();
 
   constructor(
     private apiConfig: FsApiConfig,
@@ -69,6 +73,10 @@ export class FsApi {
     return this._queue;
   }
 
+  get cache() {
+    return this._cache;
+  }
+
   public get(url, query?, config?: RequestConfig) {
     return this.request('GET', url, query, config);
   }
@@ -86,15 +94,23 @@ export class FsApi {
   }
 
   public request(method: string, url: string, data?: object, config?: RequestConfig): Observable<any> {
+
     config = Object.assign(new FsApiConfig(), this.apiConfig, config);
     method = method.toUpperCase();
     data = Object.assign({}, data);
 
-    this.sanitize(data);
+    this._sanitize(data);
 
     if (method === 'GET') {
       config.query = data;
       data = {};
+
+      if (config.cache) {
+        const cache = this.cache.get(url, config.query);
+        if (cache) {
+          return of(cache);
+        }
+      }
     }
 
     // Create clear request
@@ -122,6 +138,12 @@ export class FsApi {
 
       INTERCEPTORS.push(...this.httpInterceptors);
     }
+    const handlers = [];
+    if (config.handlers && this.responseHandler) {
+      handlers.push(this.responseHandler);
+    }
+
+    handlers.push(new FsApiCacheHandler(this._cache));
 
     // Executing of interceptors
     const handlersChain = INTERCEPTORS.reduceRight(
@@ -134,10 +156,10 @@ export class FsApi {
           return config.reportProgress || event instanceof HttpResponse;
         }),
         tap((event: HttpEvent<any>) => {
-          if (event.type === HttpEventType.Response && config.handlers) {
-            if (this.responseHandler) {
-              this.responseHandler.success(event, config);
-            }
+          if (event.type === HttpEventType.Response) {
+            handlers.forEach((handler: FsApiBaseHander) => {
+              handler.success(event, config, request);
+            });
           }
         }),
         map((event: HttpEvent<any>) => {
@@ -145,14 +167,14 @@ export class FsApi {
         }),
         tap({
           error: (err) => {
-            if (this.responseHandler && config.handlers) {
-              this.responseHandler.error(err, config);
-            }
+            handlers.forEach((handler: FsApiBaseHander) => {
+              handler.error(err, config);
+            });
           },
           complete: () => {
-            if (this.responseHandler && config.handlers) {
-              this.responseHandler.complete(config);
-            }
+            handlers.forEach((handler: FsApiBaseHander) => {
+              handler.complete(config);
+            });
           }
         })
       );
@@ -168,7 +190,7 @@ export class FsApi {
    *
    * @param obj
    */
-  private sanitize(obj) {
+  private _sanitize(obj) {
     const self = this;
     forEach(obj, function (value, key) {
       if (isDate(value)) {
@@ -181,7 +203,7 @@ export class FsApi {
         delete obj[key];
 
       } else if (isObject(value)) {
-        self.sanitize(value);
+        self._sanitize(value);
       }
     });
 

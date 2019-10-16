@@ -10,21 +10,17 @@ export class FirstExampleComponent {
   data: Array<any> = null;
   file: null;
   url = 'https://boilerplate.local.firestitch.com/api/dummy';
-  constructor(private FsApi: FsApi) {}
+  constructor(private _api: FsApi) {}
 
   uploadFiles(file: File) {
-
-    console.log(file);
-    this.FsApi.post(this.url, { file: file })
+    this._api.post(this.url, { file: file })
     .subscribe(resp => {
     });
   }
 
   public post() {
-
     const data = { object: { date: new Date() } };
-
-    this.FsApi.post(this.url, data)
+    this._api.post(this.url, data)
     .subscribe(resp => {
       this.data = resp;
     });
@@ -34,8 +30,8 @@ export class FirstExampleComponent {
     this.get({ exception: '400 Exception Message' });
   }
 
-  public get(query) {
-    this.FsApi.get(this.url, query, { key: 'objects' })
+  public get(query, cache = false) {
+    this._api.get(this.url, query, { key: 'objects', cache: cache })
     .subscribe(resp => {
 
       console.log(resp);
@@ -47,7 +43,7 @@ export class FirstExampleComponent {
 
   public blob() {
     const url = this.url + '/download';
-    this.FsApi.get(url, {}, {
+    this._api.get(url, {}, {
       interceptors: false,
       handlers: false,
       responseType: ResponseType.Blob
@@ -58,10 +54,5 @@ export class FirstExampleComponent {
     }, (event) => {
       alert(event)
     });
-  }
-
-
-  public mapp(resp) {
-    return { data: resp.data.objects };
   }
 }

@@ -1,5 +1,6 @@
 <div class="buttons">
-  <button mat-raised-button color="primary" (click)="get(null)">GET</button>
+  <button mat-raised-button color="primary" (click)="get({ param: 'test' })">GET</button>
+  <button mat-raised-button color="primary" (click)="get({ param: 'cache-test' }, true)">GET (Cached)</button>
   <button mat-raised-button color="primary" (click)="blob()">GET Blob</button>
   <button mat-raised-button color="primary" (click)="getException()">GET Exception</button>
   <button mat-raised-button color="primary" (click)="post()">POST</button>
