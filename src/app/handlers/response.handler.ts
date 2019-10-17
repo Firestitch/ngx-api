@@ -9,8 +9,8 @@ export class FsApiResponseHandler implements FsApiBaseHander {
       event.body = event.body[config.key];
     }
   }
-  error(error, config) {
-    debugger;
-  }
+
+  error(error, config) {}
+
   complete(config) {}
 }
