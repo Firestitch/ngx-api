@@ -9,7 +9,7 @@ export class FirstExampleComponent {
 
   data: Array<any> = null;
   file: null;
-  url = 'https://boilerplate.local.firestitch.com/api/dummy';
+  url = 'https://boilerplate.firestitch.com/api/dummy';
   constructor(private _api: FsApi) {}
 
   uploadFiles(file: File) {
@@ -31,6 +31,9 @@ export class FirstExampleComponent {
   }
 
   public get(query, cache = false) {
+
+    query.null = null;
+
     this._api.get(this.url, query, { key: 'objects', cache: cache })
     .subscribe(resp => {
 
