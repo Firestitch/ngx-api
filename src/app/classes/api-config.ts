@@ -5,7 +5,7 @@ import { ResponseType } from '../enums/response-type.enum';
 @Injectable()
 export class FsApiConfig {
   /** A key value store for the request headers. */
-  public headers?: object = {};
+  public headers?: Record<string, string | string[]> = {};
   public encoding = 'json';
   public interceptors = true;
   public handlers = true;
