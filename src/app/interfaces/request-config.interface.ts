@@ -1,7 +1,7 @@
 import { ResponseType } from '../enums/response-type.enum';
 
 export interface RequestConfig {
-  headers?: object;
+  headers?: Record<string, string | string[]>;
   encoding?: string;
   interceptors?: boolean;
   handlers?: boolean;
