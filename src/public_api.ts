@@ -12,7 +12,7 @@ export { CustomParamsEncoder } from './app/classes/params-encoder';
 export { RequestHandler } from './app/classes/request-handler';
 
 // Providers
-export { FS_API_REQUEST_INTERCEPTOR, FS_API_RESPONSE_HANDLER } from './app/fs-api-providers';
+export { FS_API_REQUEST_INTERCEPTOR, FS_API_RESPONSE_HANDLER, FS_API_CONFIG } from './app/fs-api-providers';
 
 // Helpers
 export { makeInterceptorFactory } from './app/helpers/interceptor.factory';
