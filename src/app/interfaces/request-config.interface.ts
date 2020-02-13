@@ -1,3 +1,4 @@
+import { Queue } from '@firestitch/common';
 import { ResponseType } from '../enums/response-type.enum';
 
 export interface RequestConfig {
@@ -10,4 +11,5 @@ export interface RequestConfig {
   reportProgress?: boolean;
   responseType?:  ResponseType;
   cache?: boolean;
+  customQueue?: Queue;
 }

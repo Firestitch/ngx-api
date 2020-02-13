@@ -180,9 +180,15 @@ export class FsApi {
       );
 
     // Depends on encoding will send in queue or raw
-    return (config.encoding === 'formdata')
-      ? this._queue.push(chainedRequest)
-      : chainedRequest;
+    if (config.encoding === 'formdata') {
+      if (config.customQueue) {
+        return config.customQueue.push(chainedRequest);
+      } else {
+        return this._queue.push(chainedRequest);
+      }
+    } else {
+      return chainedRequest;
+    }
   }
 
   /**

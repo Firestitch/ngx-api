@@ -1,4 +1,5 @@
 import { Injectable, Optional, Inject } from '@angular/core';
+import { Queue } from '@firestitch/common';
 import { ResponseType } from '../enums/response-type.enum';
 
 
@@ -13,6 +14,7 @@ export class FsApiConfig {
   public query?: object = {};
   public reportProgress = false;
   public responseType: ResponseType = ResponseType.Json;
+  public customQueue: Queue;
 
   constructor(@Optional() @Inject('FsApiConfig') private config?: any) {
     Object.assign(this, config || {});
