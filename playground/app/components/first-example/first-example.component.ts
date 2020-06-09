@@ -32,7 +32,9 @@ export class FirstExampleComponent {
 
   public get(query, cache = false) {
 
-    query.null = null;
+    query.nullValue = null;
+    query.objectValue = { name: 'Name', value: 999, childObject: { id: 555 } };
+    query.arrayValue = [{ name: 'Element 1', value: 1 }, { name: 'Element 2', value: 2 }];
 
     this._api.get(this.url, query, { key: 'objects', cache: cache })
     .subscribe(resp => {

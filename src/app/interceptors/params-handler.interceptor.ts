@@ -9,6 +9,7 @@ import { forEach } from 'lodash-es';
 import { Observable } from 'rxjs';
 import { RequestInterceptor } from './base/request.interceptor';
 import { CustomParamsEncoder } from '../classes/params-encoder';
+import { objectToFormData } from '../helpers/object-to-form-data';
 
 
 export class ParamsHandlerInterceptor extends RequestInterceptor {
@@ -21,7 +22,8 @@ export class ParamsHandlerInterceptor extends RequestInterceptor {
       encoder: new CustomParamsEncoder()
     });
 
-    forEach(this._config.query, function(value, name) {
+    const formData: FormData = objectToFormData(this._config.query);
+    formData.forEach((value: any, name) => {
       params = params.append(name, value);
     });
 
