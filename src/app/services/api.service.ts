@@ -114,7 +114,7 @@ export class FsApi {
     }
 
     // Create clear request
-    const request = new HttpRequest((method as any), url, { responseType: config.responseType });
+    const request = new HttpRequest((method as any), url, null, { responseType: config.responseType });
 
     const INTERCEPTORS: any = [
       new HeadersHandlerInterceptor(config, data),
