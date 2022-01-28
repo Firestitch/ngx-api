@@ -28,6 +28,7 @@ import {
   TokenInterceptorFactory
 } from './interceptors';
 import { ResponseHandler } from './interceptors/response.handler';
+import { DownloadBlobComponent } from './components/download-blob/download-blob.component';
 
 @NgModule({
   bootstrap: [ AppComponent ],
@@ -52,7 +53,8 @@ import { ResponseHandler } from './interceptors/response.handler';
     FirstExampleComponent,
     UploadExampleComponent,
     SingleUploadComponent,
-    UploadCancelExampleComponent
+    UploadCancelExampleComponent,
+    DownloadBlobComponent,
   ],
   providers: [
     TestService,
