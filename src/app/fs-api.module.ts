@@ -23,7 +23,7 @@ import { IModuleConfig } from './interfaces/module-config.interface';
   exports: []
 })
 export class FsApiModule {
-  static forRoot(config: IModuleConfig = {}): ModuleWithProviders {
+  static forRoot(config: IModuleConfig = {}): ModuleWithProviders<FsApiModule> {
     return {
       ngModule: FsApiModule,
       providers: [
