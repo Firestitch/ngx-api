@@ -1,16 +1,17 @@
+
 import { FsApiBaseHander } from '../interfaces/handler.interface';
 
 
 export class FsApiResponseHandler implements FsApiBaseHander {
 
-  success(event, config) {
+  public success(event, config): void {
     event.body = event.body.data;
     if (config.key) {
       event.body = event.body[config.key];
     }
   }
 
-  error(error, config) {}
+  public error(error, config): void {}
 
-  complete(config) {}
+  public complete(config): void {}
 }

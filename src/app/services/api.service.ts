@@ -1,4 +1,4 @@
-import { Inject, Injectable, Injector, Optional } from '@angular/core';
+import { Inject, Injectable, Optional } from '@angular/core';
 import {
   HttpRequest,
   HttpEventType,
@@ -27,9 +27,11 @@ import {
   FS_API_CONFIG,
   FS_API_REQUEST_INTERCEPTOR,
   FS_API_RESPONSE_HANDLER,
+  FS_API_RESPONSE_DATA_HANDLER,
 } from '../fs-api-providers';
 
 import { FsApiResponseHandler } from '../handlers/response.handler';
+import { FsApiResponseBodyHandler } from '../handlers/response-body.handler';
 import { FsApiCacheHandler } from '../handlers/cache.handler';
 import { IModuleConfig } from '../interfaces/module-config.interface';
 import { RequestConfig } from '../interfaces';
@@ -41,13 +43,13 @@ import { ApiCache } from '../classes/api-cache';
 export class FsApi {
 
   public events = [];
+  
   private readonly _queue = new Queue(5);
   private _cache = new ApiCache();
 
   constructor(
     private apiConfig: FsApiConfig,
     private http: HttpXhrBackend,
-    private injector: Injector,
     // Custom interceptors
     @Optional() @Inject(FS_API_CONFIG)
     private config: IModuleConfig,
@@ -62,10 +64,14 @@ export class FsApi {
 
     // Other callbacks
     @Optional() @Inject(FS_API_RESPONSE_HANDLER)
-    private responseHandler: FsApiResponseHandler
-  ) {
+    private responseHandler: FsApiResponseHandler,
 
-    // Queue Limit
+    // Other callbacks
+    @Optional() @Inject(FS_API_RESPONSE_DATA_HANDLER)
+    private responseBodyHandler: FsApiResponseBodyHandler,
+  ) {
+    this.responseHandler = responseHandler ? responseHandler : new FsApiResponseHandler();
+    this.responseBodyHandler = responseBodyHandler ? responseBodyHandler : new FsApiResponseBodyHandler();
     this._queue.setLimit((this.config && this.config.maxFileConnections) || 5);
   }
 
@@ -138,8 +144,10 @@ export class FsApi {
 
       INTERCEPTORS.push(...this.httpInterceptors);
     }
+
     const handlers = [];
-    if (config.handlers && this.responseHandler) {
+    if (config.handlers) {
+      handlers.push(this.responseBodyHandler);
       handlers.push(this.responseHandler);
     }
 

@@ -22,6 +22,7 @@ export { BodyHandlerInterceptor } from './app/interceptors/body-handler.intercep
 export { ParamsHandlerInterceptor } from './app/interceptors/params-handler.interceptor';
 export { HeadersHandlerInterceptor } from './app/interceptors/headers-handler.interceptor';
 export { FsApiResponseHandler } from './app/handlers/response.handler';
+export { FsApiResponseBodyHandler } from './app/handlers/response-body.handler';
 export { RequestInterceptor } from './app/interceptors/base/request.interceptor';
 
 // Interfaces
