@@ -21,7 +21,7 @@ export class FsApiResponseBodyHandler implements FsApiBaseHander {
       }
     } else {
       if(typeof data === 'string') {
-        const match = data.match(/\d{4}-\d{2}-\d{2}(.*)/);
+        const match = data.match(/^\d{4}-\d{2}-\d{2}(.*)/);
 
         if(match) {
           data = match[1] ? parse(data) : parseLocal(data);
