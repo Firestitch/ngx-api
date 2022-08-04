@@ -7,7 +7,7 @@ import { FsApiBaseHander } from '../interfaces/handler.interface';
 export class FsApiResponseBodyHandler implements FsApiBaseHander {
 
   public success(event, config): void {
-    this.processData(event.body.data);
+    this.processData(event.body?.data);
   }
 
   public error(error, config): void {}
@@ -15,7 +15,7 @@ export class FsApiResponseBodyHandler implements FsApiBaseHander {
   public complete(config): void {}
 
   public processData(data): void {
-    if(data instanceof Object) {
+    if (data instanceof Object) {
       for (const key of Object.keys(data)) {
         data[key] = this.processData(data[key]);
       }
@@ -29,6 +29,6 @@ export class FsApiResponseBodyHandler implements FsApiBaseHander {
       }
     }
 
-    return data;    
+    return data;
   }
 }
