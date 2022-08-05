@@ -5,7 +5,6 @@ import {
   HttpRequest
 } from '@angular/common/http';
 
-import { forEach } from 'lodash-es';
 import { Observable } from 'rxjs';
 import { RequestInterceptor } from './base/request.interceptor';
 import { lookupBlob } from '../helpers/lookup-blob';
@@ -19,8 +18,9 @@ export class HeadersHandlerInterceptor extends RequestInterceptor {
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     let headers = new HttpHeaders();
 
-    forEach(this._config.headers, function(value, name) {
-      headers = headers.set(name, value);
+    Object.keys(this._config.headers)
+    .forEach((name) => {
+      headers = headers.set(name, this._config.headers[name]);
     });
 
     if (lookupBlob(this._data)) {

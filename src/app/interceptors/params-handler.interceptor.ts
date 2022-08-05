@@ -5,7 +5,6 @@ import {
   HttpRequest
 } from '@angular/common/http';
 
-import { forEach } from 'lodash-es';
 import { Observable } from 'rxjs';
 import { RequestInterceptor } from './base/request.interceptor';
 import { CustomParamsEncoder } from '../classes/params-encoder';

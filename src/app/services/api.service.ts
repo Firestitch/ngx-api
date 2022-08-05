@@ -14,7 +14,6 @@ import { Observable, of } from 'rxjs';
 import { map, tap, filter } from 'rxjs/operators';
 
 import { isDate, isValid, format } from 'date-fns';
-import { forEach, isObject } from 'lodash-es';
 
 import { FsApiConfig } from '../classes/api-config';
 import { RequestHandler } from '../classes/request-handler';
@@ -100,12 +99,9 @@ export class FsApi {
   }
 
   public request(method: string, url: string, data?: object, config?: RequestConfig): Observable<any> {
-
     config = Object.assign(new FsApiConfig(), this.apiConfig, config);
     method = method.toUpperCase();
-    data = Object.assign({}, data);
-
-    this._sanitize(data);
+    data = this._sanitize(data);
 
     if (method === 'GET') {
       config.query = data;
@@ -204,23 +200,23 @@ export class FsApi {
    *
    * @param obj
    */
-  private _sanitize(obj) {
-    const self = this;
-    forEach(obj, function (value, key) {
+  private _sanitize(obj, data = {}) {
+    Object.keys(obj)
+    .forEach((key) => {
+      const value = obj[key];
       if (isDate(value)) {
         if (isValid(value)) {
-          obj[key] = format(value, 'yyyy-MM-dd\'T\'HH:mm:ssxxx');
-        } else {
-          delete obj[key];
+          data[key] = format(value, 'yyyy-MM-dd\'T\'HH:mm:ssxxx');
         }
-      } else if (value === undefined) {
-        delete obj[key];
+      } else if (value !== undefined) {
+        data[key] = value;
 
-      } else if (isObject(value)) {
-        self._sanitize(value);
+        if (value instanceof Object) {
+          this._sanitize(value, data[key]);      
+        }
       }
     });
 
-    return obj;
+    return data;
   }
 }
