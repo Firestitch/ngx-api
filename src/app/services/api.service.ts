@@ -201,6 +201,10 @@ export class FsApi {
    * @param obj
    */
   private _sanitize(obj, data = {}) {
+    if(obj === null || typeof obj !== 'object') {
+      return obj;
+    }
+
     Object.keys(obj)
     .forEach((key) => {
       const value = obj[key];
