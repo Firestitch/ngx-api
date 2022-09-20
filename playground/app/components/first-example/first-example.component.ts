@@ -12,14 +12,21 @@ export class FirstExampleComponent {
   url = 'https://specify.dev.firestitch.com/api/dummy';
   constructor(private _api: FsApi) {}
 
-  uploadFiles(file: File) {
+  public uploadFiles(file: File) {
     this._api.post(this.url, { file: file })
     .subscribe(resp => {
     });
   }
 
   public post() {
-    const data = { object: { date: new Date() } };
+    const data = { 
+      string: 'Hello',
+      number: 5674325,
+      date: new Date(),
+      array: [1,2,3],
+      arrayObject: [{ id: 1 }, { id: 2 }],
+      object: { date: new Date() } 
+    };
     this._api.post(this.url, data)
     .subscribe(resp => {
       this.data = resp;

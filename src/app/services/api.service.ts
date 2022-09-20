@@ -208,15 +208,27 @@ export class FsApi {
     Object.keys(obj)
     .forEach((key) => {
       const value = obj[key];
-      if (isDate(value)) {
-        if (isValid(value)) {
-          data[key] = format(value, 'yyyy-MM-dd\'T\'HH:mm:ssxxx');
-        }
-      } else if (value !== undefined) {
-        data[key] = value;
+      if (value !== undefined) {
+        if (isDate(value)) {
+          if (isValid(value)) {
+            data[key] = format(value, 'yyyy-MM-dd\'T\'HH:mm:ssxxx');
+          } 
+        } else if (Array.isArray(value)) {
+          data[key] = [
+            ...value
+          ];
 
-        if (value instanceof Object) {
-          this._sanitize(value, data[key]);      
+          this._sanitize(value, data[key]);   
+        } else if(value instanceof Blob) {
+          data[key] = value;
+        } else if (value instanceof Object) {
+          data[key] = {
+            ...value
+          };
+
+          this._sanitize(value, data[key]);
+        } else {
+          data[key] = value;
         }
       }
     });

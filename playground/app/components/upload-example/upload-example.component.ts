@@ -16,9 +16,15 @@ export class UploadExampleComponent {
 
   public upload() {
 
-    const data = { object: { date: new Date() }, file: null };
+    const data = { 
+      objectFile: { file: null }, 
+      object: { date: new Date() }, 
+      file: null 
+    };
+
     this.files.forEach((fsFile, index) => {
       data.file = fsFile.file;
+      data.objectFile.file = fsFile.file;
 
       fsFile.obserable = this._api.post(this.url, data, { reportProgress: true })
       .subscribe(event => {
