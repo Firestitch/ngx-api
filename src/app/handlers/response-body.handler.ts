@@ -21,10 +21,11 @@ export class FsApiResponseBodyHandler implements FsApiBaseHander {
       }
     } else {
       if(typeof data === 'string') {
-        const match = data.match(/^\d{4}-\d{2}-\d{2}(.*)/);
+        const match = data.match(/(^\d{4}-\d{2}-\d{2})([T]\d{2}:\d{2}:\d{2})?([+-]\d{2}:\d{2}|\.\d{3}Z)?$/);
 
         if(match) {
-          data = match[1] ? parse(data) : parseLocal(data);
+          data = match[3] ? parse(data) : parseLocal(data);
+          console.log(data);
         }
       }
     }
