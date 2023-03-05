@@ -18,8 +18,8 @@ export function objectToFormData(target, formData = new FormData(), namespace = 
     if (item && typeof item === 'object' && !isBlob) {
       objectToFormData(item, formData, formKey, level)
     } else {
-      if (isBlob && item && item.name) {
-        formData.append(formKey, item, item.name);
+      if (isBlob && item && (item as any).name) {
+        formData.append(formKey, item, (item as any).name);
       } else {
         formData.append(formKey, item);
       }
