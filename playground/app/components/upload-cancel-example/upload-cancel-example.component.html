@@ -1,6 +1,6 @@
 
 <div class="buttons">
-  <fs-file (select)="select($event)" multiple="false">
+  <fs-file (select)="select($event)" [multiple]="false">
     <button mat-raised-button color="primary">Select File</button>
   </fs-file>
   <button mat-raised-button color="primary" (click)="upload()">Upload</button>
