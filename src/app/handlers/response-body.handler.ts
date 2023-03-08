@@ -25,7 +25,6 @@ export class FsApiResponseBodyHandler implements FsApiBaseHander {
 
         if(match) {
           data = match[3] ? parse(data) : parseLocal(data);
-          console.log(data);
         }
       }
     }
