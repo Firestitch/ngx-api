@@ -12,4 +12,5 @@ export interface RequestConfig {
   responseType?:  ResponseType;
   cache?: boolean;
   customQueue?: Queue;
+  data?: any;
 }

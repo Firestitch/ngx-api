@@ -15,6 +15,7 @@ export class FsApiConfig {
   public reportProgress = false;
   public responseType: ResponseType = ResponseType.Json;
   public customQueue: Queue;
+  public data: any;
 
   constructor(@Optional() @Inject('FsApiConfig') private config?: any) {
     Object.assign(this, config || {});
