@@ -30,3 +30,6 @@ export { IModuleConfig } from './app/interfaces/module-config.interface';
 export { RequestConfig } from './app/interfaces/request-config.interface';
 export { FsApiBaseHander } from './app/interfaces/handler.interface';
 export { ResponseType } from './app/enums/response-type.enum';
+
+export { FsApiImageDirective } from './app/directives';
+export { FsApiImagePipe } from './app/pipes';

@@ -36,6 +36,7 @@ import { IModuleConfig } from '../interfaces/module-config.interface';
 import { RequestConfig } from '../interfaces';
 import { FsApiBaseHander } from '../interfaces/handler.interface';
 import { ApiCache } from '../classes/api-cache';
+import { FsApiFile } from '../classes';
 
 
 @Injectable()
@@ -74,11 +75,15 @@ export class FsApi {
     this._queue.setLimit((this.config && this.config.maxFileConnections) || 5);
   }
 
-  get queue() {
+  public createApiFile(url: string) {
+    return new FsApiFile(this, url);
+  }
+
+  public get queue() {
     return this._queue;
   }
 
-  get cache() {
+  public get cache() {
     return this._cache;
   }
 

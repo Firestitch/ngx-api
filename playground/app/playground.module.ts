@@ -29,6 +29,7 @@ import {
 } from './interceptors';
 import { ResponseHandler } from './interceptors/response.handler';
 import { DownloadBlobComponent } from './components/download-blob/download-blob.component';
+import { ImageComponent } from './components';
 
 @NgModule({
   bootstrap: [ AppComponent ],
@@ -55,6 +56,7 @@ import { DownloadBlobComponent } from './components/download-blob/download-blob.
     SingleUploadComponent,
     UploadCancelExampleComponent,
     DownloadBlobComponent,
+    ImageComponent,
   ],
   providers: [
     TestService,

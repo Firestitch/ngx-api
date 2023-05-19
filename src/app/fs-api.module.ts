@@ -6,6 +6,8 @@ import { FS_API_CONFIG } from './fs-api-providers';
 import { FsApi } from './services/api.service';
 import { FsApiConfig } from './classes/api-config';
 import { IModuleConfig } from './interfaces/module-config.interface';
+import { FsApiImageDirective } from './directives';
+import { FsApiImagePipe } from './pipes';
 
 
 @NgModule({
@@ -13,14 +15,20 @@ import { IModuleConfig } from './interfaces/module-config.interface';
     CommonModule,
     HttpClientModule
   ],
-  declarations: [],
+  declarations: [
+    FsApiImageDirective,
+    FsApiImagePipe,
+  ],
   providers: [
     FsApi,
     FsApiConfig,
     HttpXhrBackend,
     { provide: HttpBackend, useExisting: HttpXhrBackend },
   ],
-  exports: []
+  exports: [
+    FsApiImageDirective,
+    FsApiImagePipe,
+  ]
 })
 export class FsApiModule {
   static forRoot(config: IModuleConfig = {}): ModuleWithProviders<FsApiModule> {
