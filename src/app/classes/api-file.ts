@@ -18,7 +18,7 @@ export class FsApiFile {
     
     if(!this._name) {
       this._name = (url || '').replace(/\?.*/, '');
-      this._name.substring(this._name.lastIndexOf('/') + 1);
+      this._name = this._name.substring(this._name.lastIndexOf('/') + 1);
     }
   }
   

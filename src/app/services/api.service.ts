@@ -75,8 +75,8 @@ export class FsApi {
     this._queue.setLimit((this.config && this.config.maxFileConnections) || 5);
   }
 
-  public createApiFile(url: string) {
-    return new FsApiFile(this, url);
+  public createApiFile(url: string, filename?: string) {
+    return new FsApiFile(this, url, filename);
   }
 
   public get queue() {
