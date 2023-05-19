@@ -11,11 +11,19 @@ export class FsApiFile {
   private _api: FsApi;
   private _name: string;
 
-  public constructor(api: FsApi, url: string) {
+  public constructor(api: FsApi, url: string, filename?: string) {
     this._url = url;
     this._api = api;
-    this._name = (url || '').replace(/\?.*/, '');
-    this._name.substring(this._name.lastIndexOf('/') + 1);
+    this._name = filename;
+    
+    if(!this._name) {
+      this._name = (url || '').replace(/\?.*/, '');
+      this._name.substring(this._name.lastIndexOf('/') + 1);
+    }
+  }
+  
+  public get name(): string {
+    return this._name;
   }
 
   public get blob(): Observable<Blob> {
