@@ -37,6 +37,7 @@ import { RequestConfig } from '../interfaces';
 import { FsApiBaseHander } from '../interfaces/handler.interface';
 import { ApiCache } from '../classes/api-cache';
 import { FsApiFile } from '../classes';
+import { DomSanitizer } from '@angular/platform-browser';
 
 
 @Injectable()
@@ -48,8 +49,9 @@ export class FsApi {
   private _cache = new ApiCache();
 
   constructor(
-    private apiConfig: FsApiConfig,
-    private http: HttpXhrBackend,
+    private _apiConfig: FsApiConfig,
+    private _http: HttpXhrBackend,
+    private _sanitizer: DomSanitizer,
     // Custom interceptors
     @Optional() @Inject(FS_API_CONFIG)
     private config: IModuleConfig,
@@ -87,6 +89,10 @@ export class FsApi {
     return this._cache;
   }
 
+  public get sanitizer(): DomSanitizer {
+    return this._sanitizer;
+  }
+
   public get(url, query?, config?: RequestConfig) {
     return this.request('GET', url, query, config);
   }
@@ -104,7 +110,7 @@ export class FsApi {
   }
 
   public request(method: string, url: string, data?: object, config?: RequestConfig): Observable<any> {
-    config = Object.assign(new FsApiConfig(), this.apiConfig, config);
+    config = Object.assign(new FsApiConfig(), this._apiConfig, config);
     method = method.toUpperCase();
     data = this._sanitize(data);
 
@@ -159,7 +165,7 @@ export class FsApi {
 
     // Executing of interceptors
     const handlersChain = INTERCEPTORS.reduceRight(
-      (next: any, interceptor: any) => new RequestHandler(next, interceptor), this.http);
+      (next: any, interceptor: any) => new RequestHandler(next, interceptor), this._http);
 
     // Do request and process the answer
     const chainedRequest = handlersChain.handle(request)

@@ -3,6 +3,7 @@ import { Observable } from "rxjs";
 import { FsApi } from "../services";
 import { ResponseType } from "../enums";
 import { map } from "rxjs/operators";
+import { SafeUrl } from "@angular/platform-browser";
 
 
 export class FsApiFile {
@@ -35,6 +36,14 @@ export class FsApiFile {
     return this.blob
       .pipe(
         map((blob) => URL.createObjectURL(blob))
+      );
+  }
+
+  public get safeDataUrl(): SafeUrl {
+    return this.blob
+      .pipe(
+        map((blob) => URL.createObjectURL(blob)),
+        map((data) => this._api.sanitizer.bypassSecurityTrustUrl(data))
       );
   }
 
