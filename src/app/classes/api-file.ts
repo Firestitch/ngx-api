@@ -2,7 +2,7 @@ import { Observable } from "rxjs";
 
 import { FsApi } from "../services";
 import { ResponseType } from "../enums";
-import { map } from "rxjs/operators";
+import { map, switchMap } from "rxjs/operators";
 import { SafeUrl } from "@angular/platform-browser";
 
 
@@ -39,7 +39,30 @@ export class FsApiFile {
       );
   }
 
-  public get safeDataUrl(): SafeUrl {
+  public get base64(): Observable<string> {
+    return this.blob
+      .pipe(
+       switchMap((blob) => new Observable<string>((observer) => {
+        const reader = new FileReader();
+          reader.readAsDataURL(blob);
+          reader.onload = () => {
+            observer.next(reader.result as string);
+            observer.complete();
+          };
+          reader.onerror = error => observer.error(error);
+        })
+       )
+      );
+  }
+
+  public get safeBase64Url(): Observable<SafeUrl> {
+    return this.base64
+      .pipe(
+        map((data) => this._api.sanitizer.bypassSecurityTrustUrl(data))
+      );
+  }
+
+  public get safeDataUrl(): Observable<SafeUrl> {
     return this.blob
       .pipe(
         map((blob) => URL.createObjectURL(blob)),

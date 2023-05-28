@@ -18,9 +18,6 @@ export class FsApiImagePipe implements PipeTransform {
 
   public transform(url: string) {    
     return this._api.createApiFile(url)
-      .dataUrl
-        .pipe(
-          map((data) => this._sanitizer.bypassSecurityTrustUrl(data)) 
-        );
+      .safeDataUrl;
   }
 }

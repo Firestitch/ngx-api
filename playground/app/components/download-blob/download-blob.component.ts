@@ -9,18 +9,14 @@ import { DomSanitizer } from '@angular/platform-browser';
 })
 export class DownloadBlobComponent {
 
-  public src;
+  public apiFile;
 
   constructor(
     private _api: FsApi,
-    private _sanitizer: DomSanitizer,
   ) {}
 
   public download() {
     const url = '/assets/dog-puppy-on-garden-royalty-free-image-1586966191.jpg';
-    this._api.get(url, {}, { handlers: false, responseType: ResponseType.Blob })
-      .subscribe((blob) => {
-        this.src = this._sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(blob));
-      });
+    this.apiFile = this._api.createApiFile(url);
   }
 }

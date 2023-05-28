@@ -1,6 +1,12 @@
 
-<img [src]="url | fsApiImage | async">
+<div>Blob Url</div>
+<img [src]="safeDataUrl | async" width="400">
 <br><br>
+
+<div>Base64 Url</div>
+<img [src]="safeBase64Url | async" width="400">
+<br><br>
+
 <button
     mat-raised-button
     color="primary"
