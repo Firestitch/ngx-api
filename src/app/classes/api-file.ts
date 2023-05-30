@@ -32,7 +32,7 @@ export class FsApiFile {
       .get(this._url, {}, { handlers: false, responseType: ResponseType.Blob });
   }
 
-  public get dataUrl(): Observable<string> {
+  public get blobUrl(): Observable<string> {
     return this.blob
       .pipe(
         map((blob) => URL.createObjectURL(blob))
@@ -71,7 +71,7 @@ export class FsApiFile {
   }
 
   public download(name?: string): void {
-    this.dataUrl
+    this.blobUrl
       .subscribe((objectUrl) => {
         const a = document.createElement('a');
         document.body.appendChild(a);

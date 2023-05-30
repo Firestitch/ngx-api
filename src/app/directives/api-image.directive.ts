@@ -24,7 +24,7 @@ export class FsApiImageDirective implements OnInit {
   public ngOnInit(): void {
     const file = this._api.createApiFile(this.url);
 
-    file.dataUrl
+    file.blobUrl
       .subscribe((data) => {
         this._el.nativeElement.setAttribute('src', data);
         this._el.nativeElement.style.display = this.display;

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 import { FsApi, ResponseType } from '@firestitch/api';
-import { DomSanitizer } from '@angular/platform-browser';
+
 
 @Component({
   selector: 'download-blob',

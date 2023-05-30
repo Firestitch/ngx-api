@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { SafeHtml, SafeUrl } from '@angular/platform-browser';
+import { SafeUrl } from '@angular/platform-browser';
 import { FsApi } from '@firestitch/api';
-import { FsApiFile } from 'package/public_api';
 import { Observable } from 'rxjs';
 
 
