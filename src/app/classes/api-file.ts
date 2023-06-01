@@ -4,6 +4,7 @@ import { FsApi } from "../services";
 import { ResponseType } from "../enums";
 import { map, switchMap } from "rxjs/operators";
 import { SafeUrl } from "@angular/platform-browser";
+import { HttpResponse } from "@angular/common/http";
 
 
 export class FsApiFile {
@@ -30,6 +31,27 @@ export class FsApiFile {
   public get blob(): Observable<Blob> {
     return this._api
       .get(this._url, {}, { handlers: false, responseType: ResponseType.Blob });
+  }
+
+  public get file(): Observable<File> {
+    return this._api
+      .get(this._url, {}, { handlers: false, responseType: ResponseType.Blob, mapHttpResponseBody: false })
+      .pipe(
+        map((event: HttpResponse<any>) => {
+          let filename = (event.headers.getAll('Content-Disposition') || [])
+            .reduce((accum, item) => {
+              const matches = item.match(/filename="([^"]+)"/);
+              return matches ? matches[1] : accum;
+            }, '');
+
+          if(!filename) {
+            const url = new URL(event.url);
+            filename = url.pathname.split('/').pop();
+          }
+
+          return new File([event.body], filename);
+        })
+      );
   }
 
   public get blobUrl(): Observable<string> {
@@ -71,13 +93,17 @@ export class FsApiFile {
   }
 
   public download(name?: string): void {
-    this.blobUrl
-      .subscribe((objectUrl) => {
+    this.file
+      .subscribe((file: File) => {
         const a = document.createElement('a');
         document.body.appendChild(a);
         a.style.display = 'none';
-        a.href = objectUrl;
-        a.download = name ? name : this._name;
+        a.href = URL.createObjectURL(file);
+        name = name ? name : file.name
+        if(name) {
+          a.download = name;
+        }
+
         a.click();
       });
   }

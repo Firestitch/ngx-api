@@ -181,7 +181,7 @@ export class FsApi {
           }
         }),
         map((event: HttpEvent<any>) => {
-          return (event.type === HttpEventType.Response) ? event.body : event;
+          return ((config.mapHttpResponseBody ?? true) && event.type === HttpEventType.Response) ? event.body : event;
         }),
         tap({
           error: (err) => {
