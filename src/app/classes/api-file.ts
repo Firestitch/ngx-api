@@ -3,7 +3,7 @@ import { Observable } from "rxjs";
 import { FsApi } from "../services";
 import { ResponseType } from "../enums";
 import { map, switchMap } from "rxjs/operators";
-import { SafeUrl } from "@angular/platform-browser";
+import { SafeResourceUrl, SafeUrl } from "@angular/platform-browser";
 import { HttpResponse } from "@angular/common/http";
 
 
@@ -81,6 +81,14 @@ export class FsApiFile {
     return this.base64
       .pipe(
         map((data) => this._api.sanitizer.bypassSecurityTrustUrl(data))
+      );
+  }
+
+
+  public get safeBase64ResourceUrl(): Observable<SafeResourceUrl> {
+    return this.base64
+      .pipe(
+        map((data) => this._api.sanitizer.bypassSecurityTrustResourceUrl(data))
       );
   }
 
