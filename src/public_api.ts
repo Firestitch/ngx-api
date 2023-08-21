@@ -31,3 +31,5 @@ export { ResponseType } from './app/enums/response-type.enum';
 
 export { FsApiImageDirective } from './app/directives';
 export { FsApiImagePipe } from './app/pipes';
+
+export { DisplayApiError } from './app/consts';
