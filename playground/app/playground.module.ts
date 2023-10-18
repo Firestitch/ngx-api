@@ -3,36 +3,34 @@ import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import { FsExampleModule } from '@firestitch/example';
-import { FsFileModule } from '@firestitch/file';
-import { FsMessageModule, FsMessage } from '@firestitch/message';
-import { FsCommonModule } from '@firestitch/common';
 import {
-  FsApiModule,
   FS_API_REQUEST_INTERCEPTOR,
   FS_API_RESPONSE_HANDLER,
+  FsApiModule,
 } from '@firestitch/api';
-
-import { ToastrModule } from 'ngx-toastr';
+import { FsCommonModule } from '@firestitch/common';
+import { FsExampleModule } from '@firestitch/example';
+import { FsFileModule } from '@firestitch/file';
+import { FsMessage, FsMessageModule } from '@firestitch/message';
 
 import { AppComponent } from './app.component';
-import { AppMaterialModule } from './material.module';
 import { FirstExampleComponent } from './components/first-example/first-example.component';
-import { UploadExampleComponent } from './components/upload-example/upload-example.component';
 import { SingleUploadComponent } from './components/single-upload/single-upload.component';
 import { UploadCancelExampleComponent } from './components/upload-cancel-example/upload-cancel-example.component';
+import { UploadExampleComponent } from './components/upload-example/upload-example.component';
+import { AppMaterialModule } from './material.module';
 
-import { TestService } from './services/test.service';
+import { ImageComponent } from './components';
+import { DownloadBlobComponent } from './components/download-blob/download-blob.component';
 import {
   AlertInterceptorFactory,
   TokenInterceptorFactory
 } from './interceptors';
 import { ResponseHandler } from './interceptors/response.handler';
-import { DownloadBlobComponent } from './components/download-blob/download-blob.component';
-import { ImageComponent } from './components';
+import { TestService } from './services/test.service';
 
 @NgModule({
-  bootstrap: [ AppComponent ],
+  bootstrap: [AppComponent],
   imports: [
     BrowserModule,
     FsApiModule.forRoot({
@@ -45,7 +43,6 @@ import { ImageComponent } from './components';
     FsFileModule.forRoot(),
     FsCommonModule,
     FsMessageModule.forRoot(),
-    ToastrModule.forRoot({ preventDuplicates: true }),
   ],
   entryComponents: [
   ],
@@ -60,11 +57,11 @@ import { ImageComponent } from './components';
   ],
   providers: [
     TestService,
-    { provide: FS_API_REQUEST_INTERCEPTOR, useFactory: AlertInterceptorFactory, deps: [ FsMessage ], multi: true },
+    { provide: FS_API_REQUEST_INTERCEPTOR, useFactory: AlertInterceptorFactory, deps: [FsMessage], multi: true },
     { provide: FS_API_REQUEST_INTERCEPTOR, useFactory: TokenInterceptorFactory, multi: true },
-    { provide: FS_API_RESPONSE_HANDLER, useClass: ResponseHandler, deps: [ FsMessage ] }
+    { provide: FS_API_RESPONSE_HANDLER, useClass: ResponseHandler, deps: [FsMessage] }
   ],
 })
 export class PlaygroundModule {
-  constructor() {}
+  constructor() { }
 }
