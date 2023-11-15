@@ -1,12 +1,14 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { SafeUrl } from '@angular/platform-browser';
+
 import { FsApi } from '@firestitch/api';
+
 import { Observable } from 'rxjs';
 
 
 @Component({
   selector: 'app-image',
-  templateUrl: 'image.component.html',
+  templateUrl: './image.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ImageComponent {
@@ -16,8 +18,8 @@ export class ImageComponent {
   public safeBase64Url: Observable<SafeUrl>;
 
 
-  public constructor(
-    private _api: FsApi
+  constructor(
+    private _api: FsApi,
   ) {
     this.safeDataUrl = this._api.createApiFile(this.url).safeDataUrl;
     this.safeBase64Url = this._api.createApiFile(this.url).safeBase64Url;

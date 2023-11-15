@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
 
 import {
   FS_API_REQUEST_INTERCEPTOR,
@@ -13,20 +13,21 @@ import { FsExampleModule } from '@firestitch/example';
 import { FsFileModule } from '@firestitch/file';
 import { FsMessage, FsMessageModule } from '@firestitch/message';
 
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
 import { AppComponent } from './app.component';
+import { ImageComponent } from './components';
+import { DownloadBlobComponent } from './components/download-blob/download-blob.component';
 import { FirstExampleComponent } from './components/first-example/first-example.component';
 import { SingleUploadComponent } from './components/single-upload/single-upload.component';
 import { UploadCancelExampleComponent } from './components/upload-cancel-example/upload-cancel-example.component';
 import { UploadExampleComponent } from './components/upload-example/upload-example.component';
-import { AppMaterialModule } from './material.module';
-
-import { ImageComponent } from './components';
-import { DownloadBlobComponent } from './components/download-blob/download-blob.component';
 import {
   AlertInterceptorFactory,
-  TokenInterceptorFactory
+  TokenInterceptorFactory,
 } from './interceptors';
 import { ResponseHandler } from './interceptors/response.handler';
+import { AppMaterialModule } from './material.module';
 import { TestService } from './services/test.service';
 
 @NgModule({
@@ -59,7 +60,7 @@ import { TestService } from './services/test.service';
     TestService,
     { provide: FS_API_REQUEST_INTERCEPTOR, useFactory: AlertInterceptorFactory, deps: [FsMessage], multi: true },
     { provide: FS_API_REQUEST_INTERCEPTOR, useFactory: TokenInterceptorFactory, multi: true },
-    { provide: FS_API_RESPONSE_HANDLER, useClass: ResponseHandler, deps: [FsMessage] }
+    { provide: FS_API_RESPONSE_HANDLER, useClass: ResponseHandler, deps: [FsMessage] },
   ],
 })
 export class PlaygroundModule {

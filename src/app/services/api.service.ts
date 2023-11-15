@@ -1,50 +1,48 @@
 import { Inject, Injectable, Optional } from '@angular/core';
-import {
-  HttpRequest,
-  HttpEventType,
-  HttpXhrBackend,
-  HttpEvent,
-  HttpResponse,
-  HTTP_INTERCEPTORS,
-} from '@angular/common/http';
+import { DomSanitizer } from '@angular/platform-browser';
 
 import { Queue } from '@firestitch/common';
 
+
 import { Observable, of } from 'rxjs';
-import { map, tap, filter } from 'rxjs/operators';
+import { filter, map, tap } from 'rxjs/operators';
 
-import { isDate, isValid, format } from 'date-fns';
+import {
+  HTTP_INTERCEPTORS,
+  HttpEvent,
+  HttpEventType,
+  HttpRequest,
+  HttpResponse,
+  HttpXhrBackend,
+} from '@angular/common/http';
+import { format, isDate, isValid } from 'date-fns';
 
+import { FsApiFile } from '../classes';
+import { ApiCache } from '../classes/api-cache';
 import { FsApiConfig } from '../classes/api-config';
 import { RequestHandler } from '../classes/request-handler';
-
-import { HeadersHandlerInterceptor } from '../interceptors/headers-handler.interceptor';
-import { BodyHandlerInterceptor } from '../interceptors/body-handler.interceptor';
-import { ParamsHandlerInterceptor} from '../interceptors/params-handler.interceptor';
-
 import {
   FS_API_CONFIG,
   FS_API_REQUEST_INTERCEPTOR,
-  FS_API_RESPONSE_HANDLER,
   FS_API_RESPONSE_DATA_HANDLER,
+  FS_API_RESPONSE_HANDLER,
 } from '../fs-api-providers';
-
-import { FsApiResponseHandler } from '../handlers/response.handler';
-import { FsApiResponseBodyHandler } from '../handlers/response-body.handler';
 import { FsApiCacheHandler } from '../handlers/cache.handler';
-import { IModuleConfig } from '../interfaces/module-config.interface';
+import { FsApiResponseBodyHandler } from '../handlers/response-body.handler';
+import { FsApiResponseHandler } from '../handlers/response.handler';
+import { BodyHandlerInterceptor } from '../interceptors/body-handler.interceptor';
+import { HeadersHandlerInterceptor } from '../interceptors/headers-handler.interceptor';
+import { ParamsHandlerInterceptor } from '../interceptors/params-handler.interceptor';
 import { RequestConfig } from '../interfaces';
 import { FsApiBaseHander } from '../interfaces/handler.interface';
-import { ApiCache } from '../classes/api-cache';
-import { FsApiFile } from '../classes';
-import { DomSanitizer } from '@angular/platform-browser';
+import { IModuleConfig } from '../interfaces/module-config.interface';
 
 
 @Injectable()
 export class FsApi {
 
   public events = [];
-  
+
   private readonly _queue = new Queue(5);
   private _cache = new ApiCache();
 
@@ -127,9 +125,9 @@ export class FsApi {
     }
 
     // Create clear request
-    const request = new HttpRequest((method as any), url, null, { 
-      responseType: config.responseType, 
-      context: config.context 
+    const request = new HttpRequest((method as any), url, null, {
+      responseType: config.responseType,
+      context: config.context,
     });
 
     const INTERCEPTORS: any = [
@@ -193,20 +191,22 @@ export class FsApi {
             handlers.forEach((handler: FsApiBaseHander) => {
               handler.complete(config);
             });
-          }
-        })
+          },
+        }),
       );
 
     // Depends on encoding will send in queue or raw
     if (config.encoding === 'formdata') {
       if (config.customQueue) {
         return config.customQueue.push(chainedRequest);
-      } else {
-        return this._queue.push(chainedRequest);
       }
-    } else {
-      return chainedRequest;
+
+      return this._queue.push(chainedRequest);
+
     }
+
+    return chainedRequest;
+
   }
 
   /**
@@ -215,37 +215,37 @@ export class FsApi {
    * @param obj
    */
   private _sanitize(obj, data = {}) {
-    if(obj === null || typeof obj !== 'object') {
+    if (obj === null || typeof obj !== 'object') {
       return obj;
     }
 
     Object.keys(obj)
-    .forEach((key) => {
-      const value = obj[key];
-      if (value !== undefined) {
-        if (isDate(value)) {
-          if (isValid(value)) {
-            data[key] = format(value, 'yyyy-MM-dd\'T\'HH:mm:ssxxx');
-          } 
-        } else if (Array.isArray(value)) {
-          data[key] = [
-            ...value
-          ];
+      .forEach((key) => {
+        const value = obj[key];
+        if (value !== undefined) {
+          if (isDate(value)) {
+            if (isValid(value)) {
+              data[key] = format(value, 'yyyy-MM-dd\'T\'HH:mm:ssxxx');
+            }
+          } else if (Array.isArray(value)) {
+            data[key] = [
+              ...value,
+            ];
 
-          this._sanitize(value, data[key]);   
-        } else if(value instanceof Blob) {
-          data[key] = value;
-        } else if (value instanceof Object) {
-          data[key] = {
-            ...value
-          };
+            this._sanitize(value, data[key]);
+          } else if (value instanceof Blob) {
+            data[key] = value;
+          } else if (value instanceof Object) {
+            data[key] = {
+              ...value,
+            };
 
-          this._sanitize(value, data[key]);
-        } else {
-          data[key] = value;
+            this._sanitize(value, data[key]);
+          } else {
+            data[key] = value;
+          }
         }
-      }
-    });
+      });
 
     return data;
   }

@@ -1,22 +1,27 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
-import { FsApi, ResponseType } from '@firestitch/api';
+import { FsApi } from '@firestitch/api';
 
 
 @Component({
   selector: 'download-blob',
-  templateUrl: 'download-blob.component.html'
+  templateUrl: './download-blob.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DownloadBlobComponent {
 
-  public apiFile;
-
   constructor(
     private _api: FsApi,
-  ) {}
+  ) { }
 
-  public download() {
+  public downloadUrl() {
     const url = '/assets/dog-puppy-on-garden-royalty-free-image-1586966191.jpg';
-    this.apiFile = this._api.createApiFile(url);
+    this._api.createApiFile(url)
+      .download();
+  }
+
+  public downloadApi() {
+    this._api.createApiFile('https://specify.dev.firestitch.com/api/dummy/download')
+      .download();
   }
 }
