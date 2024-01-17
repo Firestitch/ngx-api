@@ -1,19 +1,20 @@
-import { HttpBackend, HttpClientModule, HttpXhrBackend } from '@angular/common/http';
-import { NgModule, ModuleWithProviders } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ModuleWithProviders, NgModule } from '@angular/core';
 
-import { FS_API_CONFIG } from './fs-api-providers';
-import { FsApi } from './services/api.service';
+import { HttpBackend, HttpClientModule, HttpXhrBackend } from '@angular/common/http';
+
 import { FsApiConfig } from './classes/api-config';
-import { IModuleConfig } from './interfaces/module-config.interface';
 import { FsApiImageDirective } from './directives';
+import { FS_API_CONFIG } from './fs-api-providers';
+import { IModuleConfig } from './interfaces/module-config.interface';
 import { FsApiImagePipe } from './pipes';
+import { FsApi } from './services/api.service';
 
 
 @NgModule({
   imports: [
     CommonModule,
-    HttpClientModule
+    HttpClientModule,
   ],
   declarations: [
     FsApiImageDirective,
@@ -28,17 +29,17 @@ import { FsApiImagePipe } from './pipes';
   exports: [
     FsApiImageDirective,
     FsApiImagePipe,
-  ]
+  ],
 })
 export class FsApiModule {
-  static forRoot(config: IModuleConfig = {}): ModuleWithProviders<FsApiModule> {
+  public static forRoot(config: IModuleConfig = {}): ModuleWithProviders<FsApiModule> {
     return {
       ngModule: FsApiModule,
       providers: [
         { provide: FS_API_CONFIG, useValue: config },
         FsApiConfig,
         FsApi,
-      ]
+      ],
     };
   }
 }

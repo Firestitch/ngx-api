@@ -45,6 +45,8 @@ export class FsApi {
 
   private readonly _queue = new Queue(5);
   private _cache = new ApiCache();
+  private _responseHandlers = [new FsApiResponseHandler()];
+  private _responseBodyHandlers = [new FsApiResponseBodyHandler()];
 
   constructor(
     private _apiConfig: FsApiConfig,
@@ -52,27 +54,37 @@ export class FsApi {
     private _sanitizer: DomSanitizer,
     // Custom interceptors
     @Optional() @Inject(FS_API_CONFIG)
-    private config: IModuleConfig,
+    private _config: IModuleConfig,
 
     // Custom interceptors
     @Optional() @Inject(HTTP_INTERCEPTORS)
-    private httpInterceptors,
+    private _httpInterceptors,
 
     // Custom interceptors
     @Optional() @Inject(FS_API_REQUEST_INTERCEPTOR)
-    private requestInterceptors,
+    private _requestInterceptors,
 
     // Other callbacks
     @Optional() @Inject(FS_API_RESPONSE_HANDLER)
-    private responseHandler: FsApiResponseHandler,
+    private _responseHandler: FsApiResponseHandler,
 
     // Other callbacks
     @Optional() @Inject(FS_API_RESPONSE_DATA_HANDLER)
-    private responseBodyHandler: FsApiResponseBodyHandler,
+    private _responseBodyHandler: FsApiResponseBodyHandler,
   ) {
-    this.responseHandler = responseHandler ? responseHandler : new FsApiResponseHandler();
-    this.responseBodyHandler = responseBodyHandler ? responseBodyHandler : new FsApiResponseBodyHandler();
-    this._queue.setLimit((this.config && this.config.maxFileConnections) || 5);
+    if(_responseHandler) {
+      this._responseHandlers = Array.isArray(_responseHandler) ?
+        _responseHandler :
+        [_responseHandler];
+    }
+
+    if(_responseBodyHandler) {
+      this._responseBodyHandlers = Array.isArray(_responseBodyHandler) ?
+        _responseBodyHandler :
+        [_responseBodyHandler];
+    }
+
+    this._queue.setLimit((this._config && this._config.maxFileConnections) || 5);
   }
 
   public createApiFile(url: string, filename?: string) {
@@ -91,19 +103,19 @@ export class FsApi {
     return this._sanitizer;
   }
 
-  public get(url, query?, config?: RequestConfig) {
+  public get(url, query?: any, config?: RequestConfig) {
     return this.request('GET', url, query, config);
   }
 
-  public post(url, data?: object, config?: RequestConfig): Observable<any> {
+  public post(url, data?: any, config?: RequestConfig): Observable<any> {
     return this.request('POST', url, data, config);
   }
 
-  public put(url, data?: object, config?: RequestConfig): Observable<any> {
+  public put(url, data?: any, config?: RequestConfig): Observable<any> {
     return this.request('PUT', url, data, config);
   }
 
-  public delete(url, data?: object, config?: RequestConfig): Observable<any> {
+  public delete(url, data?: any, config?: RequestConfig): Observable<any> {
     return this.request('DELETE', url, data, config);
   }
 
@@ -139,24 +151,24 @@ export class FsApi {
     if (config.interceptors) {
 
       // Add custom interceptors into chain
-      if (Array.isArray(this.requestInterceptors)) {
-        const interceptors = this.requestInterceptors
+      if (Array.isArray(this._requestInterceptors)) {
+        const interceptors = this._requestInterceptors
           .map((interceptor) => interceptor(config, data));
 
         INTERCEPTORS.push(...interceptors);
-      } else if (this.requestInterceptors) {
-        const interceptor = this.requestInterceptors(config, data);
+      } else if (this._requestInterceptors) {
+        const interceptor = this._requestInterceptors(config, data);
 
         INTERCEPTORS.push(interceptor);
       }
 
-      INTERCEPTORS.push(...this.httpInterceptors);
+      INTERCEPTORS.push(...this._httpInterceptors);
     }
 
     const handlers = [];
     if (config.handlers) {
-      handlers.push(this.responseBodyHandler);
-      handlers.push(this.responseHandler);
+      handlers.push(...this._responseBodyHandlers);
+      handlers.push(...this._responseHandlers);
     }
 
     handlers.push(new FsApiCacheHandler(this._cache));
@@ -202,11 +214,9 @@ export class FsApi {
       }
 
       return this._queue.push(chainedRequest);
-
     }
 
     return chainedRequest;
-
   }
 
   /**

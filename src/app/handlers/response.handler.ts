@@ -11,7 +11,11 @@ export class FsApiResponseHandler implements FsApiBaseHander {
     }
   }
 
-  public error(error, config): void {}
+  public error(error, config): void {
+    //
+  }
 
-  public complete(config): void {}
+  public complete(config): void {
+    //
+  }
 }

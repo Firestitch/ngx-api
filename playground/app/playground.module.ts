@@ -30,6 +30,7 @@ import { ResponseHandler } from './interceptors/response.handler';
 import { AppMaterialModule } from './material.module';
 import { TestService } from './services/test.service';
 
+
 @NgModule({
   bootstrap: [AppComponent],
   imports: [
@@ -44,8 +45,6 @@ import { TestService } from './services/test.service';
     FsFileModule.forRoot(),
     FsCommonModule,
     FsMessageModule.forRoot(),
-  ],
-  entryComponents: [
   ],
   declarations: [
     AppComponent,
