@@ -24,6 +24,7 @@ export { ResponseType, StreamEventType } from './app/enums';
 export { FsApiBaseHander, IModuleConfig, RequestConfig } from './app/interfaces';
 export { StreamEvent } from './app/types';
 
+export { FsApiConfig } from './app/classes';
 export { FsApiImageDirective } from './app/directives';
 export { FsApiImagePipe } from './app/pipes';
 
