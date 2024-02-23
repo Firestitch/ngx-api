@@ -1,10 +1,13 @@
 import {
-  HttpRequest, HttpResponse, HttpErrorResponse
+  HttpErrorResponse,
+  HttpRequest, HttpResponse,
 } from '@angular/common/http';
-import { RequestConfig } from './request-config.interface';
+
+import { FsApiConfig } from '../classes';
+
 
 export interface FsApiBaseHander {
-  success(event?: HttpResponse<any>, config?: RequestConfig, request?: HttpRequest<any>);
-  error(error?: HttpErrorResponse, config?: RequestConfig);
-  complete(config?: RequestConfig);
+  success(event?: HttpResponse<any>, config?: FsApiConfig, request?: HttpRequest<any>);
+  error(error?: HttpErrorResponse, config?: FsApiConfig);
+  complete(config?: FsApiConfig);
 }

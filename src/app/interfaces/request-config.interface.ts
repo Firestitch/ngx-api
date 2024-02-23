@@ -1,6 +1,8 @@
 import { Queue } from '@firestitch/common';
+
+import { HttpContext } from '@angular/common/http';
+
 import { ResponseType } from '../enums/response-type.enum';
-import { HttpContext, HttpHeaderResponse, HttpProgressEvent, HttpResponse, HttpSentEvent, HttpUserEvent } from '@angular/common/http';
 
 export interface RequestConfig {
   headers?: Record<string, string | string[]>;
@@ -12,8 +14,9 @@ export interface RequestConfig {
   reportProgress?: boolean;
   responseType?:  ResponseType;
   cache?: boolean;
-  customQueue?: Queue;
+  queue?: Queue;
   data?: any;
   context?: HttpContext;
-  mapHttpResponseBody?: boolean
+  mapHttpResponseBody?: boolean;
+  stream?: boolean;
 }

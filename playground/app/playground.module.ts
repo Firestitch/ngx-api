@@ -16,7 +16,7 @@ import { FsMessage, FsMessageModule } from '@firestitch/message';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppComponent } from './app.component';
-import { ImageComponent } from './components';
+import { ImageComponent, StreamExampleComponent } from './components';
 import { DownloadBlobComponent } from './components/download-blob/download-blob.component';
 import { FirstExampleComponent } from './components/first-example/first-example.component';
 import { SingleUploadComponent } from './components/single-upload/single-upload.component';
@@ -54,6 +54,7 @@ import { TestService } from './services/test.service';
     UploadCancelExampleComponent,
     DownloadBlobComponent,
     ImageComponent,
+    StreamExampleComponent,
   ],
   providers: [
     TestService,

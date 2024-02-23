@@ -1,13 +1,15 @@
+import { Observable } from 'rxjs';
+
 import {
   HttpEvent,
   HttpHandler,
-  HttpRequest
+  HttpRequest,
 } from '@angular/common/http';
 
-import { Observable } from 'rxjs';
+
+import { objectToFormData } from '../helpers/object-to-form-data';
 
 import { RequestInterceptor } from './base/request.interceptor';
-import { objectToFormData } from '../helpers/object-to-form-data';
 
 
 export class BodyHandlerInterceptor extends RequestInterceptor {
@@ -15,8 +17,7 @@ export class BodyHandlerInterceptor extends RequestInterceptor {
     super(_config, _data);
   }
 
-  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-
+  public intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     let body = null;
 
     switch (this._config.encoding) {
@@ -33,10 +34,6 @@ export class BodyHandlerInterceptor extends RequestInterceptor {
       } break;
     }
 
-    const modified = req.clone({
-      body: body
-    });
-
-    return next.handle(modified);
+    return next.handle(req.clone({ body }));
   }
 }

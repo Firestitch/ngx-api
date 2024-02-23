@@ -1,17 +1,21 @@
-import { Component } from '@angular/core';
-import { HttpEventType } from '@angular/common/http';
-import { FsMessage } from '@firestitch/message';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+
 import { FsApi } from '@firestitch/api';
+import { FsMessage } from '@firestitch/message';
+
+import { HttpEventType } from '@angular/common/http';
 
 
 @Component({
   selector: 'upload-cancel-example',
-  templateUrl: 'upload-cancel-example.component.html'
+  templateUrl: './upload-cancel-example.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UploadCancelExampleComponent {
 
-  files = [];
-  url = 'https://specify.dev.firestitch.com/api/dummy';
+  public files = [];
+  public url = 'https://specify.dev.firestitch.com/api/dummy';
+
   constructor(private _api: FsApi, private _message: FsMessage) {}
 
   public upload() {
@@ -21,31 +25,31 @@ export class UploadCancelExampleComponent {
       data.file = fsFile.file;
 
       fsFile.obserable = this._api.post(this.url, data, { reportProgress: true })
-      .subscribe(event => {
+        .subscribe((event) => {
 
-        switch (event.type) {
-          case HttpEventType.Sent: {
-            fsFile.progress = true;
-            this._message.info('Uploading started');
-          } break;
-          case HttpEventType.UploadProgress: {
-            const uploaded = (event.loaded / event.total) * 100;
-            this._message.info(`Uploading ${uploaded.toFixed(1)}%`);
-          } break;
-          case HttpEventType.ResponseHeader: {
-            this._message.info('Response Header Received');
-          } break;
-          default: {
-            this._message.success('Uploading completed');
-            fsFile.progress = false;
+          switch (event.type) {
+            case HttpEventType.Sent: {
+              fsFile.progress = true;
+              this._message.info('Uploading started');
+            } break;
+            case HttpEventType.UploadProgress: {
+              const uploaded = (event.loaded / event.total) * 100;
+              this._message.info(`Uploading ${uploaded.toFixed(1)}%`);
+            } break;
+            case HttpEventType.ResponseHeader: {
+              this._message.info('Response Header Received');
+            } break;
+            default: {
+              this._message.success('Uploading completed');
+              fsFile.progress = false;
+            }
           }
-        }
-      }, () => {
-        this._message.error('Uploading error');
-        fsFile.obserable = null;
-      }, () => {
-        fsFile.obserable = null;
-      });
+        }, () => {
+          this._message.error('Uploading error');
+          fsFile.obserable = null;
+        }, () => {
+          fsFile.obserable = null;
+        });
 
       setTimeout(() => {
         if (fsFile.obserable) {
@@ -53,7 +57,7 @@ export class UploadCancelExampleComponent {
           this._message.warning('Uploading has been canceled');
           fsFile.progress = false;
         }
-      }, 500)
+      }, 500);
     });
   }
 

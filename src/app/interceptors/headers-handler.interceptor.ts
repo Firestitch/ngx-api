@@ -1,13 +1,15 @@
+import { Observable } from 'rxjs';
+
 import {
   HttpEvent,
   HttpHandler,
   HttpHeaders,
-  HttpRequest
+  HttpRequest,
 } from '@angular/common/http';
 
-import { Observable } from 'rxjs';
-import { RequestInterceptor } from './base/request.interceptor';
 import { lookupBlob } from '../helpers/lookup-blob';
+
+import { RequestInterceptor } from './base/request.interceptor';
 
 
 export class HeadersHandlerInterceptor extends RequestInterceptor {
@@ -15,13 +17,13 @@ export class HeadersHandlerInterceptor extends RequestInterceptor {
     super(_config, _data);
   }
 
-  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+  public intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     let headers = new HttpHeaders();
 
     Object.keys(this._config.headers)
-    .forEach((name) => {
-      headers = headers.set(name, this._config.headers[name]);
-    });
+      .forEach((name) => {
+        headers = headers.set(name, this._config.headers[name]);
+      });
 
     if (lookupBlob(this._data)) {
       this._config.encoding = 'formdata';
@@ -41,7 +43,7 @@ export class HeadersHandlerInterceptor extends RequestInterceptor {
       } break;
     }
 
-    const modified = req.clone({ headers: headers });
+    const modified = req.clone({ headers });
 
     return next.handle(modified);
   }

@@ -4,8 +4,8 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { Queue } from '@firestitch/common';
 
 
-import { Observable, of } from 'rxjs';
-import { filter, map, tap } from 'rxjs/operators';
+import { Observable, merge, of, throwError } from 'rxjs';
+import { catchError, filter, map, switchMap, tap } from 'rxjs/operators';
 
 import {
   HTTP_INTERCEPTORS,
@@ -15,12 +15,11 @@ import {
   HttpResponse,
   HttpXhrBackend,
 } from '@angular/common/http';
-import { format, isDate, isValid } from 'date-fns';
 
-import { FsApiFile } from '../classes';
+import { FsApiFile, RequestHandler } from '../classes';
 import { ApiCache } from '../classes/api-cache';
 import { FsApiConfig } from '../classes/api-config';
-import { RequestHandler } from '../classes/request-handler';
+import { StreamEventType } from '../enums';
 import {
   FS_API_CONFIG,
   FS_API_REQUEST_INTERCEPTOR,
@@ -30,12 +29,14 @@ import {
 import { FsApiCacheHandler } from '../handlers/cache.handler';
 import { FsApiResponseBodyHandler } from '../handlers/response-body.handler';
 import { FsApiResponseHandler } from '../handlers/response.handler';
-import { BodyHandlerInterceptor } from '../interceptors/body-handler.interceptor';
-import { HeadersHandlerInterceptor } from '../interceptors/headers-handler.interceptor';
-import { ParamsHandlerInterceptor } from '../interceptors/params-handler.interceptor';
+import {
+  BodyHandlerInterceptor, HeadersHandlerInterceptor, ParamsHandlerInterceptor,
+  RequestInterceptor,
+} from '../interceptors';
 import { RequestConfig } from '../interfaces';
 import { FsApiBaseHander } from '../interfaces/handler.interface';
 import { IModuleConfig } from '../interfaces/module-config.interface';
+import { StreamEvent } from '../types';
 
 
 @Injectable()
@@ -45,11 +46,10 @@ export class FsApi {
 
   private readonly _queue = new Queue(5);
   private _cache = new ApiCache();
-  private _responseHandlers = [new FsApiResponseHandler()];
-  private _responseBodyHandlers = [new FsApiResponseBodyHandler()];
+  private _responseHandlers: FsApiBaseHander[] = [new FsApiResponseHandler()];
+  private _responseBodyHandlers: FsApiBaseHander[] = [new FsApiResponseBodyHandler()];
 
   constructor(
-    private _apiConfig: FsApiConfig,
     private _http: HttpXhrBackend,
     private _sanitizer: DomSanitizer,
     // Custom interceptors
@@ -119,15 +119,58 @@ export class FsApi {
     return this.request('DELETE', url, data, config);
   }
 
-  public request(method: string, url: string, data?: object, config?: RequestConfig): Observable<any> {
-    config = Object.assign(new FsApiConfig(), this._apiConfig, config);
-    method = method.toUpperCase();
-    data = this._sanitize(data);
+  public stream(
+    method: string,
+    url: string,
+    data?: any,
+    requestConfig?: RequestConfig,
+  ): Observable<StreamEvent> {
+    const config = new FsApiConfig({
+      ...this._config,
+      ...requestConfig,
+      stream: true,
+    }, method, data);
 
-    if (method === 'GET') {
-      config.query = data;
-      data = {};
+    let idx = 0;
 
+    return this._getInterceptorChain(config, config.data)
+      .handle(this._createHttpRequest(config, url))
+      .pipe(
+        filter((event: HttpEvent<any>) => {
+          return event?.type === HttpEventType.DownloadProgress ||
+          event?.type === HttpEventType.Response;
+        }),
+        switchMap((event: HttpEvent<any>) => {
+          if(event.type === HttpEventType.DownloadProgress) {
+            const partialText = (event as any).partialText;
+            const text = partialText.substring(idx).trim();
+            const data$ = text.split('\n')
+              .map((item) => {
+                return of({ type: StreamEventType.Data, data: JSON.parse(item) });
+              });
+
+            idx = partialText.length - 1;
+
+            return merge(...data$);
+          }
+
+          return of({
+            ...data,
+            type: StreamEventType.HttpResponse,
+          });
+        }),
+      );
+  }
+
+  public request(
+    method: string,
+    url: string,
+    data?: any,
+    requestConfig?: RequestConfig,
+  ): Observable<any> {
+    const config = new FsApiConfig({ ...this._config, ...requestConfig }, method, data);
+
+    if (config.methodGet) {
       if (config.cache) {
         const cache = this.cache.get(url, config.query);
         if (cache) {
@@ -136,81 +179,46 @@ export class FsApi {
       }
     }
 
-    // Create clear request
-    const request = new HttpRequest((method as any), url, null, {
-      responseType: config.responseType,
-      context: config.context,
-    });
-
-    const INTERCEPTORS: any = [
-      new HeadersHandlerInterceptor(config, data),
-      new BodyHandlerInterceptor(config, data),
-      new ParamsHandlerInterceptor(config, data),
-    ];
-
-    if (config.interceptors) {
-
-      // Add custom interceptors into chain
-      if (Array.isArray(this._requestInterceptors)) {
-        const interceptors = this._requestInterceptors
-          .map((interceptor) => interceptor(config, data));
-
-        INTERCEPTORS.push(...interceptors);
-      } else if (this._requestInterceptors) {
-        const interceptor = this._requestInterceptors(config, data);
-
-        INTERCEPTORS.push(interceptor);
-      }
-
-      INTERCEPTORS.push(...this._httpInterceptors);
-    }
-
-    const handlers = [];
-    if (config.handlers) {
-      handlers.push(...this._responseBodyHandlers);
-      handlers.push(...this._responseHandlers);
-    }
-
-    handlers.push(new FsApiCacheHandler(this._cache));
-
-    // Executing of interceptors
-    const handlersChain = INTERCEPTORS.reduceRight(
-      (next: any, interceptor: any) => new RequestHandler(next, interceptor), this._http);
+    const request = this._createHttpRequest(config, url);
+    const handlers = this._getHandlers(config);
 
     // Do request and process the answer
-    const chainedRequest = handlersChain.handle(request)
+    const chainedRequest = this._getInterceptorChain(config, config.data)
+      .handle(request)
       .pipe(
-        filter((event) => {
+        filter((event: HttpEvent<any>) => {
           return config.reportProgress || event instanceof HttpResponse;
         }),
-        tap((event: HttpEvent<any>) => {
+        tap((event: HttpResponse<any>) => {
           if (event.type === HttpEventType.Response) {
             handlers.forEach((handler: FsApiBaseHander) => {
               handler.success(event, config, request);
             });
           }
         }),
-        map((event: HttpEvent<any>) => {
-          return ((config.mapHttpResponseBody ?? true) && event.type === HttpEventType.Response) ? event.body : event;
+        map((event: HttpResponse<any>) => {
+          return ((config.mapHttpResponseBody ?? true) && event.type === HttpEventType.Response) ?
+            event.body :
+            event;
         }),
-        tap({
-          error: (err) => {
-            handlers.forEach((handler: FsApiBaseHander) => {
-              handler.error(err, config);
-            });
-          },
-          complete: () => {
-            handlers.forEach((handler: FsApiBaseHander) => {
-              handler.complete(config);
-            });
-          },
+        tap(() => {
+          handlers.forEach((handler: FsApiBaseHander) => {
+            handler.complete(config);
+          });
+        }),
+        catchError((error) => {
+          handlers.forEach((handler: FsApiBaseHander) => {
+            handler.error(error, config);
+          });
+
+          return throwError(error);
         }),
       );
 
     // Depends on encoding will send in queue or raw
     if (config.encoding === 'formdata') {
-      if (config.customQueue) {
-        return config.customQueue.push(chainedRequest);
+      if (config.queue) {
+        return config.queue.push(chainedRequest);
       }
 
       return this._queue.push(chainedRequest);
@@ -219,44 +227,58 @@ export class FsApi {
     return chainedRequest;
   }
 
-  /**
-   * Sanitize the passed object
-   *
-   * @param obj
-   */
-  private _sanitize(obj, data = {}) {
-    if (obj === null || typeof obj !== 'object') {
-      return obj;
+  private _createHttpRequest(config: FsApiConfig, url: string) {
+    return new HttpRequest(config.method, url, null, {
+      responseType: config.responseType,
+      context: config.context,
+    });
+  }
+
+  private _getHandlers(config: RequestConfig): FsApiBaseHander[] {
+    const handlers = [];
+
+    if(config.stream) {
+      return handlers;
     }
 
-    Object.keys(obj)
-      .forEach((key) => {
-        const value = obj[key];
-        if (value !== undefined) {
-          if (isDate(value)) {
-            if (isValid(value)) {
-              data[key] = format(value, 'yyyy-MM-dd\'T\'HH:mm:ssxxx');
-            }
-          } else if (Array.isArray(value)) {
-            data[key] = [
-              ...value,
-            ];
+    if (config.handlers) {
+      handlers.push(...this._responseBodyHandlers);
+      handlers.push(...this._responseHandlers);
+    }
 
-            this._sanitize(value, data[key]);
-          } else if (value instanceof Blob) {
-            data[key] = value;
-          } else if (value instanceof Object) {
-            data[key] = {
-              ...value,
-            };
+    handlers.push(new FsApiCacheHandler(this._cache));
 
-            this._sanitize(value, data[key]);
-          } else {
-            data[key] = value;
-          }
-        }
-      });
+    return handlers;
+  }
 
-    return data;
+  private _getInterceptorChain(config, data): RequestHandler {
+    const interceptors: RequestInterceptor[] = [
+      new HeadersHandlerInterceptor(config, data),
+      new BodyHandlerInterceptor(config, data),
+      new ParamsHandlerInterceptor(config, data),
+    ];
+
+    if (config.interceptors) {
+      // Add custom interceptors into chain
+      if (Array.isArray(this._requestInterceptors)) {
+        interceptors.push(
+          ...this._requestInterceptors
+            .map((interceptor) => interceptor(config, data)),
+        );
+      } else if (this._requestInterceptors) {
+        const interceptor = this._requestInterceptors(config, data);
+
+        interceptors.push(interceptor);
+      }
+
+      interceptors.push(...this._httpInterceptors);
+    }
+
+
+    // Executing of interceptors
+    return interceptors
+      .reduceRight((next: any, interceptor: any) => {
+        return new RequestHandler(next, interceptor);
+      }, this._http);
   }
 }

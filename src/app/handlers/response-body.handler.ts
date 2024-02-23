@@ -1,18 +1,25 @@
 
 import { parse, parseLocal } from '@firestitch/date';
 
+import { HttpResponse } from '@angular/common/http';
+
+import { FsApiConfig } from '../classes';
 import { FsApiBaseHander } from '../interfaces/handler.interface';
 
 
 export class FsApiResponseBodyHandler implements FsApiBaseHander {
 
-  public success(event, config): void {
+  public success(event: HttpResponse<any>, config: FsApiConfig): void {
     this.processData(event.body?.data);
   }
 
-  public error(error, config): void {}
+  public error(error, config: FsApiConfig): void {
+    //
+  }
 
-  public complete(config): void {}
+  public complete(config: FsApiConfig): void {
+    //
+  }
 
   public processData(data): void {
     if (data instanceof Object) {

@@ -1,21 +1,20 @@
-import { FsMessage } from '@firestitch/message';
 import { FsApiResponseHandler } from '@firestitch/api';
+import { FsMessage, MessageMode } from '@firestitch/message';
 
 export class ResponseHandler extends FsApiResponseHandler {
 
-  protected fsMessage;
-  constructor(fsMessage: FsMessage) {
+  constructor(
+    private _message: FsMessage) {
     super();
-    this.fsMessage = fsMessage;
   }
 
   public success(event, config) {
     super.success(event, config);
-    this.fsMessage.success('Successful API call');
+    this._message.success('Successful API call');
   }
 
   public error(err, config) {
-    this.fsMessage.error(err.statusText, { mode: 'toast' });
+    this._message.error(err.message || err.statusText, { mode: MessageMode.Toast });
   }
 
   public complete(config) {

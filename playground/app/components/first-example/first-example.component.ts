@@ -1,36 +1,45 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+
 import { FsApi, ResponseType } from '@firestitch/api';
 
 @Component({
   selector: 'first-example',
-  templateUrl: 'first-example.component.html'
+  templateUrl: './first-example.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FirstExampleComponent {
 
-  data: Array<any> = null;
-  file: null;
-  url = 'https://specify.dev.firestitch.com/api/dummy';
-  constructor(private _api: FsApi) {}
+  public data: any[] = null;
+  public file: null;
+  public url = 'https://specify.dev.firestitch.com/api/dummy';
+
+  constructor(
+    private _api: FsApi,
+    private _cdRef: ChangeDetectorRef,
+  ) {}
 
   public uploadFiles(file: File) {
-    this._api.post(this.url, { file: file })
-    .subscribe(resp => {
-    });
+    this._api.post(this.url, { file })
+      .subscribe((resp) => {
+      });
   }
 
   public post() {
-    const data = { 
+    const data = {
       string: 'Hello',
       number: 5674325,
       date: new Date(),
       array: [1,2,3],
       arrayObject: [{ id: 1 }, { id: 2 }],
-      object: { date: new Date() } 
+      object: { date: new Date() },
     };
-    this._api.post(this.url, data)
-    .subscribe(resp => {
-      this.data = resp;
-    });
+
+    this._api
+      .post(this.url, data)
+      .subscribe((resp) => {
+        this.data = resp;
+        this._cdRef.markForCheck();
+      });
   }
 
   public getException() {
@@ -44,28 +53,28 @@ export class FirstExampleComponent {
     query.arrayStrings = ['active', 'pending'];
     query.date = { date: new Date() };
 
-    this._api.get(this.url, query, { key: 'objects', cache: cache })
-    .subscribe(resp => {
+    this._api.get(this.url, query, { key: 'objects', cache })
+      .subscribe((resp) => {
 
-      console.log(resp);
-      this.data = resp;
-    }, (event) => {
-      //this.data = event.error;
-    });
+        console.log(resp);
+        this.data = resp;
+        this._cdRef.markForCheck();
+      });
   }
 
   public blob() {
-    const url = this.url + '/download';
+    const url = `${this.url  }/download`;
     this._api.get(url, {}, {
       interceptors: false,
       handlers: false,
-      responseType: ResponseType.Blob
+      responseType: ResponseType.Blob,
     })
-    .subscribe(resp => {
-      console.log(resp);
-      this.data = resp;
-    }, (event) => {
-      alert(event)
-    });
+      .subscribe((resp) => {
+        console.log(resp);
+        this.data = resp;
+        this._cdRef.markForCheck();
+      }, (event) => {
+        alert(event);
+      });
   }
 }

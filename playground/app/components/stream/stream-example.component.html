@@ -1,0 +1,13 @@
+<div class="buttons">
+  <button 
+      mat-raised-button 
+      color="primary" 
+      (click)="get({ count: 20 })">
+    Get
+  </button>
+</div>
+
+<fieldset>
+  <legend>Response</legend>
+  {{data|json}}
+</fieldset>

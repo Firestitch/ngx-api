@@ -1,7 +1,8 @@
-import { FsApiBaseHander } from '../interfaces/handler.interface';
 import { HttpRequest, HttpResponse } from '@angular/common/http';
-import { RequestConfig } from '../interfaces';
+
 import { ApiCache } from '../classes/api-cache';
+import { RequestConfig } from '../interfaces';
+import { FsApiBaseHander } from '../interfaces/handler.interface';
 
 
 export class FsApiCacheHandler implements FsApiBaseHander {
@@ -12,7 +13,7 @@ export class FsApiCacheHandler implements FsApiBaseHander {
     this._cache = cache;
   }
 
-  success(response: HttpResponse<any>, config: RequestConfig, request: HttpRequest<any>) {
+  public success(response: HttpResponse<any>, config: RequestConfig, request: HttpRequest<any>) {
     if (request.method === 'GET') {
       if (config.cache && (request.responseType === 'json' || request.responseType === 'text')) {
         this._cache.set(request.url, config.query, response.body);
@@ -22,7 +23,11 @@ export class FsApiCacheHandler implements FsApiBaseHander {
     }
   }
 
-  error(error, config) {}
+  public error(error, config) {
+    //
+  }
 
-  complete(config) {}
+  public complete(config) {
+    //
+  }
 }
