@@ -18,7 +18,7 @@ import { StreamEventData } from 'src/app/interfaces';
 export class StreamExampleComponent implements OnDestroy {
 
   public data = [];
-  public url = 'https://specify.local.firestitch.com/api/dummy/stream';
+  public url = 'https://specify.dev.firestitch.com/api/dummy/stream';
 
   private _destroy$ = new Subject();
 
