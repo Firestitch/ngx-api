@@ -22,9 +22,9 @@ export class BodyHandlerInterceptor extends RequestInterceptor {
     let body = this._data;
 
     switch (this._config.encoding) {
-      case 'json': {
-        body = JSON.stringify(this._data);
-      } break;
+      // case 'json': {
+      //   body = JSON.stringify(this._data);
+      // } break;
 
       case 'formdata': {
         body = objectToFormData(this._data);
