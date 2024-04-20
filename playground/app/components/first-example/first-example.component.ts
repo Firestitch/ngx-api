@@ -11,7 +11,7 @@ export class FirstExampleComponent {
 
   public data: any[] = null;
   public file: null;
-  public url = 'https://specify.dev.firestitch.com/api/dummy';
+  public url = 'https://specify.firestitch.dev/api/dummy';
 
   constructor(
     private _api: FsApi,
@@ -20,14 +20,13 @@ export class FirstExampleComponent {
 
   public uploadFiles(file: File) {
     this._api.post(this.url, { file })
-      .subscribe((resp) => {
-      });
+      .subscribe();
   }
 
   public post() {
     const data = {
-      string: 'Hello',
-      number: 5674325,
+      text: 'Hello',
+      integer: 5674325,
       date: new Date(),
       array: [1,2,3],
       arrayObject: [{ id: 1 }, { id: 2 }],
@@ -35,7 +34,9 @@ export class FirstExampleComponent {
     };
 
     this._api
-      .post(this.url, data)
+      .post(this.url, data, {
+        encoding: null,
+      })
       .subscribe((resp) => {
         this.data = resp;
         this._cdRef.markForCheck();

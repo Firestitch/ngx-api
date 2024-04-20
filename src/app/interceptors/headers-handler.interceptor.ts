@@ -7,13 +7,14 @@ import {
   HttpRequest,
 } from '@angular/common/http';
 
+import { FsApiConfig } from '../classes';
 import { lookupBlob } from '../helpers/lookup-blob';
 
 import { RequestInterceptor } from './base/request.interceptor';
 
 
 export class HeadersHandlerInterceptor extends RequestInterceptor {
-  constructor(protected _config: any, protected _data: any) {
+  constructor(protected _config: FsApiConfig, protected _data: any) {
     super(_config, _data);
   }
 
@@ -35,7 +36,7 @@ export class HeadersHandlerInterceptor extends RequestInterceptor {
       } break;
 
       case 'json': {
-        headers = headers.set('Content-Type', 'text/json');
+        headers = headers.set('Content-Type', 'application/json');
       } break;
 
       case 'formdata': {

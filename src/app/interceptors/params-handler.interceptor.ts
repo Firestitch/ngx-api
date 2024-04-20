@@ -1,14 +1,18 @@
+
+import { Observable } from 'rxjs';
+
 import {
   HttpEvent,
   HttpHandler,
   HttpParams,
-  HttpRequest
+  HttpRequest,
 } from '@angular/common/http';
 
-import { Observable } from 'rxjs';
-import { RequestInterceptor } from './base/request.interceptor';
+
 import { CustomParamsEncoder } from '../classes/params-encoder';
 import { objectToFormData } from '../helpers/object-to-form-data';
+
+import { RequestInterceptor } from './base/request.interceptor';
 
 
 export class ParamsHandlerInterceptor extends RequestInterceptor {
@@ -16,9 +20,9 @@ export class ParamsHandlerInterceptor extends RequestInterceptor {
     super(_config, _data);
   }
 
-  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+  public intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     let params = new HttpParams({
-      encoder: new CustomParamsEncoder()
+      encoder: new CustomParamsEncoder(),
     });
 
     const formData: FormData = objectToFormData(this._config.query);
@@ -27,8 +31,8 @@ export class ParamsHandlerInterceptor extends RequestInterceptor {
     });
 
     const modified = req.clone({
-      params: params,
-      reportProgress: this._config.reportProgress
+      params,
+      reportProgress: this._config.reportProgress,
     });
 
     return next.handle(modified);

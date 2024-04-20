@@ -21,7 +21,7 @@ export class DownloadBlobComponent {
   }
 
   public downloadApi() {
-    this._api.createApiFile('https://specify.dev.firestitch.com/api/dummy/download')
+    this._api.createApiFile('https://specify.firestitch.dev/api/dummy/download')
       .download();
   }
 }

@@ -6,7 +6,7 @@ import { ResponseType } from '../enums/response-type.enum';
 
 export interface RequestConfig {
   headers?: Record<string, string | string[]>;
-  encoding?: string;
+  encoding?: 'json' | 'url' | 'formdata';
   interceptors?: boolean;
   handlers?: boolean;
   key?: string;

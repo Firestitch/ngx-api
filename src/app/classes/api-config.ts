@@ -13,7 +13,7 @@ export class FsApiConfig {
 
   /** A key value store for the request headers. */
   public headers?: Record<string, string | string[]> = {};
-  public encoding = 'json';
+  public encoding: 'json' | 'formdata' | 'url';
   public interceptors = true;
   public handlers = true;
   public key?: string = null;
@@ -32,12 +32,17 @@ export class FsApiConfig {
     private _method: string,
     private _data: any,
   ) {
-    Object.assign(this, _config || {});
+    const config = {
+      encoding: 'json',
+      ...(this._config || {}),
+    };
+
+    Object.assign(this, config);
 
     if(this.methodGet) {
-      this.query = this._sanitize(_data);
+      this.query = this._sanitize(this._data);
     } else {
-      this.data = this._sanitize(_data);
+      this.data = this._sanitize(this._data);
     }
 
     if(this.stream) {

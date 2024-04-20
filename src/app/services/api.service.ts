@@ -216,6 +216,7 @@ export class FsApi {
       );
 
     // Depends on encoding will send in queue or raw
+    // TODO: Not sure why we are doing this
     if (config.encoding === 'formdata') {
       if (config.queue) {
         return config.queue.push(chainedRequest);

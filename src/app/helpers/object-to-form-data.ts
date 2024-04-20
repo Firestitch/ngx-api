@@ -6,7 +6,7 @@ export function objectToFormData(target, formData = new FormData(), namespace = 
     throw Error('Maximum call stack size exceeded');
   }
 
-  if (target === void 0 || target === null) {
+  if (target === undefined || target === null) {
     return formData;
   }
 
@@ -16,7 +16,7 @@ export function objectToFormData(target, formData = new FormData(), namespace = 
     const isBlob = item instanceof Blob;
 
     if (item && typeof item === 'object' && !isBlob) {
-      objectToFormData(item, formData, formKey, level)
+      objectToFormData(item, formData, formKey, level);
     } else {
       if (isBlob && item && (item as any).name) {
         formData.append(formKey, item, (item as any).name);

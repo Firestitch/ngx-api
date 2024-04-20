@@ -16,7 +16,7 @@ import { HttpEventType } from '@angular/common/http';
 export class UploadExampleComponent {
 
   public files = [];
-  public url = 'https://specify.dev.firestitch.com/api/dummy';
+  public url = 'https://specify.firestitch.dev/api/dummy';
   constructor(private _api: FsApi, private _message: FsMessage) {}
 
   public upload() {
