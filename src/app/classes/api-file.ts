@@ -54,7 +54,9 @@ export class FsApiFile {
             filename = url.pathname.split('/').pop();
           }
 
-          return new File([event.body], filename);
+          const type = event.headers.get('Content-Type');
+
+          return new File([event.body], filename, { type });
         }),
       );
   }
