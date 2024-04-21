@@ -20,6 +20,7 @@ export { HeadersHandlerInterceptor } from './app/interceptors/headers-handler.in
 export { ParamsHandlerInterceptor } from './app/interceptors/params-handler.interceptor';
 
 export * from './app/enums';
+export * from './app/helpers';
 export * from './app/interfaces';
 export { StreamEvent } from './app/types';
 

@@ -6,6 +6,7 @@ import { map, switchMap } from 'rxjs/operators';
 import { HttpResponse } from '@angular/common/http';
 
 import { RequestMethod, ResponseType } from '../enums';
+import { blobToBase64 } from '../helpers';
 import { FsApiFileConfig } from '../interfaces';
 import { FsApi } from '../services';
 
@@ -68,16 +69,7 @@ export class FsApiFile {
   public get base64(): Observable<string> {
     return this.blob
       .pipe(
-        switchMap((blob) => new Observable<string>((observer) => {
-          const reader = new FileReader();
-          reader.readAsDataURL(blob);
-          reader.onload = () => {
-            observer.next(reader.result as string);
-            observer.complete();
-          };
-          reader.onerror = (error) => observer.error(error);
-        }),
-        ),
+        switchMap((blob) => blobToBase64(blob)),
       );
   }
 
@@ -116,6 +108,10 @@ export class FsApiFile {
         }
 
         a.click();
+        setTimeout(() => {
+          URL.revokeObjectURL(a.href);
+          a.parentNode.removeChild(a);
+        }, 0);
       });
   }
 }
