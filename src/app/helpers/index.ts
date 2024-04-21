@@ -1,3 +1,4 @@
+export * from './blob-to-base64-url';
 export * from './blob-to-base64';
 export * from './interceptor.factory';
 export * from './lookup-blob';

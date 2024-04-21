@@ -6,7 +6,7 @@ import { map, switchMap } from 'rxjs/operators';
 import { HttpResponse } from '@angular/common/http';
 
 import { RequestMethod, ResponseType } from '../enums';
-import { blobToBase64 } from '../helpers';
+import { blobToBase64, blobToBase64Url } from '../helpers';
 import { FsApiFileConfig } from '../interfaces';
 import { FsApi } from '../services';
 
@@ -75,15 +75,22 @@ export class FsApiFile {
       );
   }
 
+  public get base64Url(): Observable<string> {
+    return this.blob
+      .pipe(
+        switchMap((blob) => blobToBase64Url(blob)),
+      );
+  }
+
   public get safeBase64Url(): Observable<SafeUrl> {
-    return this.base64
+    return this.base64Url
       .pipe(
         map((data) => this._api.sanitizer.bypassSecurityTrustUrl(data)),
       );
   }
 
   public get safeBase64ResourceUrl(): Observable<SafeResourceUrl> {
-    return this.base64
+    return this.base64Url
       .pipe(
         map((data) => this._api.sanitizer.bypassSecurityTrustResourceUrl(data)),
       );

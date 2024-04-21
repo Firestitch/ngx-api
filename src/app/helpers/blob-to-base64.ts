@@ -1,13 +1,12 @@
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+
+import { blobToBase64Url } from './blob-to-base64-url';
+
 
 export function blobToBase64(blob: Blob): Observable<string> {
-  return new Observable<string>((observer) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(blob);
-    reader.onload = () => {
-      observer.next(reader.result as string);
-      observer.complete();
-    };
-    reader.onerror = (error) => observer.error(error);
-  });
+  return blobToBase64Url(blob)
+    .pipe(
+      map((data) => (data).substr((data).indexOf(',') + 1)),
+    );
 }
