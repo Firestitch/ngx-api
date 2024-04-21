@@ -1,6 +1,10 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 
-import { FsApi, ResponseType } from '@firestitch/api';
+
+import { FsApi } from '@firestitch/api';
+
+import { from } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'first-example',
@@ -64,18 +68,15 @@ export class FirstExampleComponent {
   }
 
   public blob() {
-    const url = `${this.url  }/download`;
-    this._api.get(url, {}, {
-      interceptors: false,
-      handlers: false,
-      responseType: ResponseType.Blob,
-    })
+    const url = `${this.url}/download`;
+    this._api.createApiFile(url)
+      .blob
+      .pipe(
+        switchMap((blob) => from(blob.text())),
+      )
       .subscribe((resp) => {
-        console.log(resp);
-        this.data = resp;
+        this.data = [resp];
         this._cdRef.markForCheck();
-      }, (event) => {
-        alert(event);
       });
   }
 }

@@ -5,29 +5,26 @@ import { map, switchMap } from 'rxjs/operators';
 
 import { HttpResponse } from '@angular/common/http';
 
-import { ResponseType } from '../enums';
+import { RequestMethod, ResponseType } from '../enums';
+import { FsApiFileConfig } from '../interfaces';
 import { FsApi } from '../services';
-
 
 export class FsApiFile {
 
   private _url: string;
   private _api: FsApi;
-  private _name: string;
+  private _config: FsApiFileConfig;
 
-  constructor(api: FsApi, url: string, filename?: string) {
+  constructor(
+    api: FsApi, url: string,
+    options?: FsApiFileConfig,
+  ) {
     this._url = url;
     this._api = api;
-    this._name = filename;
-
-    if (!this._name) {
-      this._name = (url || '').replace(/\?.*/, '');
-      this._name = this._name.substring(this._name.lastIndexOf('/') + 1);
-    }
-  }
-
-  public get name(): string {
-    return this._name;
+    this._config = {
+      method: RequestMethod.Get,
+      ...options,
+    };
   }
 
   public get blob(): Observable<Blob> {
@@ -37,7 +34,7 @@ export class FsApiFile {
 
   public get file(): Observable<File> {
     return this._api
-      .get(this._url, {}, {
+      .request(this._config.method, this._url, this._config.data, {
         handlers: false,
         responseType: ResponseType.Blob,
         mapHttpResponseBody: false,
@@ -90,7 +87,6 @@ export class FsApiFile {
         map((data) => this._api.sanitizer.bypassSecurityTrustUrl(data)),
       );
   }
-
 
   public get safeBase64ResourceUrl(): Observable<SafeResourceUrl> {
     return this.base64

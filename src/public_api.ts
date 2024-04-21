@@ -19,9 +19,8 @@ export { BodyHandlerInterceptor } from './app/interceptors/body-handler.intercep
 export { HeadersHandlerInterceptor } from './app/interceptors/headers-handler.interceptor';
 export { ParamsHandlerInterceptor } from './app/interceptors/params-handler.interceptor';
 
-// Interfaces
-export { ResponseType, StreamEventType } from './app/enums';
-export { FsApiBaseHander, IModuleConfig, RequestConfig } from './app/interfaces';
+export * from './app/enums';
+export * from './app/interfaces';
 export { StreamEvent } from './app/types';
 
 export { FsApiConfig } from './app/classes';

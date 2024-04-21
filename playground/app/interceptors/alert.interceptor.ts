@@ -1,7 +1,9 @@
-import { HttpEvent, HttpHandler, HttpRequest } from '@angular/common/http';
 import { RequestInterceptor, makeInterceptorFactory } from '@firestitch/api';
 import { FsMessage } from '@firestitch/message';
+
 import { Observable } from 'rxjs';
+
+import { HttpEvent, HttpHandler, HttpRequest } from '@angular/common/http';
 
 
 class AlertInterceptor extends RequestInterceptor {
@@ -9,8 +11,9 @@ class AlertInterceptor extends RequestInterceptor {
     super(config, data);
   }
 
-  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    this.fsMessage.info('Has been intercepted');
+  public intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    this.fsMessage.info('Interceptor had been ran');
+
     return next.handle(req);
   }
 }

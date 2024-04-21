@@ -22,11 +22,11 @@ import { FirstExampleComponent } from './components/first-example/first-example.
 import { SingleUploadComponent } from './components/single-upload/single-upload.component';
 import { UploadCancelExampleComponent } from './components/upload-cancel-example/upload-cancel-example.component';
 import { UploadExampleComponent } from './components/upload-example/upload-example.component';
+import { ResponseHandler } from './handlers/response.handler';
 import {
   AlertInterceptorFactory,
   TokenInterceptorFactory,
 } from './interceptors';
-import { ResponseHandler } from './interceptors/response.handler';
 import { AppMaterialModule } from './material.module';
 import { TestService } from './services/test.service';
 

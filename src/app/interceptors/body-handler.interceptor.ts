@@ -14,6 +14,7 @@ import { RequestInterceptor } from './base/request.interceptor';
 
 
 export class BodyHandlerInterceptor extends RequestInterceptor {
+
   constructor(protected _config: FsApiConfig, protected _data: any) {
     super(_config, _data);
   }
@@ -22,10 +23,6 @@ export class BodyHandlerInterceptor extends RequestInterceptor {
     let body = this._data;
 
     switch (this._config.encoding) {
-      // case 'json': {
-      //   body = JSON.stringify(this._data);
-      // } break;
-
       case 'formdata': {
         body = objectToFormData(this._data);
       } break;

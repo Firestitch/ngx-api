@@ -1,7 +1,8 @@
-import { HttpEvent, HttpHandler, HttpRequest } from '@angular/common/http';
+import { RequestInterceptor, makeInterceptorFactory } from '@firestitch/api';
+
 import { Observable } from 'rxjs';
 
-import { RequestInterceptor, makeInterceptorFactory } from '@firestitch/api';
+import { HttpEvent, HttpHandler, HttpRequest } from '@angular/common/http';
 
 
 class TokenInterceptor extends RequestInterceptor {
@@ -9,11 +10,11 @@ class TokenInterceptor extends RequestInterceptor {
     super(_config, _data);
   }
 
-  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+  public intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     console.log('begin');
 
     const headers = req.headers.append('api-key', '34095td98yvhs9w8dg6yd78yg0sd76gas98d67');
-    const modified = req.clone({ headers: headers });
+    const modified = req.clone({ headers });
 
     return next.handle(modified);
   }

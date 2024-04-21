@@ -19,7 +19,7 @@ import {
 import { FsApiFile, RequestHandler } from '../classes';
 import { ApiCache } from '../classes/api-cache';
 import { FsApiConfig } from '../classes/api-config';
-import { StreamEventType } from '../enums';
+import { RequestMethod, StreamEventType } from '../enums';
 import {
   FS_API_CONFIG,
   FS_API_REQUEST_INTERCEPTOR,
@@ -33,7 +33,7 @@ import {
   BodyHandlerInterceptor, HeadersHandlerInterceptor, ParamsHandlerInterceptor,
   RequestInterceptor,
 } from '../interceptors';
-import { RequestConfig } from '../interfaces';
+import { FsApiFileConfig, RequestConfig } from '../interfaces';
 import { FsApiBaseHander } from '../interfaces/handler.interface';
 import { IModuleConfig } from '../interfaces/module-config.interface';
 import { StreamEvent } from '../types';
@@ -87,8 +87,12 @@ export class FsApi {
     this._queue.setLimit((this._config && this._config.maxFileConnections) || 5);
   }
 
-  public createApiFile(url: string, filename?: string) {
-    return new FsApiFile(this, url, filename);
+
+  public createApiFile(
+    url: string,
+    config?: FsApiFileConfig,
+  ) {
+    return new FsApiFile(this, url, config);
   }
 
   public get queue() {
@@ -103,20 +107,20 @@ export class FsApi {
     return this._sanitizer;
   }
 
-  public get(url, query?: any, config?: RequestConfig) {
-    return this.request('GET', url, query, config);
+  public get(url: RequestMethod | string, query?: any, config?: RequestConfig) {
+    return this.request(RequestMethod.Get, url, query, config);
   }
 
-  public post(url, data?: any, config?: RequestConfig): Observable<any> {
-    return this.request('POST', url, data, config);
+  public post(url: RequestMethod | string, data?: any, config?: RequestConfig): Observable<any> {
+    return this.request(RequestMethod.Post, url, data, config);
   }
 
-  public put(url, data?: any, config?: RequestConfig): Observable<any> {
-    return this.request('PUT', url, data, config);
+  public put(url: RequestMethod | string, data?: any, config?: RequestConfig): Observable<any> {
+    return this.request(RequestMethod.Put, url, data, config);
   }
 
-  public delete(url, data?: any, config?: RequestConfig): Observable<any> {
-    return this.request('DELETE', url, data, config);
+  public delete(url: RequestMethod | string, data?: any, config?: RequestConfig): Observable<any> {
+    return this.request(RequestMethod.Delete, url, data, config);
   }
 
   public stream(
@@ -163,7 +167,7 @@ export class FsApi {
   }
 
   public request(
-    method: string,
+    method: RequestMethod | string,
     url: string,
     data?: any,
     requestConfig?: RequestConfig,
@@ -238,16 +242,11 @@ export class FsApi {
   private _getHandlers(config: RequestConfig): FsApiBaseHander[] {
     const handlers = [];
 
-    if(config.stream) {
-      return handlers;
-    }
-
-    if (config.handlers) {
+    if (!config.stream && config.handlers) {
       handlers.push(...this._responseBodyHandlers);
       handlers.push(...this._responseHandlers);
+      handlers.push(new FsApiCacheHandler(this._cache));
     }
-
-    handlers.push(new FsApiCacheHandler(this._cache));
 
     return handlers;
   }
@@ -274,7 +273,6 @@ export class FsApi {
 
       interceptors.push(...this._httpInterceptors);
     }
-
 
     // Executing of interceptors
     return interceptors
