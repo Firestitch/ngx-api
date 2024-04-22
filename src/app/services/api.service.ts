@@ -39,7 +39,9 @@ import { IModuleConfig } from '../interfaces/module-config.interface';
 import { StreamEvent } from '../types';
 
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class FsApi {
 
   public events = [];
