@@ -3,7 +3,6 @@ import { SafeResourceUrl, SafeUrl } from '@angular/platform-browser';
 import { Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
-import { HttpResponse } from '@angular/common/http';
 
 import { RequestMethod, ResponseType } from '../enums';
 import { blobToBase64, blobToBase64Url } from '../helpers';
@@ -17,7 +16,8 @@ export class FsApiFile {
   private _config: FsApiFileConfig;
 
   constructor(
-    api: FsApi, url: string,
+    api: FsApi,
+    url: string,
     options?: FsApiFileConfig,
   ) {
     this._url = url;
@@ -34,31 +34,7 @@ export class FsApiFile {
   }
 
   public get file(): Observable<File> {
-    return this._api
-      .request(this._config.method, this._url, this._config.data, {
-        handlers: false,
-        responseType: ResponseType.Blob,
-        mapHttpResponseBody: false,
-      })
-      .pipe(
-        map((event: HttpResponse<any>) => {
-          let filename = (event.headers.getAll('Content-Disposition') || [])
-            .reduce((accum, item) => {
-              const matches = item.match(/filename="([^"]+)"/);
-
-              return matches ? matches[1] : accum;
-            }, '');
-
-          if (!filename) {
-            const url = new URL(event.url);
-            filename = url.pathname.split('/').pop();
-          }
-
-          const type = event.headers.get('Content-Type');
-
-          return new File([event.body], filename, { type });
-        }),
-      );
+    return this._api.file(this._config.method, this._url, this._config.data);
   }
 
   public get blobUrl(): Observable<string> {
@@ -105,22 +81,6 @@ export class FsApiFile {
   }
 
   public download(name?: string): void {
-    this.file
-      .subscribe((file: File) => {
-        const a = document.createElement('a');
-        document.body.appendChild(a);
-        a.style.display = 'none';
-        a.href = URL.createObjectURL(file);
-        name = name ? name : file.name;
-        if (name) {
-          a.download = name;
-        }
-
-        a.click();
-        setTimeout(() => {
-          URL.revokeObjectURL(a.href);
-          a.parentNode.removeChild(a);
-        }, 0);
-      });
+    this._api.download(name, this._config.method, this._url, this._config.data);
   }
 }

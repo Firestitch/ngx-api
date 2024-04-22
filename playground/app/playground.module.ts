@@ -6,6 +6,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import {
   FS_API_REQUEST_INTERCEPTOR,
   FS_API_RESPONSE_HANDLER,
+  FsApi,
   FsApiModule,
 } from '@firestitch/api';
 import { FsCommonModule } from '@firestitch/common';
@@ -28,6 +29,7 @@ import {
   TokenInterceptorFactory,
 } from './interceptors';
 import { AppMaterialModule } from './material.module';
+import { NewFsApi } from './services/new-api.service';
 import { TestService } from './services/test.service';
 
 
@@ -61,6 +63,7 @@ import { TestService } from './services/test.service';
     { provide: FS_API_REQUEST_INTERCEPTOR, useFactory: AlertInterceptorFactory, deps: [FsMessage], multi: true },
     { provide: FS_API_REQUEST_INTERCEPTOR, useFactory: TokenInterceptorFactory, multi: true },
     { provide: FS_API_RESPONSE_HANDLER, useClass: ResponseHandler, deps: [FsMessage] },
+    { provide: FsApi, useClass: NewFsApi },
   ],
 })
 export class PlaygroundModule {

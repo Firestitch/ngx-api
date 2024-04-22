@@ -19,7 +19,7 @@ import {
 import { FsApiFile, RequestHandler } from '../classes';
 import { ApiCache } from '../classes/api-cache';
 import { FsApiConfig } from '../classes/api-config';
-import { RequestMethod, StreamEventType } from '../enums';
+import { RequestMethod, ResponseType, StreamEventType } from '../enums';
 import {
   FS_API_CONFIG,
   FS_API_REQUEST_INTERCEPTOR,
@@ -230,6 +230,55 @@ export class FsApi {
     }
 
     return chainedRequest;
+  }
+
+
+  public download(name: string, method, url: string, data = null): void {
+    this.file(method, url, data)
+      .subscribe((file: File) => {
+        const a = document.createElement('a');
+        document.body.appendChild(a);
+        a.style.display = 'none';
+        a.href = URL.createObjectURL(file);
+        name = name ? name : file.name;
+        if (name) {
+          a.download = name;
+        }
+
+        a.click();
+        setTimeout(() => {
+          URL.revokeObjectURL(a.href);
+          a.parentNode.removeChild(a);
+        }, 0);
+      });
+  }
+
+  public file(method, url: string, data = null, requestConfig: RequestConfig = null): Observable<File> {
+    return this.request(method, url, data, {
+      handlers: false,
+      responseType: ResponseType.Blob,
+      mapHttpResponseBody: false,
+      ...requestConfig,
+    })
+      .pipe(
+        map((event: HttpResponse<any>) => {
+          let filename = (event.headers.getAll('Content-Disposition') || [])
+            .reduce((accum, item) => {
+              const matches = item.match(/filename="([^"]+)"/);
+
+              return matches ? matches[1] : accum;
+            }, '');
+
+          if (!filename) {
+            filename = (new URL(event.url))
+              .pathname.split('/').pop();
+          }
+
+          const type = event.headers.get('Content-Type');
+
+          return new File([event.body], filename, { type });
+        }),
+      );
   }
 
   private _createHttpRequest(config: FsApiConfig, url: string) {
