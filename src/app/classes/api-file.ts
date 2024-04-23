@@ -28,6 +28,10 @@ export class FsApiFile {
     };
   }
 
+  public get name(): string {
+    return this._config.name;
+  }
+
   public get blob(): Observable<Blob> {
     return this._api
       .get(this._url, {}, { handlers: false, responseType: ResponseType.Blob });
