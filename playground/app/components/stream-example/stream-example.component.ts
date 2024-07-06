@@ -28,6 +28,10 @@ export class StreamExampleComponent implements OnDestroy {
     private _message: FsMessage,
   ) {}
 
+  public download(query) {
+    //
+  }
+  
   public get(query) {
     this.data = [];
     this._api
