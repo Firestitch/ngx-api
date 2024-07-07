@@ -148,15 +148,39 @@ export class FsApi {
         }),
         switchMap((event: HttpEvent<any>) => {
           if(event.type === HttpEventType.DownloadProgress) {
-            const partialText = (event as any).partialText;
-            const text = partialText.substring(idx).trim();
-            const data$ = text.split('\n')
-              .map((item) => {
-                return of({ type: StreamEventType.Data, data: JSON.parse(item) });
-              });
+            let data$;
+            try {
+              const partialText = (event as any).partialText;
+              const text = partialText.substring(idx).trim();
+            
+              data$ = text.split('\n')
+                .map((item) => {
+                  const itemData = JSON.parse(item);
 
-            idx = partialText.length - 1;
+                  if(itemData?.code > 200) {
+                    throw new HttpErrorResponse({
+                      status: itemData.code,
+                      statusText: itemData.message,
+                      error: itemData,
+                    });
+                  }
 
+                  return of({ type: StreamEventType.Data, data: itemData });
+                });
+
+              idx = partialText.length - 1;
+
+            } catch(error) {
+              if(!(error instanceof HttpErrorResponse)) {
+                return throwError(new HttpErrorResponse({
+                  status: 400,
+                  statusText: error,
+                }));
+              }
+
+              return throwError(error);
+            } 
+            
             return merge(...data$);
           }
 
@@ -205,7 +229,7 @@ export class FsApi {
               url: event.url,
             });
 
-            return throwError(error);
+            return throwError(event.body.message);
           }
 
           if (event.type === HttpEventType.Response) {

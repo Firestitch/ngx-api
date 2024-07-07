@@ -4,9 +4,10 @@ import { FsApi } from '@firestitch/api';
 import { FsMessage } from '@firestitch/message';
 
 
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { of, Subject } from 'rxjs';
+import { catchError, takeUntil } from 'rxjs/operators';
 
+import { HttpErrorResponse } from '@angular/common/http';
 import { TEST_URL } from 'playground/app/injectors';
 import { StreamEventType } from 'src/app/enums';
 import { StreamEventData } from 'src/app/interfaces';
@@ -29,12 +30,26 @@ export class StreamExampleComponent implements OnDestroy {
     private _cdRef: ChangeDetectorRef,
     private _message: FsMessage,
   ) {}
+
+  public error() {
+    this.get('Some bad happened');
+  }
   
-  public get(query) {
+  public get(exception?) {
+    const query = {
+      count: 20,
+      exception,
+    };
+
     this.data = [];
     this._api
       .stream('get', `${this._url}/stream`, query)
       .pipe(
+        catchError((error: HttpErrorResponse) => {
+          this._message.error(error.statusText);
+
+          return of(error);
+        }), 
         takeUntil(this._destroy$),
       )
       .subscribe((data: StreamEventData) => {
@@ -44,7 +59,7 @@ export class StreamExampleComponent implements OnDestroy {
         }
 
         if(data.type === StreamEventType.HttpResponse) {
-          this._message.success();
+          this._message.success('Done');
         }
       });
   }
