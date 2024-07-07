@@ -8,16 +8,14 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { TEST_URL } from 'playground/app/injectors';
-import { StreamEventType } from 'src/app/enums';
-import { StreamEventData } from 'src/app/interfaces';
 
 
 @Component({
-  selector: 'app-stream-example',
-  templateUrl: './stream-example.component.html',
+  selector: 'app-keep-alive-example',
+  templateUrl: './keep-alive-example.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class StreamExampleComponent implements OnDestroy {
+export class KeepAliveExampleComponent implements OnDestroy {
 
   public data = [];
 
@@ -29,24 +27,19 @@ export class StreamExampleComponent implements OnDestroy {
     private _cdRef: ChangeDetectorRef,
     private _message: FsMessage,
   ) {}
-  
-  public get(query) {
+
+  public error(count) {
+    const query = {
+      keepAlive: count,
+    };
+
     this.data = [];
     this._api
-      .stream('get', `${this._url}/stream`, query)
+      .get(this._url, query)
       .pipe(
         takeUntil(this._destroy$),
       )
-      .subscribe((data: StreamEventData) => {
-        if(data.type === StreamEventType.Data) {
-          this.data.push(data);
-          this._cdRef.markForCheck();
-        }
-
-        if(data.type === StreamEventType.HttpResponse) {
-          this._message.success();
-        }
-      });
+      .subscribe();
   }
 
   public ngOnDestroy(): void {

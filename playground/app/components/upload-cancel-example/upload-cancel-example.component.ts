@@ -1,9 +1,10 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 
 import { FsApi } from '@firestitch/api';
 import { FsMessage } from '@firestitch/message';
 
 import { HttpEventType } from '@angular/common/http';
+import { TEST_URL } from 'playground/app/injectors';
 
 
 @Component({
@@ -14,9 +15,12 @@ import { HttpEventType } from '@angular/common/http';
 export class UploadCancelExampleComponent {
 
   public files = [];
-  public url = 'https://specify.firestitch.dev/api/dummy';
 
-  constructor(private _api: FsApi, private _message: FsMessage) {}
+  constructor(
+    @Inject(TEST_URL) private _url: string,
+    private _api: FsApi, 
+    private _message: FsMessage,
+  ) {}
 
   public upload() {
 
@@ -24,7 +28,7 @@ export class UploadCancelExampleComponent {
     this.files.forEach((fsFile, index) => {
       data.file = fsFile.file;
 
-      fsFile.obserable = this._api.post(this.url, data, { reportProgress: true })
+      fsFile.obserable = this._api.post(this._url, data, { reportProgress: true })
         .subscribe((event) => {
 
           switch (event.type) {

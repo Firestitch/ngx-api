@@ -17,13 +17,14 @@ import { FsMessage, FsMessageModule } from '@firestitch/message';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppComponent } from './app.component';
-import { ImageComponent, StreamExampleComponent } from './components';
+import { ImageComponent, KeepAliveExampleComponent, StreamExampleComponent } from './components';
 import { DownloadBlobComponent } from './components/download-blob/download-blob.component';
 import { FirstExampleComponent } from './components/first-example/first-example.component';
 import { SingleUploadComponent } from './components/single-upload/single-upload.component';
 import { UploadCancelExampleComponent } from './components/upload-cancel-example/upload-cancel-example.component';
 import { UploadExampleComponent } from './components/upload-example/upload-example.component';
 import { ResponseHandler } from './handlers/response.handler';
+import { TEST_URL } from './injectors';
 import {
   AlertInterceptorFactory,
   TokenInterceptorFactory,
@@ -57,6 +58,7 @@ import { TestService } from './services/test.service';
     DownloadBlobComponent,
     ImageComponent,
     StreamExampleComponent,
+    KeepAliveExampleComponent,
   ],
   providers: [
     TestService,
@@ -64,8 +66,9 @@ import { TestService } from './services/test.service';
     { provide: FS_API_REQUEST_INTERCEPTOR, useFactory: TokenInterceptorFactory, multi: true },
     { provide: FS_API_RESPONSE_HANDLER, useClass: ResponseHandler, deps: [FsMessage] },
     { provide: FsApi, useClass: NewFsApi },
+    { provide: TEST_URL, useValue: 'https://specify.firestitch.dev/api/dummy' },
+    { provide: TEST_URL, useValue: 'https://specify.local.firestitch.com/api/dummy' },
   ],
 })
 export class PlaygroundModule {
-  constructor() { }
 }

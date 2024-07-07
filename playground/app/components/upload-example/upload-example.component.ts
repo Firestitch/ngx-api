@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 
 import { FsApi } from '@firestitch/api';
 import { FsMessage } from '@firestitch/message';
@@ -6,6 +6,7 @@ import { FsMessage } from '@firestitch/message';
 import { finalize } from 'rxjs/operators';
 
 import { HttpEventType } from '@angular/common/http';
+import { TEST_URL } from 'playground/app/injectors';
 
 
 @Component({
@@ -16,8 +17,12 @@ import { HttpEventType } from '@angular/common/http';
 export class UploadExampleComponent {
 
   public files = [];
-  public url = 'https://specify.firestitch.dev/api/dummy';
-  constructor(private _api: FsApi, private _message: FsMessage) {}
+
+  constructor(
+    @Inject(TEST_URL) private _url: string,
+    private _api: FsApi, 
+    private _message: FsMessage,
+  ) {}
 
   public upload() {
 
@@ -31,7 +36,7 @@ export class UploadExampleComponent {
       data.file = fsFile.file;
       data.objectFile.file = fsFile.file;
 
-      fsFile.obserable = this._api.post(this.url, data, { reportProgress: true })
+      fsFile.obserable = this._api.post(this._url, data, { reportProgress: true })
         .pipe(
           finalize(() => {
             fsFile.progress = false;

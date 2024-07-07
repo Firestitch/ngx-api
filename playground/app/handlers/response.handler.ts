@@ -14,7 +14,7 @@ export class ResponseHandler extends FsApiResponseHandler {
   }
 
   public error(err, config) {
-    this._message.error(err.message || err.statusText, { mode: MessageMode.Toast });
+    this._message.error(err.statusText || err.message, { mode: MessageMode.Toast });
   }
 
   public complete(config) {

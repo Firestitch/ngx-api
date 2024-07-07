@@ -1,6 +1,8 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 
 import { FsApi } from '@firestitch/api';
+
+import { TEST_URL } from 'playground/app/injectors';
 
 
 @Component({
@@ -9,8 +11,9 @@ import { FsApi } from '@firestitch/api';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DownloadBlobComponent {
-
+  
   constructor(
+    @Inject(TEST_URL) private _url: string,
     private _api: FsApi,
   ) { }
 
@@ -21,7 +24,7 @@ export class DownloadBlobComponent {
   }
 
   public downloadApi() {
-    this._api.createApiFile('https://specify.firestitch.dev/api/dummy/download')
+    this._api.createApiFile(`${this._url}/download`)
       .download();
   }
 }

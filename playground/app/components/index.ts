@@ -1,6 +1,7 @@
 export * from './download-blob';
 export * from './first-example';
 export * from './image';
+export * from './keep-alive-example';
 export * from './single-upload';
 export * from './stream-example';
 export * from './upload-cancel-example';

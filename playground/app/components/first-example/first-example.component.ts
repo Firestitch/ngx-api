@@ -1,10 +1,13 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject } from '@angular/core';
 
 
 import { FsApi } from '@firestitch/api';
 
+
 import { from } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+
+import { TEST_URL } from 'playground/app/injectors';
 
 @Component({
   selector: 'first-example',
@@ -15,15 +18,15 @@ export class FirstExampleComponent {
 
   public data: any[] = null;
   public file: null;
-  public url = 'https://specify.firestitch.dev/api/dummy';
 
   constructor(
+    @Inject(TEST_URL) private _url: string,
     private _api: FsApi,
     private _cdRef: ChangeDetectorRef,
   ) {}
 
   public uploadFiles(file: File) {
-    this._api.post(this.url, { file })
+    this._api.post(this._url, { file })
       .subscribe();
   }
 
@@ -38,7 +41,7 @@ export class FirstExampleComponent {
     };
 
     this._api
-      .post(this.url, data, {
+      .post(this._url, data, {
         encoding: null,
       })
       .subscribe((resp) => {
@@ -58,7 +61,7 @@ export class FirstExampleComponent {
     query.arrayStrings = ['active', 'pending'];
     query.date = { date: new Date() };
 
-    this._api.get(this.url, query, { key: 'objects', cache })
+    this._api.get(this._url, query, { key: 'objects', cache })
       .subscribe((resp) => {
 
         console.log(resp);
@@ -68,7 +71,7 @@ export class FirstExampleComponent {
   }
 
   public blob() {
-    const url = `${this.url}/download`;
+    const url = `${this._url}/download`;
     this._api.createApiFile(url)
       .blob
       .pipe(

@@ -9,6 +9,7 @@ import { catchError, filter, map, switchMap, tap } from 'rxjs/operators';
 
 import {
   HTTP_INTERCEPTORS,
+  HttpErrorResponse,
   HttpEvent,
   HttpEventType,
   HttpRequest,
@@ -194,12 +195,26 @@ export class FsApi {
         filter((event: HttpEvent<any>) => {
           return config.reportProgress || event instanceof HttpResponse;
         }),
-        tap((event: HttpResponse<any>) => {
+        switchMap((event: HttpResponse<any>) => {
+          if(event.body?.code > 200) {
+            const error = new HttpErrorResponse({
+              status: event.body.code,
+              statusText: event.body.message,
+              error: event.body,
+              headers: event.headers,
+              url: event.url,
+            });
+
+            return throwError(error);
+          }
+
           if (event.type === HttpEventType.Response) {
             handlers.forEach((handler: FsApiBaseHander) => {
               handler.success(event, config, request);
             });
           }
+
+          return of(event);
         }),
         map((event: HttpResponse<any>) => {
           return ((config.mapHttpResponseBody ?? true) && event.type === HttpEventType.Response) ?
