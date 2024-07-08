@@ -27,10 +27,12 @@ export class BodyInterceptor implements HttpInterceptor {
   }
 
   public intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    let body = this._data;
     if(this._config.encoding === 'formdata') {
-      const body = objectToFormData(this._data);
-      req = req.clone({ body });
+      body = objectToFormData(body);
     }
+
+    req = req.clone({ body });
 
     return next.handle(req)
       .pipe(
