@@ -49,7 +49,7 @@ export class FsApi {
 
   private readonly _queue = new Queue(5);
   private _cache = new ApiCache();
-  private _responseHandlers: FsApiBaseHander[] = [new FsApiResponseHandler()];
+  private _responseHandlers: FsApiBaseHander[] = [];
   private _responseBodyHandlers: FsApiBaseHander[] = [new FsApiResponseBodyHandler()];
 
   constructor(
