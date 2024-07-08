@@ -1,10 +1,11 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 
 import { FsApi } from '@firestitch/api';
 
 import { finalize } from 'rxjs/operators';
 
 import { HttpEventType } from '@angular/common/http';
+import { TEST_URL } from 'playground/app/injectors';
 
 
 @Component({
@@ -17,9 +18,9 @@ export class SingleUploadComponent {
   public files = [];
   public percent = 0;
   public kbLoaded = 0;
-  public url = '/api';
 
   constructor(
+    @Inject(TEST_URL) private _url: string,
     private _api: FsApi,
   ) {}
 
@@ -31,7 +32,7 @@ export class SingleUploadComponent {
       this.kbLoaded = 0;
       this.percent = 0;
 
-      this._api.post(this.url, data, { reportProgress: true })
+      this._api.post(this._url, data, { reportProgress: true })
         .pipe(
           finalize(() => {
             this.percent = 0;
