@@ -26,7 +26,7 @@ export class SingleUploadComponent {
 
   public upload() {
     const data = { object: { date: new Date(), file: null }, file: null };
-    this.files.forEach((fsFile, index) => {
+    this.files.forEach((fsFile) => {
       data.file = fsFile.file;
       data.object.file = fsFile.file;
       this.kbLoaded = 0;
