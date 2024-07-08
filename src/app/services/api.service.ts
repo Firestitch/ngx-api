@@ -4,14 +4,12 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { Queue } from '@firestitch/common';
 
 
-import { Observable, merge, of, throwError } from 'rxjs';
-import { catchError, filter, map, switchMap, tap } from 'rxjs/operators';
+import { Observable, of, throwError } from 'rxjs';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
 
 import {
   HTTP_INTERCEPTORS,
-  HttpErrorResponse,
-  HttpEvent,
-  HttpEventType,
+  HttpInterceptor,
   HttpRequest,
   HttpResponse,
   HttpXhrBackend,
@@ -20,24 +18,22 @@ import {
 import { FsApiFile, RequestHandler } from '../classes';
 import { ApiCache } from '../classes/api-cache';
 import { FsApiConfig } from '../classes/api-config';
-import { RequestMethod, ResponseType, StreamEventType } from '../enums';
+import { RequestMethod, ResponseType } from '../enums';
 import {
   FS_API_CONFIG,
   FS_API_REQUEST_INTERCEPTOR,
-  FS_API_RESPONSE_DATA_HANDLER,
   FS_API_RESPONSE_HANDLER,
 } from '../fs-api-providers';
 import { FsApiCacheHandler } from '../handlers/cache.handler';
-import { FsApiResponseBodyHandler } from '../handlers/response-body.handler';
 import { FsApiResponseHandler } from '../handlers/response.handler';
 import {
-  BodyHandlerInterceptor, HeadersHandlerInterceptor, ParamsHandlerInterceptor,
-  RequestInterceptor,
+  BodyInterceptor,
+  HeadersInterceptor, ParamsInterceptor,
+  StreamInterceptor,
 } from '../interceptors';
 import { FsApiFileConfig, RequestConfig } from '../interfaces';
 import { FsApiBaseHander } from '../interfaces/handler.interface';
 import { IModuleConfig } from '../interfaces/module-config.interface';
-import { StreamEvent } from '../types';
 
 
 @Injectable({
@@ -50,11 +46,12 @@ export class FsApi {
   private readonly _queue = new Queue(5);
   private _cache = new ApiCache();
   private _responseHandlers: FsApiBaseHander[] = [];
-  private _responseBodyHandlers: FsApiBaseHander[] = [new FsApiResponseBodyHandler()];
+  private _responseBodyHandlers: FsApiBaseHander[] = [];
 
   constructor(
     private _http: HttpXhrBackend,
     private _sanitizer: DomSanitizer,
+
     // Custom interceptors
     @Optional() @Inject(FS_API_CONFIG)
     private _config: IModuleConfig,
@@ -71,20 +68,11 @@ export class FsApi {
     @Optional() @Inject(FS_API_RESPONSE_HANDLER)
     private _responseHandler: FsApiResponseHandler,
 
-    // Other callbacks
-    @Optional() @Inject(FS_API_RESPONSE_DATA_HANDLER)
-    private _responseBodyHandler: FsApiResponseBodyHandler,
   ) {
     if(_responseHandler) {
       this._responseHandlers = Array.isArray(_responseHandler) ?
         _responseHandler :
         [_responseHandler];
-    }
-
-    if(_responseBodyHandler) {
-      this._responseBodyHandlers = Array.isArray(_responseBodyHandler) ?
-        _responseBodyHandler :
-        [_responseBodyHandler];
     }
 
     this._queue.setLimit((this._config && this._config.maxFileConnections) || 5);
@@ -130,66 +118,15 @@ export class FsApi {
     url: string,
     data?: any,
     requestConfig?: RequestConfig,
-  ): Observable<StreamEvent> {
+  ): Observable<any> {
     const config = new FsApiConfig({
       ...this._config,
       ...requestConfig,
       stream: true,
     }, method, data);
 
-    let idx = 0;
-
     return this._getInterceptorChain(config, config.data)
-      .handle(this._createHttpRequest(config, url))
-      .pipe(
-        filter((event: HttpEvent<any>) => {
-          return event?.type === HttpEventType.DownloadProgress ||
-          event?.type === HttpEventType.Response;
-        }),
-        switchMap((event: HttpEvent<any>) => {
-          if(event.type === HttpEventType.DownloadProgress) {
-            let data$;
-            try {
-              const partialText = (event as any).partialText;
-              const text = partialText.substring(idx).trim();
-            
-              data$ = text.split('\n')
-                .map((item) => {
-                  const itemData = JSON.parse(item);
-
-                  if(itemData?.code > 200) {
-                    throw new HttpErrorResponse({
-                      status: itemData.code,
-                      statusText: itemData.message,
-                      error: itemData,
-                    });
-                  }
-
-                  return of({ type: StreamEventType.Data, data: itemData });
-                });
-
-              idx = partialText.length - 1;
-
-            } catch(error) {
-              if(!(error instanceof HttpErrorResponse)) {
-                return throwError(new HttpErrorResponse({
-                  status: 400,
-                  statusText: error,
-                }));
-              }
-
-              return throwError(error);
-            } 
-            
-            return merge(...data$);
-          }
-
-          return of({
-            ...data,
-            type: StreamEventType.HttpResponse,
-          });
-        }),
-      );
+      .handle(this._createHttpRequest(config, url));
   }
 
   public request(
@@ -216,34 +153,13 @@ export class FsApi {
     const chainedRequest = this._getInterceptorChain(config, config.data)
       .handle(request)
       .pipe(
-        filter((event: HttpEvent<any>) => {
-          return config.reportProgress || event instanceof HttpResponse;
-        }),
         switchMap((event: HttpResponse<any>) => {
-          if(event.body?.code > 200) {
-            const error = new HttpErrorResponse({
-              status: event.body.code,
-              statusText: event.body.message,
-              error: event.body,
-              headers: event.headers,
-              url: event.url,
-            });
-
-            return throwError(event.body.message);
-          }
-
-          if (event.type === HttpEventType.Response) {
-            handlers.forEach((handler: FsApiBaseHander) => {
+          handlers
+            .forEach((handler: FsApiBaseHander) => {
               handler.success(event, config, request);
             });
-          }
 
           return of(event);
-        }),
-        map((event: HttpResponse<any>) => {
-          return ((config.mapHttpResponseBody ?? true) && event.type === HttpEventType.Response) ?
-            event.body :
-            event;
         }),
         tap(() => {
           handlers.forEach((handler: FsApiBaseHander) => {
@@ -340,13 +256,17 @@ export class FsApi {
     return handlers;
   }
 
-  private _getInterceptorChain(config, data): RequestHandler {
-    const interceptors: RequestInterceptor[] = [
-      new HeadersHandlerInterceptor(config, data),
-      new BodyHandlerInterceptor(config, data),
-      new ParamsHandlerInterceptor(config, data),
+  private _getInterceptorChain(config: FsApiConfig, data: any): RequestHandler {
+    const interceptors: HttpInterceptor[] = [
+      new HeadersInterceptor(config, data),
+      new BodyInterceptor(config, data),
+      new ParamsInterceptor(config, data),
     ];
 
+    if(config.stream) {
+      interceptors.push(new StreamInterceptor(config, data));
+    }
+    
     if (config.interceptors) {
       // Add custom interceptors into chain
       if (Array.isArray(this._requestInterceptors)) {
@@ -365,7 +285,7 @@ export class FsApi {
 
     // Executing of interceptors
     return interceptors
-      .reduceRight((next: any, interceptor: any) => {
+      .reduce((next: any, interceptor: any) => {
         return new RequestHandler(next, interceptor);
       }, this._http);
   }

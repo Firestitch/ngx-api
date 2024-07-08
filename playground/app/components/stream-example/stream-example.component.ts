@@ -4,10 +4,8 @@ import { FsApi } from '@firestitch/api';
 import { FsMessage } from '@firestitch/message';
 
 
-import { of, Subject } from 'rxjs';
-import { catchError, takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
-import { HttpErrorResponse } from '@angular/common/http';
 import { TEST_URL } from 'playground/app/injectors';
 import { StreamEventType } from 'src/app/enums';
 import { StreamEventData } from 'src/app/interfaces';
@@ -44,14 +42,14 @@ export class StreamExampleComponent implements OnDestroy {
     this.data = [];
     this._api
       .stream('get', `${this._url}/stream`, query)
-      .pipe(
-        catchError((error: HttpErrorResponse) => {
-          this._message.error(error.statusText);
+      // .pipe(
+      //   catchError((error: HttpErrorResponse) => {
+      //     this._message.error(error.statusText);
 
-          return of(error);
-        }), 
-        takeUntil(this._destroy$),
-      )
+      //     return of(error);
+      //   }), 
+      //   takeUntil(this._destroy$),
+      // )
       .subscribe((data: StreamEventData) => {
         if(data.type === StreamEventType.Data) {
           this.data.push(data);

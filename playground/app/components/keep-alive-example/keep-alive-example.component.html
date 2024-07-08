@@ -2,7 +2,14 @@
   <button 
       mat-raised-button 
       color="primary" 
-      (click)="error(3)">
+      (click)="get(3)">
+    Get
+  </button>
+
+  <button 
+      mat-raised-button 
+      color="primary" 
+      (click)="get(3, 'There was an error')">
     Error
   </button>
 </div>

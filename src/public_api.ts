@@ -15,9 +15,9 @@ export { makeInterceptorFactory } from './app/helpers/interceptor.factory';
 export { FsApiResponseBodyHandler } from './app/handlers/response-body.handler';
 export { FsApiResponseHandler } from './app/handlers/response.handler';
 export { RequestInterceptor } from './app/interceptors/base/request.interceptor';
-export { BodyHandlerInterceptor } from './app/interceptors/body-handler.interceptor';
-export { HeadersHandlerInterceptor } from './app/interceptors/headers-handler.interceptor';
-export { ParamsHandlerInterceptor } from './app/interceptors/params-handler.interceptor';
+export { BodyInterceptor } from './app/interceptors/body.interceptor';
+export { HeadersInterceptor } from './app/interceptors/headers.interceptor';
+export { ParamsInterceptor } from './app/interceptors/params.interceptor';
 
 export * from './app/enums';
 export * from './app/helpers';

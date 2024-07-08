@@ -1,11 +1,9 @@
-import { NgModule } from '@angular/core';
+import { Injector, NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 
-
 import {
   FS_API_REQUEST_INTERCEPTOR,
-  FS_API_RESPONSE_HANDLER,
   FsApi,
   FsApiModule,
 } from '@firestitch/api';
@@ -23,10 +21,10 @@ import { FirstExampleComponent } from './components/first-example/first-example.
 import { SingleUploadComponent } from './components/single-upload/single-upload.component';
 import { UploadCancelExampleComponent } from './components/upload-cancel-example/upload-cancel-example.component';
 import { UploadExampleComponent } from './components/upload-example/upload-example.component';
-import { ResponseHandler } from './handlers/response.handler';
 import { TEST_URL } from './injectors';
 import {
   AlertInterceptorFactory,
+  ErrorInterceptorFactory,
   TokenInterceptorFactory,
 } from './interceptors';
 import { AppMaterialModule } from './material.module';
@@ -64,7 +62,7 @@ import { TestService } from './services/test.service';
     TestService,
     { provide: FS_API_REQUEST_INTERCEPTOR, useFactory: AlertInterceptorFactory, deps: [FsMessage], multi: true },
     { provide: FS_API_REQUEST_INTERCEPTOR, useFactory: TokenInterceptorFactory, multi: true },
-    { provide: FS_API_RESPONSE_HANDLER, useClass: ResponseHandler, deps: [FsMessage] },
+    { provide: FS_API_REQUEST_INTERCEPTOR, useFactory: ErrorInterceptorFactory, deps: [Injector], multi: true },
     { provide: FsApi, useClass: NewFsApi },
     { provide: TEST_URL, useValue: 'https://specify.firestitch.dev/api/dummy' },
     { provide: TEST_URL, useValue: 'https://specify.local.firestitch.com/api/dummy' },

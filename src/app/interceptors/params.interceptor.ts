@@ -4,22 +4,24 @@ import { Observable } from 'rxjs';
 import {
   HttpEvent,
   HttpHandler,
+  HttpInterceptor,
   HttpParams,
   HttpRequest,
 } from '@angular/common/http';
 
 
+import { FsApiConfig } from '../classes';
 import { CustomParamsEncoder } from '../classes/params-encoder';
 import { objectToFormData } from '../helpers/object-to-form-data';
 
-import { RequestInterceptor } from './base/request.interceptor';
 
-
-export class ParamsHandlerInterceptor extends RequestInterceptor {
-  constructor(protected _config: any, protected _data: any) {
-    super(_config, _data);
-  }
-
+export class ParamsInterceptor implements HttpInterceptor {
+  
+  constructor(
+    protected _config: FsApiConfig, 
+    protected _data: any,
+  ) {}
+  
   public intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     let params = new HttpParams({
       encoder: new CustomParamsEncoder(),

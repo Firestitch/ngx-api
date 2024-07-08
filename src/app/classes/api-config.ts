@@ -25,6 +25,7 @@ export class FsApiConfig {
   public stream: boolean;
   public cache?: boolean;
   public mapHttpResponseBody?: boolean;
+  public mapHttpResponseBodyData?: boolean;
   public context?: HttpContext;
 
   constructor(
@@ -49,7 +50,6 @@ export class FsApiConfig {
       this.reportProgress = true;
       this.responseType = ResponseType.Text;
     }
-
   }
 
   public get method() {

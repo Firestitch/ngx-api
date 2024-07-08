@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject, OnDestroy } from '@angular/core';
 
 import { FsApi } from '@firestitch/api';
 import { FsMessage } from '@firestitch/message';
@@ -24,13 +24,13 @@ export class KeepAliveExampleComponent implements OnDestroy {
   constructor(
     @Inject(TEST_URL) private _url: string,
     private _api: FsApi,
-    private _cdRef: ChangeDetectorRef,
     private _message: FsMessage,
   ) {}
 
-  public error(count) {
+  public get(count, exception?) {
     const query = {
       keepAlive: count,
+      exception,
     };
 
     this.data = [];
@@ -39,7 +39,9 @@ export class KeepAliveExampleComponent implements OnDestroy {
       .pipe(
         takeUntil(this._destroy$),
       )
-      .subscribe();
+      .subscribe(() => {
+        this._message.success('Done!'); 
+      });
   }
 
   public ngOnDestroy(): void {

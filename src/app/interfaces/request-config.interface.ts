@@ -18,5 +18,6 @@ export interface RequestConfig {
   data?: any;
   context?: HttpContext;
   mapHttpResponseBody?: boolean;
+  mapHttpResponseBodyData?: boolean;
   stream?: boolean;
 }

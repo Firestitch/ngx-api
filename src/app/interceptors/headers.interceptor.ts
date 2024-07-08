@@ -3,23 +3,24 @@ import { Observable } from 'rxjs';
 import {
   HttpEvent,
   HttpHandler,
-  HttpHeaders,
+  HttpInterceptor,
   HttpRequest,
 } from '@angular/common/http';
 
 import { FsApiConfig } from '../classes';
 import { lookupBlob } from '../helpers/lookup-blob';
 
-import { RequestInterceptor } from './base/request.interceptor';
 
-
-export class HeadersHandlerInterceptor extends RequestInterceptor {
-  constructor(protected _config: FsApiConfig, protected _data: any) {
-    super(_config, _data);
+export class HeadersInterceptor implements HttpInterceptor {
+  
+  constructor(
+    protected _config: FsApiConfig, 
+    protected _data: any,
+  ) {
   }
 
   public intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    let headers = new HttpHeaders();
+    let headers = req.headers;
 
     Object.keys(this._config.headers)
       .forEach((name) => {
@@ -44,8 +45,6 @@ export class HeadersHandlerInterceptor extends RequestInterceptor {
       } break;
     }
 
-    const modified = req.clone({ headers });
-
-    return next.handle(modified);
+    return next.handle(req.clone({ headers }));
   }
 }
