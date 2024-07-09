@@ -1,6 +1,6 @@
 
 import { merge, Observable, of, throwError } from 'rxjs';
-import { filter, switchMap } from 'rxjs/operators';
+import { catchError, filter, switchMap } from 'rxjs/operators';
 
 import {
   HttpErrorResponse,
@@ -30,6 +30,20 @@ export class StreamInterceptor implements HttpInterceptor {
 
     return next.handle(req)
       .pipe(
+        catchError((errorResponse: HttpErrorResponse) => {
+          try {
+            const error = JSON.parse(errorResponse.error);
+
+            errorResponse = new HttpErrorResponse({
+              ...errorResponse,
+              error,
+            });
+          } catch(e) {
+            //
+          }
+
+          return throwError(errorResponse);
+        }), 
         filter((event: HttpEvent<any>) => {
           return (
             event?.type === HttpEventType.DownloadProgress ||
@@ -48,7 +62,7 @@ export class StreamInterceptor implements HttpInterceptor {
                   const itemData = JSON.parse(item);
 
                   if(itemData?.code) {
-                    if(itemData > 200) {
+                    if(itemData.code > 200) {
                       throw new HttpErrorResponse({
                         status: itemData.code,
                         statusText: itemData.message,
