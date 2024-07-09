@@ -50,15 +50,15 @@ export class SingleUploadComponent {
           }
 
           if (event.type === HttpEventType.ResponseHeader) {
-
+            //
           }
 
           if (event.type === HttpEventType.DownloadProgress) {
-
+            //
           }
 
           if (event.type === HttpEventType.Response) {
-
+            //
           }
         });
     });

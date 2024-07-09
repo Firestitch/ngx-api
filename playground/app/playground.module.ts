@@ -64,8 +64,13 @@ import { TestService } from './services/test.service';
     { provide: FS_API_REQUEST_INTERCEPTOR, useFactory: TokenInterceptorFactory, multi: true },
     { provide: FS_API_REQUEST_INTERCEPTOR, useFactory: ErrorInterceptorFactory, deps: [Injector], multi: true },
     { provide: FsApi, useClass: NewFsApi },
-    { provide: TEST_URL, useValue: 'https://specify.firestitch.dev/api/dummy' },
-    { provide: TEST_URL, useValue: 'https://specify.local.firestitch.com/api/dummy' },
+    { provide: TEST_URL, 
+      useFactory: () => {
+        return document.location.hostname === 'localhost' ? 
+          'https://specify.local.firestitch.com/api/dummy' :
+          'https://specify.firestitch.dev/api/dummy';
+      }, 
+    },
   ],
 })
 export class PlaygroundModule {

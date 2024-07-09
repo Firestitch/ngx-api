@@ -1,4 +1,4 @@
 export enum StreamEventType {
   Data = 'data',
-  HttpResponse = 'httpResponse',
+  Complete = 'complete',
 }

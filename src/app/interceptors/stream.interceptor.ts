@@ -12,7 +12,8 @@ import {
 } from '@angular/common/http';
 
 
-import { FsApiConfig } from '../classes';
+import { FsApiConfig, StreamEventComplete } from '../classes';
+import { StreamEventData } from '../classes/stream-event-data';
 import { StreamEventType } from '../enums';
 
 
@@ -32,12 +33,11 @@ export class StreamInterceptor implements HttpInterceptor {
         filter((event: HttpEvent<any>) => {
           return (
             event?.type === HttpEventType.DownloadProgress ||
-          event?.type === HttpEventType.Response
+            event?.type === HttpEventType.Response
           );
         }),
         switchMap((event: HttpEvent<any>) => {
           if(event.type === HttpEventType.DownloadProgress) {
-          
             let data$;
             try {
               const partialText = (event as any).partialText;
@@ -47,15 +47,19 @@ export class StreamInterceptor implements HttpInterceptor {
                 .map((item) => {
                   const itemData = JSON.parse(item);
 
-                  if(itemData?.code > 200) {
-                    throw new HttpErrorResponse({
-                      status: itemData.code,
-                      statusText: itemData.message,
-                      error: itemData,
-                    });
+                  if(itemData?.code) {
+                    if(itemData > 200) {
+                      throw new HttpErrorResponse({
+                        status: itemData.code,
+                        statusText: itemData.message,
+                        error: itemData,
+                      });
+                    } else {
+                      return of(new StreamEventComplete({ data: itemData, code: itemData.code }));
+                    }
                   }
 
-                  return of({ type: StreamEventType.Data, data: itemData });
+                  return of(new StreamEventData({ data: itemData }));
                 });
 
               idx = partialText.length - 1;
@@ -72,11 +76,11 @@ export class StreamInterceptor implements HttpInterceptor {
             } 
           
             return merge(...data$);
-          }
+          } 
 
           return of({
             data: [],
-            type: StreamEventType.HttpResponse,
+            type: StreamEventType.Complete,
           });
         }),
       );

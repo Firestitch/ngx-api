@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy,
+} from '@angular/core';
 
 import { FsApi } from '@firestitch/api';
 import { FsMessage } from '@firestitch/message';
@@ -7,8 +9,7 @@ import { FsMessage } from '@firestitch/message';
 import { Subject } from 'rxjs';
 
 import { TEST_URL } from 'playground/app/injectors';
-import { StreamEventType } from 'src/app/enums';
-import { StreamEventData } from 'src/app/interfaces';
+import { StreamEventComplete, StreamEventData } from 'src/app';
 
 
 @Component({
@@ -36,28 +37,21 @@ export class StreamExampleComponent implements OnDestroy {
   public get(exception?) {
     const query = {
       count: 20,
+      sleep: .1,
       exception,
     };
 
     this.data = [];
     this._api
       .stream('get', `${this._url}/stream`, query)
-      // .pipe(
-      //   catchError((error: HttpErrorResponse) => {
-      //     this._message.error(error.statusText);
-
-      //     return of(error);
-      //   }), 
-      //   takeUntil(this._destroy$),
-      // )
-      .subscribe((data: StreamEventData) => {
-        if(data.type === StreamEventType.Data) {
+      .subscribe((data) => {
+        if(data instanceof StreamEventData) {
           this.data.push(data);
           this._cdRef.markForCheck();
         }
 
-        if(data.type === StreamEventType.HttpResponse) {
-          this._message.success('Done');
+        if(data instanceof StreamEventComplete) {
+          this._message.success(`Done (${data.code})`);
         }
       });
   }
