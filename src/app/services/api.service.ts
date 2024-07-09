@@ -21,6 +21,7 @@ import { FsApiConfig } from '../classes/api-config';
 import { RequestMethod, ResponseType } from '../enums';
 import {
   FS_API_CONFIG,
+  FS_API_PRE_REQUEST_INTERCEPTOR,
   FS_API_REQUEST_INTERCEPTOR,
   FS_API_RESPONSE_HANDLER,
 } from '../fs-api-providers';
@@ -62,7 +63,11 @@ export class FsApi {
 
     // Custom interceptors
     @Optional() @Inject(FS_API_REQUEST_INTERCEPTOR)
-    private _requestInterceptors,
+    private _requestInterceptors: HttpInterceptor[],
+
+    // Custom interceptors
+    @Optional() @Inject(FS_API_PRE_REQUEST_INTERCEPTOR)
+    private _preRequestInterceptors: HttpInterceptor[],
 
     // Other callbacks
     @Optional() @Inject(FS_API_RESPONSE_HANDLER)
@@ -188,7 +193,6 @@ export class FsApi {
     return chainedRequest;
   }
 
-
   public download(name: string, method, url: string, data = null): void {
     this.file(method, url, data)
       .subscribe((file: File) => {
@@ -257,7 +261,8 @@ export class FsApi {
   }
 
   private _getInterceptorChain(config: FsApiConfig, data: any): RequestHandler {
-    const interceptors: HttpInterceptor[] = [
+    let interceptors: HttpInterceptor[] = [
+      ...this._getInterceptors(config, data, this._preRequestInterceptors),
       new BodyInterceptor(config, data),
       new ParamsInterceptor(config, data),
       new HeadersInterceptor(config, data),
@@ -268,19 +273,11 @@ export class FsApi {
     }
     
     if (config.interceptors) {
-      // Add custom interceptors into chain
-      if (Array.isArray(this._requestInterceptors)) {
-        interceptors.push(
-          ...this._requestInterceptors
-            .map((interceptor) => interceptor(config, data)),
-        );
-      } else if (this._requestInterceptors) {
-        const interceptor = this._requestInterceptors(config, data);
-
-        interceptors.push(interceptor);
-      }
-
-      interceptors.push(...this._httpInterceptors);
+      interceptors = [
+        ...interceptors,
+        ...this._getInterceptors(config, data, this._requestInterceptors),
+        ...this._httpInterceptors,
+      ];
     }
 
     // Executing of interceptors
@@ -288,5 +285,16 @@ export class FsApi {
       .reduce((next: any, interceptor: any) => {
         return new RequestHandler(next, interceptor);
       }, this._http);
+  }
+
+  private _getInterceptors(config, data, interceptors) {
+    if(!interceptors) {
+      return [];
+    } 
+
+    interceptors = Array.isArray(interceptors) ? interceptors : [interceptors];
+
+    return interceptors
+      .map((interceptor) => interceptor(config, data));
   }
 }

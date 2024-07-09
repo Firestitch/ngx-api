@@ -4,7 +4,7 @@ export { FsApiModule } from './app/fs-api.module';
 export { FsApi } from './app/services/api.service';
 
 // Providers
-export { FS_API_CONFIG, FS_API_REQUEST_INTERCEPTOR, FS_API_RESPONSE_HANDLER } from './app/fs-api-providers';
+export * from './app/fs-api-providers';
 
 // Helpers
 export { makeInterceptorFactory } from './app/helpers/interceptor.factory';
@@ -12,7 +12,6 @@ export { makeInterceptorFactory } from './app/helpers/interceptor.factory';
 // Interceptors
 export { FsApiResponseBodyHandler } from './app/handlers/response-body.handler';
 export { FsApiResponseHandler } from './app/handlers/response.handler';
-export { RequestInterceptor } from './app/interceptors/base/request.interceptor';
 export { BodyInterceptor } from './app/interceptors/body.interceptor';
 export { HeadersInterceptor } from './app/interceptors/headers.interceptor';
 export { ParamsInterceptor } from './app/interceptors/params.interceptor';

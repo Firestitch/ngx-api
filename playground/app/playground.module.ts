@@ -13,6 +13,7 @@ import { FsFileModule } from '@firestitch/file';
 import { FsMessage, FsMessageModule } from '@firestitch/message';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { FS_API_PRE_REQUEST_INTERCEPTOR } from 'src/app/fs-api-providers';
 
 import { AppComponent } from './app.component';
 import { ImageComponent, KeepAliveExampleComponent, StreamExampleComponent } from './components';
@@ -25,6 +26,7 @@ import { TEST_URL } from './injectors';
 import {
   AlertInterceptorFactory,
   ErrorInterceptorFactory,
+  PreInterceptorFactory,
   TokenInterceptorFactory,
 } from './interceptors';
 import { AppMaterialModule } from './material.module';
@@ -60,9 +62,28 @@ import { TestService } from './services/test.service';
   ],
   providers: [
     TestService,
-    { provide: FS_API_REQUEST_INTERCEPTOR, useFactory: AlertInterceptorFactory, deps: [FsMessage], multi: true },
-    { provide: FS_API_REQUEST_INTERCEPTOR, useFactory: TokenInterceptorFactory, multi: true },
-    { provide: FS_API_REQUEST_INTERCEPTOR, useFactory: ErrorInterceptorFactory, deps: [Injector], multi: true },
+    { 
+      provide: FS_API_PRE_REQUEST_INTERCEPTOR, 
+      useFactory: PreInterceptorFactory, 
+      multi: true, 
+    },
+    { 
+      provide: FS_API_REQUEST_INTERCEPTOR, 
+      useFactory: AlertInterceptorFactory, 
+      deps: [FsMessage], 
+      multi: true, 
+    },
+    { 
+      provide: FS_API_REQUEST_INTERCEPTOR, 
+      useFactory: TokenInterceptorFactory, 
+      multi: true, 
+    },
+    { 
+      provide: FS_API_REQUEST_INTERCEPTOR, 
+      useFactory: ErrorInterceptorFactory, 
+      deps: [Injector],
+      multi: true, 
+    },
     { provide: FsApi, useClass: NewFsApi },
     { provide: TEST_URL, 
       useFactory: () => {
