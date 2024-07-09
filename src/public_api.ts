@@ -1,8 +1,6 @@
 // Modules
 export { FsApiModule } from './app/fs-api.module';
 
-// Services
-export { CustomParamsEncoder, FsApiFile, RequestHandler } from './app/classes';
 export { FsApi } from './app/services/api.service';
 
 // Providers
@@ -19,12 +17,13 @@ export { BodyInterceptor } from './app/interceptors/body.interceptor';
 export { HeadersInterceptor } from './app/interceptors/headers.interceptor';
 export { ParamsInterceptor } from './app/interceptors/params.interceptor';
 
+export * from './app/classes';
 export * from './app/enums';
 export * from './app/helpers';
 export * from './app/interfaces';
+
 export { StreamEvent } from './app/types';
 
-export { FsApiConfig } from './app/classes';
 export { FsApiImageDirective } from './app/directives';
 export { FsApiImagePipe } from './app/pipes';
 
