@@ -9,6 +9,7 @@ import { catchError, map, switchMap, tap } from 'rxjs/operators';
 
 import {
   HTTP_INTERCEPTORS,
+  HttpHandler,
   HttpInterceptor,
   HttpRequest,
   HttpResponse,
@@ -28,9 +29,10 @@ import {
 import { FsApiCacheHandler } from '../handlers/cache.handler';
 import { FsApiResponseHandler } from '../handlers/response.handler';
 import {
-  BodyInterceptor,
-  HeadersInterceptor, ParamsInterceptor,
-  StreamInterceptor,
+  BodyRequestInterceptor,
+  BodyResponseInterceptor,
+  HeaderRequestInterceptor, ParamRequestInterceptor,
+  StreamResponseInterceptor,
 } from '../interceptors';
 import { FsApiFileConfig, RequestConfig } from '../interfaces';
 import { FsApiBaseHander } from '../interfaces/handler.interface';
@@ -260,17 +262,13 @@ export class FsApi {
     return handlers;
   }
 
-  private _getInterceptorChain(config: FsApiConfig, data: any): RequestHandler {
+  private _getInterceptorChain(config: FsApiConfig, data: any): HttpHandler {
     let interceptors: HttpInterceptor[] = [
       ...this._getInterceptors(config, data, this._preRequestInterceptors),
-      new BodyInterceptor(config, data),
-      new ParamsInterceptor(config, data),
-      new HeadersInterceptor(config, data),
+      new BodyRequestInterceptor(config, data),
+      new ParamRequestInterceptor(config, data),
+      new HeaderRequestInterceptor(config, data),
     ];
-
-    if(config.stream) {
-      interceptors.push(new StreamInterceptor(config, data));
-    }
     
     if (config.interceptors) {
       interceptors = [
@@ -280,14 +278,22 @@ export class FsApi {
       ];
     }
 
+    if(config.stream) {
+      interceptors.push(new StreamResponseInterceptor(config, data));
+    } else {
+      interceptors.push(new BodyResponseInterceptor(config, data));
+    }
+
     // Executing of interceptors
-    return interceptors
-      .reduce((next: any, interceptor: any) => {
+    const httpHandlers = interceptors
+      .reduceRight((next: HttpHandler, interceptor: HttpInterceptor) => {
         return new RequestHandler(next, interceptor);
       }, this._http);
+
+    return httpHandlers;
   }
 
-  private _getInterceptors(config, data, interceptors) {
+  private _getInterceptors(config: FsApiConfig, data: any, interceptors) {
     if(!interceptors) {
       return [];
     } 

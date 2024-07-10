@@ -1,4 +1,4 @@
-import { makeInterceptorFactory } from '@firestitch/api';
+import { FsApiConfig, makeInterceptorFactory } from '@firestitch/api';
 import { FsMessage } from '@firestitch/message';
 
 import { Observable } from 'rxjs';
@@ -9,14 +9,14 @@ import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/c
 class AlertInterceptor implements HttpInterceptor {
 
   constructor(
-    public config, 
+    public config: FsApiConfig, 
     public data, 
-    public fsMessage: FsMessage,
+    public message: FsMessage,
   ) {
   }
 
   public intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    this.fsMessage.info('Interceptor had been ran');
+    this.message.info('Interceptor had been ran');
 
     return next.handle(req);
   }

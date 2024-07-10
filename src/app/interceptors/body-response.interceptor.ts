@@ -15,10 +15,9 @@ import {
 
 import { FsApiConfig } from '../classes';
 import { ResponseType } from '../enums';
-import { objectToFormData } from '../helpers/object-to-form-data';
 
 
-export class BodyInterceptor implements HttpInterceptor {
+export class BodyResponseInterceptor implements HttpInterceptor {
 
   constructor(
     protected _config: FsApiConfig, 
@@ -27,12 +26,6 @@ export class BodyInterceptor implements HttpInterceptor {
   }
 
   public intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    let body = this._data;
-    if(this._config.encoding === 'formdata') {
-      body = objectToFormData(body);
-    }
-
-    req = req.clone({ body });
 
     return next.handle(req)
       .pipe(

@@ -11,7 +11,7 @@ import { FsApiConfig } from '../classes';
 import { lookupBlob } from '../helpers/lookup-blob';
 
 
-export class HeadersInterceptor implements HttpInterceptor {
+export class HeaderRequestInterceptor implements HttpInterceptor {
   
   constructor(
     protected _config: FsApiConfig, 

@@ -17,7 +17,7 @@ import { StreamEventData } from '../classes/stream-event-data';
 import { StreamEventType } from '../enums';
 
 
-export class StreamInterceptor implements HttpInterceptor {
+export class StreamResponseInterceptor implements HttpInterceptor {
   
   constructor(
     protected _config: FsApiConfig, 

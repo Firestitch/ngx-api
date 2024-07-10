@@ -15,7 +15,7 @@ import { CustomParamsEncoder } from '../classes/params-encoder';
 import { objectToFormData } from '../helpers/object-to-form-data';
 
 
-export class ParamsInterceptor implements HttpInterceptor {
+export class ParamRequestInterceptor implements HttpInterceptor {
   
   constructor(
     protected _config: FsApiConfig, 

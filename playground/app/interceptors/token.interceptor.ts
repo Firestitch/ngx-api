@@ -1,4 +1,4 @@
-import { makeInterceptorFactory } from '@firestitch/api';
+import { FsApiConfig, makeInterceptorFactory } from '@firestitch/api';
 
 import { Observable } from 'rxjs';
 
@@ -8,8 +8,8 @@ import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/c
 class TokenInterceptor implements HttpInterceptor {
   
   constructor(
-    protected _config, 
-    protected _data,
+    protected _config: FsApiConfig, 
+    protected _data: any,
   ) {
   }
 
