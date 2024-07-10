@@ -1,15 +1,11 @@
-// Modules
 export { FsApiModule } from './app/fs-api.module';
 
 export { FsApi } from './app/services/api.service';
 
-// Providers
 export * from './app/fs-api-providers';
 
-// Helpers
 export { makeInterceptorFactory } from './app/helpers/interceptor.factory';
 
-// Interceptors
 export { FsApiResponseBodyHandler } from './app/handlers/response-body.handler';
 export { FsApiResponseHandler } from './app/handlers/response.handler';
 export { BodyRequestInterceptor } from './app/interceptors/body-request.interceptor';

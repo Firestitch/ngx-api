@@ -67,7 +67,7 @@ export class FsApi {
     @Optional() @Inject(FS_API_REQUEST_INTERCEPTOR)
     private _requestInterceptors: HttpInterceptor[],
 
-    // Custom interceptors
+    // Pre-request interceptors
     @Optional() @Inject(FS_API_PRE_REQUEST_INTERCEPTOR)
     private _preRequestInterceptors: HttpInterceptor[],
 
@@ -274,7 +274,6 @@ export class FsApi {
       interceptors = [
         ...interceptors,
         ...this._getInterceptors(config, data, this._requestInterceptors),
-        ...this._httpInterceptors,
       ];
     }
 
@@ -282,6 +281,13 @@ export class FsApi {
       interceptors.push(new StreamResponseInterceptor(config, data));
     } else {
       interceptors.push(new BodyResponseInterceptor(config, data));
+    }
+
+    if (config.interceptors) {
+      interceptors = [
+        ...interceptors,
+        ...this._httpInterceptors,
+      ];
     }
 
     // Executing of interceptors

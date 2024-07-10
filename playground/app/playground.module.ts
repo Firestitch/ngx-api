@@ -12,6 +12,7 @@ import { FsExampleModule } from '@firestitch/example';
 import { FsFileModule } from '@firestitch/file';
 import { FsMessage, FsMessageModule } from '@firestitch/message';
 
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FS_API_PRE_REQUEST_INTERCEPTOR } from 'src/app/fs-api-providers';
 
@@ -26,6 +27,7 @@ import { TEST_URL } from './injectors';
 import {
   AlertInterceptorFactory,
   ErrorInterceptorFactory,
+  HttpInterceptor,
   PreInterceptorFactory,
   TokenInterceptorFactory,
 } from './interceptors';
@@ -62,6 +64,11 @@ import { TestService } from './services/test.service';
   ],
   providers: [
     TestService,
+    { 
+      provide: HTTP_INTERCEPTORS, 
+      useClass: HttpInterceptor, 
+      multi: true, 
+    },
     { 
       provide: FS_API_PRE_REQUEST_INTERCEPTOR, 
       useFactory: PreInterceptorFactory, 
