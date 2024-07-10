@@ -265,9 +265,9 @@ export class FsApi {
   private _getInterceptorChain(config: FsApiConfig, data: any): HttpHandler {
     let interceptors: HttpInterceptor[] = [
       ...this._getInterceptors(config, data, this._preRequestInterceptors),
-      new BodyRequestInterceptor(config, data),
+      new HeaderRequestInterceptor(config, data),      
       new ParamRequestInterceptor(config, data),
-      new HeaderRequestInterceptor(config, data),
+      new BodyRequestInterceptor(config, data),
     ];
     
     if (config.interceptors) {
