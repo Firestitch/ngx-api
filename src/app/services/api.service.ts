@@ -61,7 +61,7 @@ export class FsApi {
 
     // Custom interceptors
     @Optional() @Inject(HTTP_INTERCEPTORS)
-    private _httpInterceptors,
+    private _httpInterceptors: HttpInterceptor[],
 
     // Custom interceptors
     @Optional() @Inject(FS_API_REQUEST_INTERCEPTOR)
