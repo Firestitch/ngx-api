@@ -1,2 +1,2 @@
-export * from './catch-api-error';
 export * from './display-api-error';
+export * from './process-api-error';
