@@ -286,7 +286,7 @@ export class FsApi {
     if (config.interceptors) {
       interceptors = [
         ...interceptors,
-        ...this._httpInterceptors,
+        ...(this._httpInterceptors || []),
       ];
     }
 
