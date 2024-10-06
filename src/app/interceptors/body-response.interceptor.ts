@@ -3,14 +3,7 @@ import { parse, parseLocal } from '@firestitch/date';
 import { Observable, of, throwError } from 'rxjs';
 import { filter, switchMap } from 'rxjs/operators';
 
-import {
-  HttpErrorResponse,
-  HttpEvent,
-  HttpHandler,
-  HttpInterceptor,
-  HttpRequest,
-  HttpResponse,
-} from '@angular/common/http';
+import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse } from '@angular/common/http';
 
 
 import { FsApiConfig } from '../classes';

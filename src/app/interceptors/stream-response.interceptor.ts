@@ -2,14 +2,7 @@
 import { merge, Observable, of, throwError } from 'rxjs';
 import { catchError, filter, switchMap } from 'rxjs/operators';
 
-import {
-  HttpErrorResponse,
-  HttpEvent,
-  HttpEventType,
-  HttpHandler,
-  HttpInterceptor,
-  HttpRequest,
-} from '@angular/common/http';
+import { HttpErrorResponse, HttpEvent, HttpEventType, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
 
 
 import { FsApiConfig, StreamEventComplete } from '../classes';

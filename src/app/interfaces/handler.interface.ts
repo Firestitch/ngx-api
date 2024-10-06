@@ -1,7 +1,4 @@
-import {
-  HttpErrorResponse,
-  HttpRequest, HttpResponse,
-} from '@angular/common/http';
+import { HttpErrorResponse, HttpRequest, HttpResponse } from '@angular/common/http';
 
 import { FsApiConfig } from '../classes';
 

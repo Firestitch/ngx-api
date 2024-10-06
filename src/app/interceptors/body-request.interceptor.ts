@@ -1,12 +1,7 @@
 
 import { Observable } from 'rxjs';
 
-import {
-  HttpEvent,
-  HttpHandler,
-  HttpInterceptor,
-  HttpRequest,
-} from '@angular/common/http';
+import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
 
 
 import { FsApiConfig } from '../classes';

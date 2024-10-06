@@ -3,9 +3,7 @@
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
-import {
-  HttpEvent, HttpHandler, HttpRequest,
-} from '@angular/common/http';
+import { HttpEvent, HttpHandler, HttpRequest } from '@angular/common/http';
 
 
 export class HttpInterceptor implements HttpInterceptor {

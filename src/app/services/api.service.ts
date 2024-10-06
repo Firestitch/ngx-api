@@ -7,14 +7,7 @@ import { Queue } from '@firestitch/common';
 import { Observable, of, throwError } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 
-import {
-  HTTP_INTERCEPTORS,
-  HttpHandler,
-  HttpInterceptor,
-  HttpRequest,
-  HttpResponse,
-  HttpXhrBackend,
-} from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse, HttpXhrBackend } from '@angular/common/http';
 
 import { FsApiFile, RequestHandler } from '../classes';
 import { ApiCache } from '../classes/api-cache';

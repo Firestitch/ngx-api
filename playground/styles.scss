@@ -3,7 +3,7 @@
 @import '@firestitch/message/styles.scss';
 @import '@firestitch/file/styles.scss';
 
-@include fs-file(mat.$blue-palette);
+@include fs-file(mat.$m2-blue-palette);
 
 .buttons {
   display: flex;
