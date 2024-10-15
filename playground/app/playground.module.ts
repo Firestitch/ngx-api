@@ -1,13 +1,13 @@
 import { Injector, NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
+import { RouterModule } from '@angular/router';
 
 import {
   FS_API_REQUEST_INTERCEPTOR,
   FsApi,
   FsApiModule,
 } from '@firestitch/api';
-import { FsCommonModule } from '@firestitch/common';
 import { FsExampleModule } from '@firestitch/example';
 import { FsFileModule } from '@firestitch/file';
 import { FsMessage, FsMessageModule } from '@firestitch/message';
@@ -40,6 +40,7 @@ import { TestService } from './services/test.service';
   bootstrap: [AppComponent],
   imports: [
     BrowserModule,
+    RouterModule.forRoot([]),
     FsApiModule.forRoot({
       maxFileConnections: 5,
     }),
@@ -48,7 +49,6 @@ import { TestService } from './services/test.service';
     FormsModule,
     FsExampleModule.forRoot({ iframeObserveBody: true }),
     FsFileModule.forRoot(),
-    FsCommonModule,
     FsMessageModule.forRoot(),
   ],
   declarations: [

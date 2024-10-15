@@ -189,13 +189,20 @@ export class FsApi {
   }
 
   public download(name: string, method, url: string, data = null): void {
-    this.file(method, url, data)
-      .subscribe((file: File) => {
+    this.download$(name, method, url, data)
+    .subscribe();
+  }
+
+  public download$(name: string, method, url: string, data = null): Observable<any> {
+    return this.file(method, url, data)
+      .pipe(
+        tap((file: File) => {
         const a = document.createElement('a');
         document.body.appendChild(a);
         a.style.display = 'none';
         a.href = URL.createObjectURL(file);
         name = name ? name : file.name;
+        
         if (name) {
           a.download = name;
         }
@@ -204,8 +211,9 @@ export class FsApi {
         setTimeout(() => {
           URL.revokeObjectURL(a.href);
           a.parentNode.removeChild(a);
-        }, 0);
-      });
+          }, 0);
+        }),
+      );
   }
 
   public file(method, url: string, data = null, requestConfig: RequestConfig = null): Observable<File> {
