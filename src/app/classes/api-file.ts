@@ -35,7 +35,15 @@ export class FsApiFile {
 
   public get blob(): Observable<Blob> {
     return this._api
-      .get(this._url, {}, { handlers: false, responseType: ResponseType.Blob });
+      .request( 
+        this._config.method, 
+        this._url, 
+        this._config.data, 
+        { 
+          handlers: false, 
+          responseType: ResponseType.Blob, 
+        },
+      );
   }
 
   public get file(): Observable<File> {
