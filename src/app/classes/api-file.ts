@@ -4,6 +4,9 @@ import { Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
 
+import { HttpContext } from '@angular/common/http';
+
+import { DisplayApiError } from '../consts';
 import { RequestMethod, ResponseType } from '../enums';
 import { blobToBase64, blobToBase64Url } from '../helpers';
 import { FsApiFileConfig } from '../interfaces';
@@ -34,20 +37,33 @@ export class FsApiFile {
   }
 
   public get blob(): Observable<Blob> {
+    const context = new HttpContext();
+    context.set(DisplayApiError, false);
+
     return this._api
       .request( 
         this._config.method, 
         this._url, 
         this._config.data, 
         { 
-          handlers: false, 
+          context, 
           responseType: ResponseType.Blob, 
         },
       );
   }
 
   public get file(): Observable<File> {
-    return this._api.file(this._config.method, this._url, this._config.data);
+    const context = new HttpContext();
+    context.set(DisplayApiError, false);
+
+    return this._api.file(
+      this._config.method, 
+      this._url, 
+      this._config.data, 
+      {
+        context,
+      },
+    );
   }
 
   public get blobUrl(): Observable<string> {
