@@ -9,6 +9,7 @@ import { blobToBase64, blobToBase64Url } from '../helpers';
 import { FsApiFileConfig } from '../interfaces';
 import { FsApi } from '../services';
 
+
 export class FsApiFile {
 
   private _url: string;
@@ -17,10 +18,10 @@ export class FsApiFile {
 
   constructor(
     api: FsApi,
-    url: string,
+    url: string | (string|number)[],
     options?: FsApiFileConfig,
   ) {
-    this._url = url;
+    this._url = Array.isArray(url) ? url.join('/') : url;
     this._api = api;
     this._config = {
       method: RequestMethod.Get,

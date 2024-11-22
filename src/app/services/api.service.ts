@@ -79,7 +79,7 @@ export class FsApi {
   }
 
   public createApiFile(
-    url: string,
+    url: string | (string|number)[],
     config?: FsApiFileConfig,
   ) {
     return new FsApiFile(this, url, config);
@@ -97,19 +97,19 @@ export class FsApi {
     return this._sanitizer;
   }
 
-  public get(url: RequestMethod | string, query?: any, config?: RequestConfig) {
+  public get(url: RequestMethod | string | (string|number)[], query?: any, config?: RequestConfig) {
     return this.request(RequestMethod.Get, url, query, config);
   }
 
-  public post(url: RequestMethod | string, data?: any, config?: RequestConfig): Observable<any> {
+  public post(url: RequestMethod | string | (string|number)[], data?: any, config?: RequestConfig): Observable<any> {
     return this.request(RequestMethod.Post, url, data, config);
   }
 
-  public put(url: RequestMethod | string, data?: any, config?: RequestConfig): Observable<any> {
+  public put(url: RequestMethod | string | (string|number)[], data?: any, config?: RequestConfig): Observable<any> {
     return this.request(RequestMethod.Put, url, data, config);
   }
 
-  public delete(url: RequestMethod | string, data?: any, config?: RequestConfig): Observable<any> {
+  public delete(url: RequestMethod | string | (string|number)[], data?: any, config?: RequestConfig): Observable<any> {
     return this.request(RequestMethod.Delete, url, data, config);
   }
 
@@ -131,11 +131,12 @@ export class FsApi {
 
   public request(
     method: RequestMethod | string,
-    url: string,
+    url: string | (string|number)[],
     data?: any,
     requestConfig?: RequestConfig,
   ): Observable<any> {
     const config = new FsApiConfig({ ...this._config, ...requestConfig }, method, data);
+    url = Array.isArray(url) ? url.join('/') : url;
 
     if (config.methodGet) {
       if (config.cache) {
@@ -190,27 +191,27 @@ export class FsApi {
 
   public download(name: string, method, url: string, data = null): void {
     this.download$(name, method, url, data)
-    .subscribe();
+      .subscribe();
   }
 
   public download$(name: string, method, url: string, data = null): Observable<any> {
     return this.file(method, url, data)
       .pipe(
         tap((file: File) => {
-        const a = document.createElement('a');
-        document.body.appendChild(a);
-        a.style.display = 'none';
-        a.href = URL.createObjectURL(file);
-        name = name ? name : file.name;
+          const a = document.createElement('a');
+          document.body.appendChild(a);
+          a.style.display = 'none';
+          a.href = URL.createObjectURL(file);
+          name = name ? name : file.name;
         
-        if (name) {
-          a.download = name;
-        }
+          if (name) {
+            a.download = name;
+          }
 
-        a.click();
-        setTimeout(() => {
-          URL.revokeObjectURL(a.href);
-          a.parentNode.removeChild(a);
+          a.click();
+          setTimeout(() => {
+            URL.revokeObjectURL(a.href);
+            a.parentNode.removeChild(a);
           }, 0);
         }),
       );

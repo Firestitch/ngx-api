@@ -24,7 +24,7 @@ export class DownloadBlobComponent {
   }
 
   public downloadApi() {
-    this._api.createApiFile(`${this._url}/download`)
+    this._api.createApiFile([this._url, '/download'])
       .download();
   }
 }

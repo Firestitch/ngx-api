@@ -1,11 +1,11 @@
-import { differenceInMinutes } from 'date-fns'
+import { differenceInMinutes } from 'date-fns';
 
 
 export class ApiCache {
 
   private _cache = Array();
 
-  public get(name, params) {
+  public get(name: string, params) {
     const cache = this._cache[name];
 
     if (!cache) {
@@ -36,7 +36,7 @@ export class ApiCache {
   }
 
   public clear(name) {
-    Object.keys(this._cache).forEach(key => {
+    Object.keys(this._cache).forEach((key) => {
       if (name.match(new RegExp(`^${key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`))) {
         delete this._cache[key];
       }
