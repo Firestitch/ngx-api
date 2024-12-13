@@ -2,7 +2,7 @@
 import { Queue } from '@firestitch/common';
 
 
-import { HttpContext } from '@angular/common/http';
+import { HttpContext, HttpInterceptor } from '@angular/common/http';
 import { format, isDate, isValid } from 'date-fns';
 
 import { ResponseType } from '../enums/response-type.enum';
@@ -14,7 +14,7 @@ export class FsApiConfig {
   /** A key value store for the request headers. */
   public headers?: Record<string, string | string[]> = {};
   public encoding: 'json' | 'formdata' | 'url';
-  public interceptors = true;
+  public interceptors: (interceptors: HttpInterceptor[]) => HttpInterceptor[];
   public handlers = true;
   public key?: string = null;
   public query?: object = {};

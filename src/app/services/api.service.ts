@@ -69,10 +69,10 @@ export class FsApi {
     private _responseHandler: FsApiResponseHandler,
 
   ) {
-    if(_responseHandler) {
-      this._responseHandlers = Array.isArray(_responseHandler) ?
-        _responseHandler :
-        [_responseHandler];
+    if(this._responseHandler) {
+      this._responseHandlers = Array.isArray(this._responseHandler) ?
+        this._responseHandler :
+        [this._responseHandler];
     }
 
     this._queue.setLimit((this._config && this._config.maxFileConnections) || 5);
@@ -271,13 +271,11 @@ export class FsApi {
       new ParamRequestInterceptor(config, data),
       new BodyRequestInterceptor(config, data),
     ];
-    
-    if (config.interceptors) {
-      interceptors = [
-        ...interceptors,
-        ...this._getInterceptors(config, data, this._requestInterceptors),
-      ];
-    }
+  
+    interceptors = [
+      ...interceptors,
+      ...this._getInterceptors(config, data, this._requestInterceptors),
+    ];
 
     if(config.stream) {
       interceptors.push(new StreamResponseInterceptor(config, data));
@@ -285,12 +283,14 @@ export class FsApi {
       interceptors.push(new BodyResponseInterceptor(config, data));
     }
 
-    if (config.interceptors) {
-      interceptors = [
-        ...interceptors,
-        ...(this._httpInterceptors || []),
-      ];
-    }
+    interceptors = [
+      ...interceptors,
+      ...(this._httpInterceptors || []),
+    ];
+
+    interceptors = config.interceptors ?
+      config.interceptors(interceptors) :
+      interceptors;
 
     // Executing of interceptors
     const httpHandlers = interceptors

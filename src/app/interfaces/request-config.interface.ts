@@ -1,13 +1,13 @@
 import { Queue } from '@firestitch/common';
 
-import { HttpContext } from '@angular/common/http';
+import { HttpContext, HttpInterceptor } from '@angular/common/http';
 
 import { ResponseType } from '../enums/response-type.enum';
 
 export interface RequestConfig {
   headers?: Record<string, string | string[]>;
   encoding?: 'json' | 'url' | 'formdata';
-  interceptors?: boolean;
+  interceptors?: (interceptors: HttpInterceptor[]) => HttpInterceptor[];
   handlers?: boolean;
   key?: string;
   query?: any;
