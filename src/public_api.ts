@@ -2,7 +2,7 @@ export { FsApiModule } from './app/fs-api.module';
 
 export { FsApi } from './app/services/api.service';
 
-export * from './app/fs-api-providers';
+export * from './app/fs-api-injectors';
 
 export { makeInterceptorFactory } from './app/helpers/interceptor.factory';
 
@@ -22,4 +22,6 @@ export { StreamEvent } from './app/types';
 
 export { FsApiImageDirective } from './app/directives';
 export { FsApiImagePipe } from './app/pipes';
+
+export { FS_API_PRE_RESPONSE_INTERCEPTOR } from './app/fs-api-injectors';
 

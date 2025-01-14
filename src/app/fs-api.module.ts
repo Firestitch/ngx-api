@@ -4,7 +4,7 @@ import { ModuleWithProviders, NgModule } from '@angular/core';
 import { HttpBackend, HttpXhrBackend, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 import { FsApiImageDirective } from './directives';
-import { FS_API_CONFIG } from './fs-api-providers';
+import { FS_API_CONFIG } from './fs-api-injectors';
 import { IModuleConfig } from './interfaces/module-config.interface';
 import { FsApiImagePipe } from './pipes';
 

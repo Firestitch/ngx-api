@@ -16,15 +16,17 @@ import { RequestMethod, ResponseType } from '../enums';
 import {
   FS_API_CONFIG,
   FS_API_PRE_REQUEST_INTERCEPTOR,
+  FS_API_PRE_RESPONSE_INTERCEPTOR,
   FS_API_REQUEST_INTERCEPTOR,
   FS_API_RESPONSE_HANDLER,
-} from '../fs-api-providers';
+} from '../fs-api-injectors';
 import { FsApiCacheHandler } from '../handlers/cache.handler';
 import { FsApiResponseHandler } from '../handlers/response.handler';
 import {
   BodyRequestInterceptor,
   BodyResponseInterceptor,
-  HeaderRequestInterceptor, ParamRequestInterceptor,
+  HeaderRequestInterceptor,
+  ParamRequestInterceptor,
   StreamResponseInterceptor,
 } from '../interceptors';
 import { FsApiFileConfig, RequestConfig } from '../interfaces';
@@ -63,6 +65,10 @@ export class FsApi {
     // Pre-request interceptors
     @Optional() @Inject(FS_API_PRE_REQUEST_INTERCEPTOR)
     private _preRequestInterceptors: HttpInterceptor[],
+
+    // Response interceptors
+    @Optional() @Inject(FS_API_PRE_RESPONSE_INTERCEPTOR)
+    private _preResponseInterceptors: HttpInterceptor[],
 
     // Other callbacks
     @Optional() @Inject(FS_API_RESPONSE_HANDLER)
@@ -285,6 +291,7 @@ export class FsApi {
 
     interceptors = [
       ...interceptors,
+      ...this._getInterceptors(config, data, this._preResponseInterceptors),
       ...(this._httpInterceptors || []),
     ];
 

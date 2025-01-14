@@ -14,7 +14,7 @@ import { FsMessage, FsMessageModule } from '@firestitch/message';
 
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { FS_API_PRE_REQUEST_INTERCEPTOR } from 'src/app/fs-api-providers';
+import { FS_API_PRE_REQUEST_INTERCEPTOR, FS_API_PRE_RESPONSE_INTERCEPTOR } from 'src/app/fs-api-injectors';
 
 import { AppComponent } from './app.component';
 import { ImageComponent, KeepAliveExampleComponent, StreamExampleComponent } from './components';
@@ -29,6 +29,7 @@ import {
   ErrorInterceptorFactory,
   HttpInterceptor,
   PreInterceptorFactory,
+  PreResponseInterceptorFactory,
   TokenInterceptorFactory,
 } from './interceptors';
 import { AppMaterialModule } from './material.module';
@@ -72,6 +73,11 @@ import { TestService } from './services/test.service';
     { 
       provide: FS_API_PRE_REQUEST_INTERCEPTOR, 
       useFactory: PreInterceptorFactory, 
+      multi: true, 
+    },
+    { 
+      provide: FS_API_PRE_RESPONSE_INTERCEPTOR, 
+      useFactory: PreResponseInterceptorFactory, 
       multi: true, 
     },
     { 
