@@ -3,10 +3,9 @@ import { SafeResourceUrl, SafeUrl } from '@angular/platform-browser';
 import { Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
-
 import { HttpContext } from '@angular/common/http';
 
-import { DisplayApiError } from '../consts';
+import { ProcessApiError } from '../consts';
 import { RequestMethod, ResponseType } from '../enums';
 import { blobToBase64, blobToBase64Url } from '../helpers';
 import { FsApiFileConfig } from '../interfaces';
@@ -38,7 +37,7 @@ export class FsApiFile {
 
   public get blob(): Observable<Blob> {
     const context = new HttpContext();
-    context.set(DisplayApiError, false);
+    context.set(ProcessApiError, false);
 
     return this._api
       .request( 
@@ -54,7 +53,7 @@ export class FsApiFile {
 
   public get file(): Observable<File> {
     const context = new HttpContext();
-    context.set(DisplayApiError, false);
+    context.set(ProcessApiError, false);
 
     return this._api.file(
       this._config.method, 
