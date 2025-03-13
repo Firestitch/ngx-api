@@ -35,7 +35,7 @@ export class StreamResponseInterceptor implements HttpInterceptor {
             //
           }
 
-          return throwError(errorResponse);
+          return throwError(() => errorResponse);
         }), 
         filter((event: HttpEvent<any>) => {
           return (
@@ -73,17 +73,22 @@ export class StreamResponseInterceptor implements HttpInterceptor {
 
             } catch(error) {
               if(!(error instanceof HttpErrorResponse)) {
-                return throwError(new HttpErrorResponse({
+                return throwError(() =>new HttpErrorResponse({
                   status: 400,
                   statusText: error,
                 }));
               }
 
-              return throwError(error);
+              return throwError(() => error);
             } 
           
             return merge(...data$);
-          } 
+          } else if(event.type === HttpEventType.Sent) {
+            return of({
+              data: [],
+              type: StreamEventType.Sent,
+            });
+          }
 
           return of({
             data: [],
