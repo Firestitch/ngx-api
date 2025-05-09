@@ -234,7 +234,13 @@ export class FsApi {
         map((event: HttpResponse<any>) => {
           let filename = (event.headers.getAll('Content-Disposition') || [])
             .reduce((accum, item) => {
-              const matches = item.match(/filename="([^"]+)"/);
+              let matches = item.match(/filename\*=UTF-8''(.*)/);
+
+              if(matches) {
+                return decodeURIComponent(matches[1]);
+              }
+
+              matches = item.match(/filename="([^"]+)"/);
 
               return matches ? matches[1] : accum;
             }, '');

@@ -56,14 +56,15 @@ export class StreamResponseInterceptor implements HttpInterceptor {
 
                   if(itemData?.code) {
                     if(itemData.code > 200) {
-                      throw new HttpErrorResponse({
+                      return throwError(() => new HttpErrorResponse({
                         status: itemData.code,
                         statusText: itemData.message,
                         error: itemData,
-                      });
-                    } else {
-                      return of(new StreamEventComplete({ data: itemData, code: itemData.code }));
+                      }));
                     }
+ 
+                    return of(new StreamEventComplete({ data: itemData, code: itemData.code }));
+                    
                   }
 
                   return of(new StreamEventData({ data: itemData }));
