@@ -70,10 +70,17 @@ export class BodyResponseInterceptor implements HttpInterceptor {
       }
     } else {
       if(typeof data === 'string') {
-        const match = data.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}([+-]\d{2}:\d{2}|\.\d{3}Z)?$/);
+        const matchDate = data
+          .match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}([+-]\d{2}:\d{2}|\.\d{3}Z)?$/);
 
-        if(match) {
-          data = match[1] ? parse(data) : parseLocal(data);
+        if(matchDate) {
+          data = matchDate[1] ? parse(data) : parseLocal(data);
+        } else {
+          const matchTime = data.match(/^\d{2}:\d{2}:\d{2}$/);
+
+          if(matchTime) {
+            data = parseLocal(data);
+          }
         }
       }
     }
