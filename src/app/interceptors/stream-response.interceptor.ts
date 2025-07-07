@@ -7,6 +7,7 @@ import { HttpErrorResponse, HttpEvent, HttpEventType, HttpHandler, HttpIntercept
 
 import { FsApiConfig, StreamEventComplete } from '../classes';
 import { StreamEventData } from '../classes/stream-event-data';
+import { DisplayApiError } from '../consts/display-api-error';
 import { StreamEventType } from '../enums';
 
 
@@ -20,6 +21,10 @@ export class StreamResponseInterceptor implements HttpInterceptor {
   public intercept(req: HttpRequest<any>, next: HttpHandler): Observable<any> {
 
     let idx = 0;
+
+    req = req.clone({
+      context: req.context.set(DisplayApiError, false),
+    });
 
     return next.handle(req)
       .pipe(
