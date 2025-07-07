@@ -46,8 +46,9 @@ export class StreamResponseInterceptor implements HttpInterceptor {
         switchMap((event: HttpEvent<any>) => {
           if(event.type === HttpEventType.DownloadProgress) {
             let data$;
+            const partialText = (event as any).partialText;
+                        
             try {
-              const partialText = (event as any).partialText;
               const text = partialText.substring(idx).trim();
           
               data$ = text.split('\n')
@@ -75,8 +76,9 @@ export class StreamResponseInterceptor implements HttpInterceptor {
             } catch(error) {
               if(!(error instanceof HttpErrorResponse)) {
                 return throwError(() =>new HttpErrorResponse({
+                  error,
                   status: 400,
-                  statusText: error,
+                  statusText: partialText,
                 }));
               }
 
