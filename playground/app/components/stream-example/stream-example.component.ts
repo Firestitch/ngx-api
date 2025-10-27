@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, inject } from '@angular/core';
 
 import { FsApi } from '@firestitch/api';
 import { FsMessage } from '@firestitch/message';
@@ -22,17 +20,15 @@ import { JsonPipe } from '@angular/common';
     imports: [MatButton, JsonPipe],
 })
 export class StreamExampleComponent implements OnDestroy {
+  private _url = inject(TEST_URL);
+  private _api = inject(FsApi);
+  private _cdRef = inject(ChangeDetectorRef);
+  private _message = inject(FsMessage);
+
 
   public data = [];
 
   private _destroy$ = new Subject();
-
-  constructor(
-    @Inject(TEST_URL) private _url: string,
-    private _api: FsApi,
-    private _cdRef: ChangeDetectorRef,
-    private _message: FsMessage,
-  ) {}
 
   public error() {
     this.get('Some bad happened');

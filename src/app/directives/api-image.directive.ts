@@ -1,4 +1,4 @@
-import { Directive, ElementRef, Input, OnInit } from '@angular/core';
+import { Directive, ElementRef, Input, OnInit, inject } from '@angular/core';
 
 import { FsApi } from '../services';
 
@@ -8,16 +8,16 @@ import { FsApi } from '../services';
     standalone: true,
 })
 export class FsApiImageDirective implements OnInit {
+  private _api = inject(FsApi);
+  private _el = inject(ElementRef);
+
 
   @Input() url: string;
 
   public src;
   public display: string;
 
-  constructor(
-    private _api: FsApi,
-    private _el: ElementRef,
-  ) {
+  constructor() {
     this.display = this._el.nativeElement.style.display;
     this._el.nativeElement.style.display = 'none';
   }

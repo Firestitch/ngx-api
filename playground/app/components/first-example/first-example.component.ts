@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
 
 
 import { FsApi } from '@firestitch/api';
@@ -19,15 +19,13 @@ import { JsonPipe } from '@angular/common';
     imports: [MatButton, JsonPipe],
 })
 export class FirstExampleComponent {
+  private _url = inject(TEST_URL);
+  private _api = inject(FsApi);
+  private _cdRef = inject(ChangeDetectorRef);
+
 
   public data: any[] = null;
   public file: null;
-
-  constructor(
-    @Inject(TEST_URL) private _url: string,
-    private _api: FsApi,
-    private _cdRef: ChangeDetectorRef,
-  ) {}
 
   public uploadFiles(file: File) {
     this._api.post(this._url, { file })

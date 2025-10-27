@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 
 import { FsApi } from '@firestitch/api';
 
@@ -23,15 +23,13 @@ import { MatIcon } from '@angular/material/icon';
     ],
 })
 export class SingleUploadComponent {
+  private _url = inject(TEST_URL);
+  private _api = inject(FsApi);
+
 
   public files = [];
   public percent = 0;
   public kbLoaded = 0;
-
-  constructor(
-    @Inject(TEST_URL) private _url: string,
-    private _api: FsApi,
-  ) {}
 
   public upload() {
     const data = { object: { date: new Date(), file: null }, file: null };

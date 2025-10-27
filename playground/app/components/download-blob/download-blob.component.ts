@@ -1,24 +1,24 @@
-import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+
+import { MatButton } from '@angular/material/button';
 
 import { FsApi } from '@firestitch/api';
 
 import { TEST_URL } from 'playground/app/injectors';
-import { MatButton } from '@angular/material/button';
 
 
 @Component({
-    selector: 'download-blob',
-    templateUrl: './download-blob.component.html',
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
-    imports: [MatButton],
+  selector: 'download-blob',
+  templateUrl: './download-blob.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [MatButton],
 })
 export class DownloadBlobComponent {
   
-  constructor(
-    @Inject(TEST_URL) private _url: string,
-    private _api: FsApi,
-  ) { }
+  private _url = inject(TEST_URL);
+  private _api = inject(FsApi);
+
 
   public downloadUrl() {
     const url = '/assets/dog-puppy-on-garden-royalty-free-image-1586966191.jpg';

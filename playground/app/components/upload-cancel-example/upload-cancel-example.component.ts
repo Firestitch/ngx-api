@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 
 import { FsApi } from '@firestitch/api';
 import { FsMessage } from '@firestitch/message';
@@ -22,14 +22,12 @@ import { MatIcon } from '@angular/material/icon';
     ],
 })
 export class UploadCancelExampleComponent {
+  private _url = inject(TEST_URL);
+  private _api = inject(FsApi);
+  private _message = inject(FsMessage);
+
 
   public files = [];
-
-  constructor(
-    @Inject(TEST_URL) private _url: string,
-    private _api: FsApi, 
-    private _message: FsMessage,
-  ) {}
 
   public upload() {
 

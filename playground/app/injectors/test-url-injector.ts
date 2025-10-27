@@ -1,3 +1,3 @@
 import { InjectionToken } from '@angular/core';
 
-export const TEST_URL = new InjectionToken<any[]>('test-url');
+export const TEST_URL = new InjectionToken<string>('test-url');

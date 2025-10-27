@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Inject, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, inject } from '@angular/core';
 
 import { FsApi } from '@firestitch/api';
 import { FsMessage } from '@firestitch/message';
@@ -20,16 +20,14 @@ import { JsonPipe } from '@angular/common';
     imports: [MatButton, JsonPipe],
 })
 export class KeepAliveExampleComponent implements OnDestroy {
+  private _url = inject(TEST_URL);
+  private _api = inject(FsApi);
+  private _message = inject(FsMessage);
+
 
   public data = [];
 
   private _destroy$ = new Subject();
-
-  constructor(
-    @Inject(TEST_URL) private _url: string,
-    private _api: FsApi,
-    private _message: FsMessage,
-  ) {}
 
   public get(count, exception?) {
     const query = {

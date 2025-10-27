@@ -1,4 +1,4 @@
-import { Inject, Injectable, Optional } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
 import { Queue } from '@firestitch/common';
@@ -38,6 +38,15 @@ import { IModuleConfig } from '../interfaces/module-config.interface';
   providedIn: 'root',
 })
 export class FsApi {
+  private _http = inject(HttpXhrBackend);
+  private _sanitizer = inject(DomSanitizer);
+  private _config = inject<IModuleConfig>(FS_API_CONFIG, { optional: true });
+  private _httpInterceptors = inject(HTTP_INTERCEPTORS, { optional: true });
+  private _requestInterceptors = inject(FS_API_REQUEST_INTERCEPTOR, { optional: true });
+  private _preRequestInterceptors = inject(FS_API_PRE_REQUEST_INTERCEPTOR, { optional: true });
+  private _preResponseInterceptors = inject(FS_API_PRE_RESPONSE_INTERCEPTOR, { optional: true });
+  private _responseHandler = inject<FsApiResponseHandler>(FS_API_RESPONSE_HANDLER, { optional: true });
+
 
   public events = [];
 
@@ -46,35 +55,7 @@ export class FsApi {
   private _responseHandlers: FsApiBaseHander[] = [];
   private _responseBodyHandlers: FsApiBaseHander[] = [];
 
-  constructor(
-    private _http: HttpXhrBackend,
-    private _sanitizer: DomSanitizer,
-
-    // Custom interceptors
-    @Optional() @Inject(FS_API_CONFIG)
-    private _config: IModuleConfig,
-
-    // Custom interceptors
-    @Optional() @Inject(HTTP_INTERCEPTORS)
-    private _httpInterceptors: HttpInterceptor[],
-
-    // Custom interceptors
-    @Optional() @Inject(FS_API_REQUEST_INTERCEPTOR)
-    private _requestInterceptors: HttpInterceptor[],
-
-    // Pre-request interceptors
-    @Optional() @Inject(FS_API_PRE_REQUEST_INTERCEPTOR)
-    private _preRequestInterceptors: HttpInterceptor[],
-
-    // Response interceptors
-    @Optional() @Inject(FS_API_PRE_RESPONSE_INTERCEPTOR)
-    private _preResponseInterceptors: HttpInterceptor[],
-
-    // Other callbacks
-    @Optional() @Inject(FS_API_RESPONSE_HANDLER)
-    private _responseHandler: FsApiResponseHandler,
-
-  ) {
+  constructor() {
     if(this._responseHandler) {
       this._responseHandlers = Array.isArray(this._responseHandler) ?
         this._responseHandler :
