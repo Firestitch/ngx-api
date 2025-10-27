@@ -6,10 +6,16 @@
   <button mat-raised-button color="primary" (click)="upload()">Upload</button>
 </div>
 
-<span *ngIf="percent">{{percent}}% <span *ngIf="kbLoaded">{{kbLoaded}}KB</span></span>
+@if (percent) {
+  <span>{{percent}}% @if (kbLoaded) {
+    <span>{{kbLoaded}}KB</span>
+  }</span>
+}
 
-<fs-file-previews [files]="files" *ngIf="files.length">
-  <ng-template fs-file-preview-action placement="top-right" action="remove" tooltip="Remove" (click)="remove($event)">
-    <mat-icon>close</mat-icon>
-  </ng-template>
-</fs-file-previews>
+@if (files.length) {
+  <fs-file-previews [files]="files">
+    <ng-template fs-file-preview-action placement="top-right" action="remove" tooltip="Remove" (click)="remove($event)">
+      <mat-icon>close</mat-icon>
+    </ng-template>
+  </fs-file-previews>
+}
