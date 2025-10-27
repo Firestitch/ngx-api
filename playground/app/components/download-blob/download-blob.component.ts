@@ -3,12 +3,15 @@ import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import { FsApi } from '@firestitch/api';
 
 import { TEST_URL } from 'playground/app/injectors';
+import { MatButton } from '@angular/material/button';
 
 
 @Component({
-  selector: 'download-blob',
-  templateUrl: './download-blob.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'download-blob',
+    templateUrl: './download-blob.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [MatButton],
 })
 export class DownloadBlobComponent {
   

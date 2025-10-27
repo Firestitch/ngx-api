@@ -10,12 +10,16 @@ import { Subject } from 'rxjs';
 
 import { TEST_URL } from 'playground/app/injectors';
 import { StreamEventComplete, StreamEventData } from 'src/app';
+import { MatButton } from '@angular/material/button';
+import { JsonPipe } from '@angular/common';
 
 
 @Component({
-  selector: 'app-stream-example',
-  templateUrl: './stream-example.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-stream-example',
+    templateUrl: './stream-example.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [MatButton, JsonPipe],
 })
 export class StreamExampleComponent implements OnDestroy {
 

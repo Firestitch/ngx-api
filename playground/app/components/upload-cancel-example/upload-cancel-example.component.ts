@@ -5,12 +5,21 @@ import { FsMessage } from '@firestitch/message';
 
 import { HttpEventType } from '@angular/common/http';
 import { TEST_URL } from 'playground/app/injectors';
+import { FsFileModule } from '@firestitch/file';
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
 
 
 @Component({
-  selector: 'upload-cancel-example',
-  templateUrl: './upload-cancel-example.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'upload-cancel-example',
+    templateUrl: './upload-cancel-example.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [
+        FsFileModule,
+        MatButton,
+        MatIcon,
+    ],
 })
 export class UploadCancelExampleComponent {
 

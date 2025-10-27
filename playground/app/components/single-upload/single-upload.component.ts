@@ -6,12 +6,21 @@ import { finalize } from 'rxjs/operators';
 
 import { HttpEventType } from '@angular/common/http';
 import { TEST_URL } from 'playground/app/injectors';
+import { FsFileModule } from '@firestitch/file';
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
 
 
 @Component({
-  selector: 'single-upload',
-  templateUrl: './single-upload.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'single-upload',
+    templateUrl: './single-upload.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [
+        FsFileModule,
+        MatButton,
+        MatIcon,
+    ],
 })
 export class SingleUploadComponent {
 

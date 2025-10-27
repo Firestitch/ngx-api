@@ -4,12 +4,16 @@ import { SafeUrl } from '@angular/platform-browser';
 import { FsApi } from '@firestitch/api';
 
 import { Observable } from 'rxjs';
+import { MatButton } from '@angular/material/button';
+import { AsyncPipe } from '@angular/common';
 
 
 @Component({
-  selector: 'app-image',
-  templateUrl: './image.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-image',
+    templateUrl: './image.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [MatButton, AsyncPipe],
 })
 export class ImageComponent {
 

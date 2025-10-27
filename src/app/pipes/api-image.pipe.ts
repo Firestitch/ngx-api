@@ -6,7 +6,8 @@ import { delay, map } from 'rxjs/operators';
 
 
 @Pipe({
-  name: 'fsApiImage',
+    name: 'fsApiImage',
+    standalone: true,
 })
 export class FsApiImagePipe implements PipeTransform {
   

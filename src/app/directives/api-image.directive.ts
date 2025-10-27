@@ -4,7 +4,8 @@ import { FsApi } from '../services';
 
 
 @Directive({
-  selector: '[fsApiImage]',
+    selector: '[fsApiImage]',
+    standalone: true,
 })
 export class FsApiImageDirective implements OnInit {
 

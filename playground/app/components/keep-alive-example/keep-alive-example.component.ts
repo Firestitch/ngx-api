@@ -8,12 +8,16 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { TEST_URL } from 'playground/app/injectors';
+import { MatButton } from '@angular/material/button';
+import { JsonPipe } from '@angular/common';
 
 
 @Component({
-  selector: 'app-keep-alive-example',
-  templateUrl: './keep-alive-example.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-keep-alive-example',
+    templateUrl: './keep-alive-example.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [MatButton, JsonPipe],
 })
 export class KeepAliveExampleComponent implements OnDestroy {
 

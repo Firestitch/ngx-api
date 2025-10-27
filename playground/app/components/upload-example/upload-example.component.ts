@@ -7,12 +7,21 @@ import { finalize } from 'rxjs/operators';
 
 import { HttpEventType } from '@angular/common/http';
 import { TEST_URL } from 'playground/app/injectors';
+import { FsFileModule } from '@firestitch/file';
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
 
 
 @Component({
-  selector: 'upload-example',
-  templateUrl: './upload-example.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'upload-example',
+    templateUrl: './upload-example.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [
+        FsFileModule,
+        MatButton,
+        MatIcon,
+    ],
 })
 export class UploadExampleComponent {
 

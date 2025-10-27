@@ -8,11 +8,15 @@ import { from } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { TEST_URL } from 'playground/app/injectors';
+import { MatButton } from '@angular/material/button';
+import { JsonPipe } from '@angular/common';
 
 @Component({
-  selector: 'first-example',
-  templateUrl: './first-example.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'first-example',
+    templateUrl: './first-example.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [MatButton, JsonPipe],
 })
 export class FirstExampleComponent {
 

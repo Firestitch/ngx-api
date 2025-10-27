@@ -9,21 +9,18 @@ import { IModuleConfig } from './interfaces/module-config.interface';
 import { FsApiImagePipe } from './pipes';
 
 
-@NgModule({ 
-  declarations: [
-    FsApiImageDirective,
-    FsApiImagePipe,
-  ],
-  exports: [
-    FsApiImageDirective,
-    FsApiImagePipe,
-  ], 
-  imports: [CommonModule],
-  providers: [
-    HttpXhrBackend,
-    { provide: HttpBackend, useExisting: HttpXhrBackend },
-    provideHttpClient(withInterceptorsFromDi()),
-  ], 
+@NgModule({
+    exports: [
+        FsApiImageDirective,
+        FsApiImagePipe,
+    ],
+    imports: [CommonModule, FsApiImageDirective,
+        FsApiImagePipe],
+    providers: [
+        HttpXhrBackend,
+        { provide: HttpBackend, useExisting: HttpXhrBackend },
+        provideHttpClient(withInterceptorsFromDi()),
+    ],
 })
 export class FsApiModule {
   public static forRoot(config: IModuleConfig = {}): ModuleWithProviders<FsApiModule> {
