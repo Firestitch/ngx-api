@@ -25,14 +25,21 @@ export class FsApiFile {
   ) {
     this._url = Array.isArray(url) ? url.join('/') : url;
     this._api = api;
-    this._config = {
+    this.setConfig({
       method: RequestMethod.Get,
       ...options,
-    };
+    });
   }
 
   public get name(): string {
     return this._config.name;
+  }
+
+  public setConfig(config: FsApiFileConfig): void {
+    this._config = {
+      ...this._config,
+      ...config,
+    };
   }
 
   public get blob(): Observable<Blob> {
@@ -47,6 +54,7 @@ export class FsApiFile {
         { 
           context, 
           responseType: ResponseType.Blob, 
+          ...this._config.requestConfig,
         },
       );
   }
