@@ -99,10 +99,13 @@ export class BodyResponseInterceptor implements HttpInterceptor {
 
   /**
    * An error body arrives in whatever shape the transport chose rather than the
-   * shape the server sent: a Blob for a blob request, a string when it could not
-   * be parsed. Decode it back to the payload so consumers read one shape — an
+   * shape the server sent: a Blob for a blob request, an ArrayBuffer for an
+   * arraybuffer request (an inline pdf or image preview), a string when it could
+   * not be parsed. Decode it back to the payload so consumers read one shape — an
    * undecoded Blob reaches FsErrorMessage as Blob.prototype.text, which renders
-   * as "function text() { [native code] }" in place of the server's message.
+   * as "function text() { [native code] }" in place of the server's message, and
+   * an undecoded ArrayBuffer has no message at all, so FsErrorMessage falls back
+   * to the status text and shows "OK".
    *
    * Unlike the success path this does not check the content type: an error body
    * is always the payload, never the file that was asked for.
@@ -126,6 +129,10 @@ export class BodyResponseInterceptor implements HttpInterceptor {
         .pipe(
           map((text) => this._parseJson(text)),
         );
+    }
+
+    if(error instanceof ArrayBuffer) {
+      return of(this._parseJson(new TextDecoder().decode(error)));
     }
 
     if(typeof error === 'string') {
