@@ -183,7 +183,7 @@ export class FsApi {
     if (config.staleWhileRevalidate) {
       return staleWhileRevalidate(
         this._cacheStorage,
-        apiCacheSignature(config.method, url, config.query, this._config?.cacheScope?.()),
+        apiCacheSignature(config, url, this._config?.cacheScope?.()),
         chainedRequest,
       );
     }

@@ -1,11 +1,22 @@
+import { FsApiConfig } from '../classes/api-config';
+
+
 /**
  * The key a StaleWhileRevalidate answer is saved under: the method, the URL,
- * the query and the scope (IModuleConfig.cacheScope). The query's keys are
- * sorted at every depth, so the same query sent in another key order finds the
- * same answer.
+ * the query, what shapes the answer that is saved (the response key, and
+ * whether the body's data was unwrapped), and the scope
+ * (IModuleConfig.cacheScope). The query's keys are sorted at every depth, so
+ * the same query sent in another key order finds the same answer.
  */
-export function apiCacheSignature(method: string, url: string, query: any, scope: string): string {
-  return JSON.stringify([method, url, sortKeys(query ?? {}), scope ?? '']);
+export function apiCacheSignature(config: FsApiConfig, url: string, scope: string): string {
+  return JSON.stringify([
+    config.method,
+    url,
+    sortKeys(config.query ?? {}),
+    config.key ?? null,
+    config.mapHttpResponseBodyData ?? true,
+    scope ?? '',
+  ]);
 }
 
 function sortKeys(value: any): any {
