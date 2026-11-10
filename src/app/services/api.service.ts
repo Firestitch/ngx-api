@@ -4,8 +4,8 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { Queue } from '@firestitch/common';
 
 
-import { Observable, of, throwError } from 'rxjs';
-import { catchError, map, switchMap, tap } from 'rxjs/operators';
+import { EMPTY, Observable, concat, of, throwError } from 'rxjs';
+import { catchError, concatMap, ignoreElements, map, switchMap, tap } from 'rxjs/operators';
 
 import { HTTP_INTERCEPTORS, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse, HttpXhrBackend } from '@angular/common/http';
 
@@ -14,6 +14,7 @@ import { ApiCache } from '../classes/api-cache';
 import { FsApiConfig } from '../classes/api-config';
 import { RequestMethod, ResponseType } from '../enums';
 import {
+  FS_API_CACHE_STORAGE,
   FS_API_CONFIG,
   FS_API_PRE_REQUEST_INTERCEPTOR,
   FS_API_PRE_RESPONSE_INTERCEPTOR,
@@ -21,6 +22,7 @@ import {
   FS_API_RESPONSE_HANDLER,
 } from '../fs-api-injectors';
 import { FsApiCacheHandler } from '../handlers/cache.handler';
+import { apiCacheSignature, staleWhileRevalidate } from '../helpers';
 import { FsApiResponseHandler } from '../handlers/response.handler';
 import {
   BodyRequestInterceptor,
@@ -29,7 +31,7 @@ import {
   ParamRequestInterceptor,
   StreamResponseInterceptor,
 } from '../interceptors';
-import { FsApiFileConfig, RequestConfig } from '../interfaces';
+import { ApiCacheStorage, FsApiFileConfig, RequestConfig } from '../interfaces';
 import { FsApiBaseHander } from '../interfaces/handler.interface';
 import { IModuleConfig } from '../interfaces/module-config.interface';
 
@@ -46,6 +48,7 @@ export class FsApi {
   private _preRequestInterceptors = inject(FS_API_PRE_REQUEST_INTERCEPTOR, { optional: true });
   private _preResponseInterceptors = inject(FS_API_PRE_RESPONSE_INTERCEPTOR, { optional: true });
   private _responseHandler = inject<FsApiResponseHandler>(FS_API_RESPONSE_HANDLER, { optional: true });
+  private _cacheStorage = inject<ApiCacheStorage>(FS_API_CACHE_STORAGE, { optional: true });
 
 
   public events = [];
@@ -82,6 +85,14 @@ export class FsApi {
 
   public get sanitizer(): DomSanitizer {
     return this._sanitizer;
+  }
+
+  /**
+   * Removes every answer ApiCacheMode.StaleWhileRevalidate saved. An app with
+   * sign-in calls it on sign-out. Nothing to do without FS_API_CACHE_STORAGE.
+   */
+  public clearCacheStorage(): Observable<void> {
+    return this._cacheStorage ? this._cacheStorage.clear() : of(null);
   }
 
   public get(url: RequestMethod | string | (string|number)[], query?: any, config?: RequestConfig) {
@@ -126,12 +137,18 @@ export class FsApi {
     url = Array.isArray(url) ? url.join('/') : url;
 
     if (config.methodGet) {
-      if (config.cache) {
+      if (config.cacheFirst) {
         const cache = this.cache.get(url, config.query);
         if (cache) {
           return of(cache);
         }
       }
+    }
+
+    if (config.staleWhileRevalidate && !this._cacheStorage) {
+      return throwError(() => new Error(
+        'ApiCacheMode.StaleWhileRevalidate needs FS_API_CACHE_STORAGE: add provideFsApiCacheStorage() from @firestitch/api/db',
+      ));
     }
 
     const request = this._createHttpRequest(config, url);
@@ -163,17 +180,27 @@ export class FsApi {
         }),
       );
 
+    if (config.staleWhileRevalidate) {
+      return staleWhileRevalidate(
+        this._cacheStorage,
+        apiCacheSignature(config.method, url, config.query, this._config?.cacheScope?.()),
+        chainedRequest,
+      );
+    }
+
+    const sentRequest = this._clearCacheStorageOnSave(config, chainedRequest);
+
     // Depends on encoding will send in queue or raw
     // TODO: Not sure why we are doing this
     if (config.encoding === 'formdata') {
       if (config.queue) {
-        return config.queue.push(chainedRequest);
+        return config.queue.push(sentRequest);
       }
 
-      return this._queue.push(chainedRequest);
+      return this._queue.push(sentRequest);
     }
 
-    return chainedRequest;
+    return sentRequest;
   }
 
   public download(name: string, method, url: string, data = null): void {
@@ -235,6 +262,30 @@ export class FsApi {
 
           return new File([event.body], filename, { type });
         }),
+      );
+  }
+
+  /**
+   * Any request that is not a GET can change what a saved answer says, so once
+   * it succeeds every StaleWhileRevalidate answer goes, before the response is
+   * handed on: a screen opened from the save's success never reads one the
+   * save made stale.
+   */
+  private _clearCacheStorageOnSave(config: FsApiConfig, request$: Observable<any>): Observable<any> {
+    if (config.methodGet || !this._cacheStorage) {
+      return request$;
+    }
+
+    return request$
+      .pipe(
+        concatMap((response) => concat(
+          this._cacheStorage.clear()
+            .pipe(
+              ignoreElements(),
+              catchError(() => EMPTY),
+            ),
+          of(response),
+        )),
       );
   }
 

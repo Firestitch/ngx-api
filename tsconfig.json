@@ -4,6 +4,9 @@
     "paths": {
       "@firestitch/api": [
         "src/public_api.ts"
+      ],
+      "@firestitch/api/db": [
+        "src/db/public_api.ts"
       ]
     }
   }

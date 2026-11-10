@@ -5,6 +5,7 @@ import { Queue } from '@firestitch/common';
 import { HttpContext, HttpInterceptor } from '@angular/common/http';
 import { format, isDate, isValid } from 'date-fns';
 
+import { ApiCacheMode } from '../enums/api-cache-mode.enum';
 import { ResponseType } from '../enums/response-type.enum';
 import { RequestConfig } from '../interfaces';
 
@@ -23,7 +24,7 @@ export class FsApiConfig {
   public queue: Queue;
   public data: any;
   public stream: boolean;
-  public cache?: boolean;
+  public cache?: boolean | ApiCacheMode;
   public mapHttpResponseBody?: boolean;
   public mapHttpResponseBodyData?: boolean;
   public context?: HttpContext;
@@ -58,6 +59,26 @@ export class FsApiConfig {
 
   public get methodGet() {
     return this.method === 'GET';
+  }
+
+  /** The in-memory, 30 minute cache: `cache: true` or ApiCacheMode.CacheFirst. */
+  public get cacheFirst(): boolean {
+    return this.cache === true || this.cache === ApiCacheMode.CacheFirst;
+  }
+
+  /**
+   * A GET whose answer is saved and handed back on the next call before the
+   * server's (ApiCacheMode.StaleWhileRevalidate). Only a JSON body handed back
+   * as the value: a file, a progress event or a raw HttpResponse is not an
+   * answer that can be saved and compared.
+   */
+  public get staleWhileRevalidate(): boolean {
+    return this.cache === ApiCacheMode.StaleWhileRevalidate
+      && this.methodGet
+      && this.responseType === ResponseType.Json
+      && (this.mapHttpResponseBody ?? true)
+      && !this.reportProgress
+      && !this.stream;
   }
 
   /** Adds or overrides a header value based on the name */
